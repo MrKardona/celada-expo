@@ -32,10 +32,10 @@ const CONFIG = {
   // — WhatsApp —
   whatsapp: "573001260097",
 
-  // — Kommo / Webhook —
-  // URL que recibirá el lead en JSON (webhook de Kommo, n8n, Apps Script, etc.)
-  // Si queda vacío "", el lead igual llega por WhatsApp con todos los datos.
-  webhookUrl: "",
+  // — Webhook de captura (Supabase) —
+  // Cada registro del formulario se guarda aquí aunque el visitante no abra WhatsApp.
+  webhookUrl: "https://igijeqhyppvpennjdkiu.supabase.co/functions/v1/lead",
+  webhookToken: "celada-expo-2026",
 
   // — Tracking (deja "" si aún no lo tienes; ver GUIA-CONFIGURACION.md) —
   gtmId: "",        // ej: "GTM-XXXXXXX"  (recomendado: solo GTM y manejas GA4+Pixel adentro)
@@ -705,7 +705,7 @@ form.addEventListener('submit', function(e){
     backup.push(lead); localStorage.setItem('cs_leads', JSON.stringify(backup));
   }catch(_){}
   if(CONFIG.webhookUrl){
-    fetch(CONFIG.webhookUrl, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(lead), keepalive:true}).catch(()=>{});
+    fetch(CONFIG.webhookUrl, {method:'POST', headers:{'Content-Type':'application/json','X-Landing-Token':CONFIG.webhookToken||''}, body: JSON.stringify(lead), keepalive:true}).catch(()=>{});
   }
 
   track('form_submit', {interes: lead.interes, cuando: lead.cuando, tipo: lead.tipo_cliente});
