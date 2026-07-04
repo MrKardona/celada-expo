@@ -148,9 +148,11 @@ h2{font-size:1.75rem;line-height:1.15;margin-bottom:8px;letter-spacing:-.02em;fo
 .step h4{font-size:1.02rem;margin:9px 0 4px;letter-spacing:-.01em}
 .step p{color:var(--txt2);font-size:.9rem;max-width:430px}
 
-/* PRODUCTOS — bento premium con animación de scroll */
-.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.prod{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;background:linear-gradient(165deg,var(--card2) 0%,var(--card) 55%);border:1px solid var(--line);border-radius:18px;padding:18px 16px 16px;cursor:pointer;user-select:none;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}
+/* PRODUCTOS — carrusel deslizable premium */
+.prod-grid{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:8px 20px 20px;scrollbar-width:none;-webkit-mask:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent);mask:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent)}
+.prod-grid::-webkit-scrollbar{display:none}
+.prod{scroll-snap-align:center;flex:0 0 70%;max-width:250px;min-height:200px;position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;background:linear-gradient(165deg,var(--card2) 0%,var(--card) 55%);border:1px solid var(--line);border-radius:20px;padding:18px 16px 16px;cursor:pointer;user-select:none;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}
+.prod .tx{margin-top:auto}
 .prod::before{content:"";position:absolute;top:-45px;right:-45px;width:130px;height:130px;background:radial-gradient(circle,rgba(255,164,0,.13),transparent 70%);opacity:0;transition:opacity .35s;pointer-events:none}
 .prod::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.05) 50%,transparent 70%);transform:translateX(-101%) skewX(-12deg);pointer-events:none}
 @media(hover:hover){
@@ -299,9 +301,9 @@ footer{padding:36px 0 90px;border-top:1px solid var(--line);text-align:center;co
 <!-- ═══════════ QUÉ PUEDES TRAER ═══════════ -->
 <section id="productos" style="padding-top:0">
   <div class="wrap reveal">
-    <span class="kicker">Sí, eso también</span>
-    <h2>¿Qué puedes traer?</h2>
-    <p class="sub">Toca para marcar lo que te interesa.</p>
+    <span class="kicker">Trae lo que imagines</span>
+    <h2>¿Qué productos puedes traer con nosotros?</h2>
+    <p class="sub">Desliza y toca para marcar tus intereses →</p>
     <svg width="0" height="0" style="position:absolute"><defs>
       <linearGradient id="gIco" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd66b"/><stop offset="1" stop-color="#ff8a00"/></linearGradient>
     </defs></svg>
