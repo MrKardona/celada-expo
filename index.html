@@ -150,7 +150,13 @@ h2{font-size:1.75rem;line-height:1.15;margin-bottom:8px;letter-spacing:-.02em;fo
 
 /* PRODUCTOS — lista editorial con iconos de línea */
 .prod-grid{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.prod{position:relative;display:flex;align-items:center;gap:14px;background:var(--bg);padding:15px 16px;cursor:pointer;user-select:none;transition:background .2s}
+.prod{position:relative;display:flex;align-items:center;gap:14px;background:var(--bg);padding:15px 16px;cursor:pointer;user-select:none;transition:background .2s;overflow:hidden}
+.prod::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,179,0,.06) 50%,transparent 70%);transform:translateX(-101%);pointer-events:none}
+@media(hover:hover){.prod:hover::after{transform:translateX(101%);transition:transform .7s ease}}
+.prod.sel .pic{animation:picpop .5s cubic-bezier(.34,1.8,.5,1)}
+@keyframes picpop{0%{transform:scale(1)}45%{transform:scale(1.22) rotate(-8deg)}100%{transform:scale(1) rotate(0)}}
+.prod.sel .mk{animation:mkpop .4s cubic-bezier(.34,1.8,.5,1)}
+@keyframes mkpop{0%{transform:scale(.4)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
 .prod:active{background:var(--card)}
 .prod .pic{flex-shrink:0;width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(255,179,0,.06);border:1px solid rgba(255,179,0,.18);transition:border-color .25s,background .25s}
 .prod .pic svg{width:22px;height:22px;fill:none;stroke:url(#gIco);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -409,10 +415,6 @@ footer{padding:36px 0 90px;border-top:1px solid var(--line);text-align:center;co
     +7 años conectándote con Estados Unidos
   </div>
 </footer>
-
-<a class="wa-float" id="waFloat" href="#" aria-label="WhatsApp" data-track="whatsapp_float">
-  <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.1 3.2 5.1 4.49.71.3 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35z"/><path d="M12.05 2a9.95 9.95 0 0 0-8.6 14.93L2 22l5.2-1.36A9.95 9.95 0 1 0 12.05 2zm0 18.2c-1.5 0-2.98-.4-4.27-1.16l-.3-.18-3.09.81.82-3.01-.2-.31a8.26 8.26 0 1 1 7.04 3.85z"/></svg>
-</a>
 
 <script>
 /* ============================================================
@@ -692,8 +694,8 @@ let formStarted = false;
 form.addEventListener('input', ()=>{ if(!formStarted){ formStarted=true; track('form_start'); } }, {once:false});
 
 function waLink(msg){ return 'https://wa.me/'+CONFIG.whatsapp+'?text='+encodeURIComponent(msg); }
-const waGenerico = waLink('Hola, vengo de '+CONFIG.eventoNombre+' y quiero activar mis '+CONFIG.beneficioTitulo+'.');
-document.getElementById('waFloat').href = waGenerico;
+const waFloatEl = document.getElementById('waFloat');
+if(waFloatEl) waFloatEl.href = waLink('Hola, vengo de '+CONFIG.eventoNombre+' y quiero activar mis '+CONFIG.beneficioTitulo+'.');
 
 form.addEventListener('submit', function(e){
   e.preventDefault();
@@ -786,10 +788,23 @@ window.addEventListener('load', function(){
       }, { amount: .6 });
     }
 
-    /* Productos: entran en cascada, sutil y editorial */
+    /* Productos: cascada + los iconos se DIBUJAN trazo a trazo */
     inView('.prod-grid', function(el){
-      animate(el.querySelectorAll('.prod'), { opacity: [0, 1], x: [-14, 0] },
+      const filas = el.querySelectorAll('.prod');
+      animate(filas, { opacity: [0, 1], x: [-14, 0] },
         { delay: stagger(0.05), duration: .45, easing: 'ease-out' });
+      filas.forEach(function(p, i){
+        p.querySelectorAll('svg *').forEach(function(sh){
+          if(!sh.getTotalLength) return;
+          try{
+            var L = sh.getTotalLength();
+            sh.style.strokeDasharray = L;
+            sh.style.strokeDashoffset = L;
+            sh.animate([{ strokeDashoffset: L }, { strokeDashoffset: 0 }],
+              { duration: 800, delay: i * 70 + 250, easing: 'ease-out', fill: 'forwards' });
+          }catch(e){}
+        });
+      });
     }, { amount: .2 });
 
     /* Stats: pop con rebote */
