@@ -136,24 +136,17 @@ h2{font-size:1.75rem;line-height:1.15;margin-bottom:8px;letter-spacing:-.02em;fo
 .benefit .bdet{color:var(--txt2);font-size:.9rem;margin-bottom:20px}
 .benefit .btn{position:relative}
 
-/* PASOS — entrada escalonada + interacción wow */
-.steps{display:flex;flex-direction:column;gap:14px}
-.step{cursor:pointer;overflow:hidden;transition:transform .25s cubic-bezier(.34,1.56,.64,1),border-color .25s,box-shadow .25s}
-.step:hover{transform:translateY(-5px) scale(1.02);border-color:var(--acc);box-shadow:0 14px 34px rgba(255,164,0,.18)}
-.step:active{transform:scale(.96)}
-.step .n{transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s}
-.step:hover .n{transform:rotate(-10deg) scale(1.18);box-shadow:0 0 20px rgba(255,179,0,.55)}
-.step::after{content:"";position:absolute;top:0;left:-90%;width:50%;height:100%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.09),transparent);transform:skewX(-20deg);transition:left .6s}
-.step:hover::after{left:150%}
-.step{position:relative}
-.vis .step{opacity:0;animation:stepin .5s forwards}
-.vis .step:nth-child(1){animation-delay:.05s}.vis .step:nth-child(2){animation-delay:.2s}
-.vis .step:nth-child(3){animation-delay:.35s}.vis .step:nth-child(4){animation-delay:.5s}
-@keyframes stepin{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
-.step{display:flex;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
-.step .n{flex-shrink:0;width:42px;height:42px;border-radius:12px;background:var(--grad);color:#1d1300;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem}
-.step h4{font-size:1rem;margin-bottom:3px}
-.step p{color:var(--txt2);font-size:.88rem}
+/* PASOS — línea de tiempo que se dibuja al hacer scroll */
+.steps{position:relative;display:flex;flex-direction:column}
+.steps::before{content:"";position:absolute;left:20px;top:10px;bottom:10px;width:2px;background:var(--line);border-radius:2px}
+.steps .line-fill{position:absolute;left:20px;top:10px;width:2px;height:calc(100% - 20px);background:var(--grad);border-radius:2px;transform-origin:top;transform:scaleY(0);box-shadow:0 0 12px rgba(255,164,0,.35)}
+.step{position:relative;display:flex;gap:18px;padding:6px 0 30px;cursor:pointer}
+.step:last-child{padding-bottom:6px}
+.step .n{position:relative;z-index:1;flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--bg2);border:1.5px solid var(--line);color:var(--txt2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;transition:background .45s,color .45s,border-color .45s,box-shadow .45s,transform .3s cubic-bezier(.34,1.56,.64,1)}
+.step.on .n{background:var(--grad);border-color:transparent;color:#1d1300;box-shadow:0 0 22px rgba(255,179,0,.45)}
+.step:active .n{transform:scale(.88)}
+.step h4{font-size:1.02rem;margin:9px 0 4px;letter-spacing:-.01em}
+.step p{color:var(--txt2);font-size:.9rem;max-width:430px}
 
 /* PRODUCTOS — lista editorial con iconos de línea */
 .prod-grid{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
@@ -287,10 +280,11 @@ footer{padding:36px 0 90px;border-top:1px solid var(--line);text-align:center;co
     <h2>¿Cómo funciona?</h2>
     <p class="sub">4 pasos y listo.</p>
     <div class="steps">
-      <div class="step"><div class="n">1</div><div><h4>Tu casillero en Miami 📬</h4><p>Regístrate en <a href="https://celadashopper.com" target="_blank" rel="noopener" data-track="web_click" style="color:var(--acc);font-weight:700;text-decoration:underline">celadashopper.com</a> → dirección en USA gratis.</p></div></div>
-      <div class="step"><div class="n">2</div><div><h4>Compra y envía a tu casillero 🛒</h4><p>Celulares, ropa, tecnología y más.<br><span style="color:var(--gold);font-weight:600">¿Sin medios de pago? Compramos por ti.</span></p></div></div>
-      <div class="step"><div class="n">3</div><div><h4>Reporte en tiempo real 📸</h4><p>Foto apenas llega tu mercancía + seguro incluido.</p></div></div>
-      <div class="step"><div class="n">4</div><div><h4>Rastreo hasta tu puerta 🚚</h4><p>Estado de tu mercancía en tiempo real y alertas automáticas a tu correo y WhatsApp.</p></div></div>
+      <div class="line-fill"></div>
+      <div class="step"><div class="n">1</div><div><h4>Activa tu casillero GRATIS</h4><p>Regístrate en <a href="https://celadashopper.com" target="_blank" rel="noopener" data-track="web_click" style="color:var(--acc);font-weight:700;text-decoration:underline">CeladaShopper.com</a>, obtén tu dirección en Miami y empieza a comprar en Estados Unidos.</p></div></div>
+      <div class="step"><div class="n">2</div><div><h4>Compra en cualquier tienda de EE. UU.</h4><p>Amazon, Apple, Walmart, eBay y miles de tiendas más.<br><span style="color:var(--gold);font-weight:600">¿No tienes cómo pagar? Nuestro Personal Shopper compra por ti.</span></p></div></div>
+      <div class="step"><div class="n">3</div><div><h4>Nosotros recibimos tu compra</h4><p>Tu paquete llega a nuestra bodega en Miami, lo inspeccionamos y te notificamos para que tengas total tranquilidad.</p></div></div>
+      <div class="step"><div class="n">4</div><div><h4>Recíbelo en Colombia</h4><p>Enviamos tu pedido hasta tu ciudad con seguimiento durante todo el proceso.</p></div></div>
     </div>
   </div>
 </section>
@@ -779,6 +773,17 @@ window.addEventListener('load', function(){
       bImg.style.transform = 'scale(1.12)';
       scroll(animate(bImg, { y: [0, 70], scale: [1.12, 1.12] }, { easing: 'linear' }),
         { target: heroSec, offset: ['start start', 'end start'] });
+    }
+
+    /* Línea de tiempo de los pasos: se dibuja con el scroll y enciende cada nodo */
+    const stepsEl = document.querySelector('.steps');
+    if(stepsEl){
+      scroll(animate('.steps .line-fill', { scaleY: [0, 1] }, { easing: 'linear' }),
+        { target: stepsEl, offset: ['start 0.78', 'end 0.55'] });
+      inView('.step', function(el){
+        el.classList.add('on');
+        animate(el, { opacity: [0, 1], x: [-16, 0] }, { duration: .5, easing: 'ease-out' });
+      }, { amount: .6 });
     }
 
     /* Productos: entran en cascada, sutil y editorial */
