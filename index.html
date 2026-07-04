@@ -731,11 +731,12 @@ window.addEventListener('load', function(){
   if(!window.Motion) return;
   try{
     const { animate, inView, scroll, stagger } = Motion;
+    const rebote = [.22, 1.35, .4, 1]; /* curva con rebote, compatible en todos los navegadores */
 
-    /* Entrada del hero: banner + contenido en cascada con resorte */
+    /* Entrada del hero: banner + contenido en cascada con rebote */
     animate('.banner-hero', { opacity: [0, 1] }, { duration: .8 });
     animate('.hero .wrap > *', { opacity: [0, 1], y: [26, 0] },
-      { delay: stagger(0.12, { startDelay: .25 }), type: 'spring', stiffness: 120, damping: 16 });
+      { delay: stagger(0.12), duration: .7, easing: rebote });
 
     /* Parallax: el banner se desliza suave al hacer scroll */
     const heroSec = document.getElementById('hero');
@@ -749,13 +750,13 @@ window.addEventListener('load', function(){
     /* Productos: aparecen en cascada con rebote */
     inView('.prod-grid', function(el){
       animate(el.querySelectorAll('.prod'), { opacity: [0, 1], scale: [.7, 1] },
-        { delay: stagger(0.06), type: 'spring', stiffness: 220, damping: 17 });
+        { delay: stagger(0.06), duration: .55, easing: rebote });
     }, { amount: .25 });
 
-    /* Stats: pop con resorte */
+    /* Stats: pop con rebote */
     inView('.stats', function(el){
       animate(el.querySelectorAll('.stat'), { opacity: [0, 1], scale: [.6, 1] },
-        { delay: stagger(0.12), type: 'spring', stiffness: 260, damping: 14 });
+        { delay: stagger(0.12), duration: .6, easing: rebote });
     }, { amount: .4 });
 
     /* Opiniones de Google: entran deslizándose */
@@ -764,9 +765,9 @@ window.addEventListener('load', function(){
         { delay: stagger(0.12), duration: .55 });
     }, { amount: .2 });
 
-    /* Encabezado del formulario: el título dorado aterriza con resorte */
+    /* Encabezado del formulario: el título dorado aterriza con rebote */
     inView('.reg-head', function(el){
-      animate(el, { opacity: [0, 1], scale: [.8, 1] }, { type: 'spring', stiffness: 170, damping: 15 });
+      animate(el, { opacity: [0, 1], scale: [.8, 1] }, { duration: .6, easing: rebote });
     }, { amount: .5 });
   }catch(e){ /* nunca romper la landing por una animación */ }
 });
