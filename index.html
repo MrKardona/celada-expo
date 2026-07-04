@@ -84,7 +84,7 @@ h2{font-size:1.75rem;line-height:1.15;margin-bottom:8px;letter-spacing:-.02em;fo
 .btn-ghost{background:var(--card);border:1px solid var(--line);color:var(--txt)}
 
 /* BANNER CO-BRANDING con difuminado */
-.banner-hero{position:relative;width:100%;line-height:0}
+.banner-hero{position:relative;width:100%;line-height:0;overflow:hidden}
 .banner-hero img{width:100%;height:auto;display:block}
 .banner-hero::after{content:"";position:absolute;inset:0;background:
   linear-gradient(180deg,rgba(12,12,14,.45) 0%,transparent 20%,transparent 38%,rgba(12,12,14,.55) 62%,rgba(12,12,14,.85) 78%,var(--bg) 94%),
@@ -722,6 +722,54 @@ form.addEventListener('submit', function(e){
 });
 
 })();
+</script>
+
+<!-- ✨ Motion (vanilla) — animaciones con física de resorte. Si el CDN falla, la landing funciona igual -->
+<script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.js" defer></script>
+<script>
+window.addEventListener('load', function(){
+  if(!window.Motion) return;
+  try{
+    const { animate, inView, scroll, stagger } = Motion;
+
+    /* Entrada del hero: banner + contenido en cascada con resorte */
+    animate('.banner-hero', { opacity: [0, 1] }, { duration: .8 });
+    animate('.hero .wrap > *', { opacity: [0, 1], y: [26, 0] },
+      { delay: stagger(0.12, { startDelay: .25 }), type: 'spring', stiffness: 120, damping: 16 });
+
+    /* Parallax: el banner se desliza suave al hacer scroll */
+    const heroSec = document.getElementById('hero');
+    const bImg = document.querySelector('.banner-hero img');
+    if(heroSec && bImg){
+      bImg.style.transform = 'scale(1.12)';
+      scroll(animate(bImg, { y: [0, 70], scale: [1.12, 1.12] }, { easing: 'linear' }),
+        { target: heroSec, offset: ['start start', 'end start'] });
+    }
+
+    /* Productos: aparecen en cascada con rebote */
+    inView('.prod-grid', function(el){
+      animate(el.querySelectorAll('.prod'), { opacity: [0, 1], scale: [.7, 1] },
+        { delay: stagger(0.06), type: 'spring', stiffness: 220, damping: 17 });
+    }, { amount: .25 });
+
+    /* Stats: pop con resorte */
+    inView('.stats', function(el){
+      animate(el.querySelectorAll('.stat'), { opacity: [0, 1], scale: [.6, 1] },
+        { delay: stagger(0.12), type: 'spring', stiffness: 260, damping: 14 });
+    }, { amount: .4 });
+
+    /* Opiniones de Google: entran deslizándose */
+    inView('#testisBox', function(el){
+      animate(el.querySelectorAll('.testi'), { opacity: [0, 1], x: [-30, 0] },
+        { delay: stagger(0.12), duration: .55 });
+    }, { amount: .2 });
+
+    /* Encabezado del formulario: el título dorado aterriza con resorte */
+    inView('.reg-head', function(el){
+      animate(el, { opacity: [0, 1], scale: [.8, 1] }, { type: 'spring', stiffness: 170, damping: 15 });
+    }, { amount: .5 });
+  }catch(e){ /* nunca romper la landing por una animación */ }
+});
 </script>
 </body>
 </html>
