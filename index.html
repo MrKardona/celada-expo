@@ -664,7 +664,7 @@ let formStarted = false;
 form.addEventListener('input', ()=>{ if(!formStarted){ formStarted=true; track('form_start'); } }, {once:false});
 
 function waLink(msg){ return 'https://wa.me/'+CONFIG.whatsapp+'?text='+encodeURIComponent(msg); }
-const waGenerico = waLink('Hola Celada Shopper 👋 Vengo de '+CONFIG.eventoNombre+' y quiero más información sobre mis '+CONFIG.beneficioTitulo+' 🎁');
+const waGenerico = waLink('Hola, vengo de '+CONFIG.eventoNombre+' y quiero activar mis '+CONFIG.beneficioTitulo+'.');
 document.getElementById('waFloat').href = waGenerico;
 
 form.addEventListener('submit', function(e){
@@ -705,12 +705,8 @@ form.addEventListener('submit', function(e){
   track('form_submit', {interes: lead.interes, cuando: lead.cuando, tipo: lead.tipo_cliente});
   if(typeof fbq === 'function') fbq('track','Lead');
 
-  /* Mensaje de WhatsApp pre-llenado */
-  const msg = 'Hola Celada Shopper 👋 Soy '+lead.nombre+' y vengo de '+CONFIG.eventoNombre+'.\n\n'
-    + '🎁 Quiero activar mis '+CONFIG.beneficioTitulo+' '+CONFIG.beneficioSubtitulo+'.\n'
-    + (lead.interes ? '🛒 Me interesa traer: '+lead.interes+'\n' : '')
-    + (lead.cuando ? '📅 Planeo comprar: '+lead.cuando+'\n' : '')
-    + '\n¡Quedo atento(a)! ✅';
+  /* Mensaje de WhatsApp pre-llenado — simple, sin emojis ni saltos (compatible iPhone) */
+  const msg = 'Hola, soy '+lead.nombre+'. Vengo de '+CONFIG.eventoNombre+' y quiero activar mis '+CONFIG.beneficioTitulo+'.';
   const url = waLink(msg);
 
   /* Mostrar éxito y abrir WhatsApp */
