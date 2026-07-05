@@ -143,7 +143,11 @@ h2{font-size:1.75rem;line-height:1.15;margin-bottom:8px;letter-spacing:-.02em;fo
 .step{position:relative;display:flex;gap:18px;padding:6px 0 30px;cursor:pointer}
 .step:last-child{padding-bottom:6px}
 .step .n{position:relative;z-index:1;flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--bg2);border:1.5px solid var(--line);color:var(--txt2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;transition:background .45s,color .45s,border-color .45s,box-shadow .45s,transform .3s cubic-bezier(.34,1.56,.64,1)}
-.step.on .n{background:var(--grad);border-color:transparent;color:#1d1300;box-shadow:0 0 22px rgba(255,179,0,.45)}
+.step .n::before{content:"";position:absolute;inset:-2px;border-radius:50%;border:1.5px solid rgba(255,179,0,.75);opacity:0;pointer-events:none}
+.step.on .n{background:var(--grad);border-color:transparent;color:#1d1300;box-shadow:0 0 22px rgba(255,179,0,.45);animation:npop .55s cubic-bezier(.34,1.8,.5,1)}
+.step.on .n::before{animation:nping .8s ease-out .12s}
+@keyframes npop{0%{transform:scale(1)}45%{transform:scale(1.35) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes nping{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.2)}}
 .step:active .n{transform:scale(.88)}
 .step h4{font-size:1.02rem;margin:9px 0 4px;letter-spacing:-.01em}
 .step p{color:var(--txt2);font-size:.9rem;max-width:430px}
@@ -575,6 +579,18 @@ document.querySelectorAll('.step').forEach((s,idx)=>{
   });
 });
 
+/* ---------- 🔥 Números de los pasos: se encienden cuando la línea los alcanza ---------- */
+if('IntersectionObserver' in window){
+  const nodos = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('on'); nodos.unobserve(e.target); }
+    });
+  }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
+  document.querySelectorAll('.step').forEach(function(s){ nodos.observe(s); });
+} else {
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.add('on'); });
+}
+
 /* ---------- 🔢 Contadores animados + stats tocables ---------- */
 function animarConteo(b){
   const end = +b.dataset.count, pre = b.dataset.pre||'', suf = b.dataset.suf||'';
@@ -741,9 +757,8 @@ window.addEventListener('load', function(){
       scroll(animate('.steps .line-fill', { scaleY: [0, 1] }, { easing: 'linear' }),
         { target: stepsEl, offset: ['start 0.78', 'end 0.55'] });
       inView('.step', function(el){
-        el.classList.add('on');
         animate(el, { opacity: [0, 1], x: [-16, 0] }, { duration: .5, easing: 'ease-out' });
-      }, { amount: .6 });
+      }, { amount: .35 });
     }
 
     /* Productos: cascada + los iconos se DIBUJAN trazo a trazo */
