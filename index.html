@@ -273,10 +273,6 @@ footer{padding:36px 0 90px;border-top:1px solid var(--line);text-align:center;co
 <!-- ═══════════ VIDEO ═══════════ -->
 <section id="video" style="display:none;padding-top:0">
   <div class="wrap reveal">
-    <div class="play-cta">
-      <span class="play-ico"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-      <span class="play-txt">Dale play</span>
-    </div>
     <div class="video-box" id="videoBox"></div>
   </div>
 </section>
@@ -770,12 +766,6 @@ window.addEventListener('load', function(){
       scroll(animate(bImg, { y: [0, 70], scale: [1.12, 1.12] }, { easing: 'linear' }),
         { target: heroSec, offset: ['start start', 'end start'] });
     }
-
-    /* Play que aparece con rebote al llegar al video */
-    inView('#video', function(){
-      animate('.play-ico', { scale: [0, 1.25, 1], rotate: [-90, 0] }, { duration: .65, easing: rebote });
-      animate('.play-txt', { opacity: [0, 1], x: [-14, 0] }, { duration: .5, delay: .15, easing: 'ease-out' });
-    }, { amount: .35 });
 
     /* Línea de tiempo de los pasos: se dibuja con el scroll y enciende cada nodo */
     const stepsEl = document.querySelector('.steps');
