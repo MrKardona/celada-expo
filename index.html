@@ -121,6 +121,10 @@ h2{font-size:1.75rem;line-height:1.15;margin-bottom:8px;letter-spacing:-.02em;fo
 .brand-sm .ps{font-size:.55rem;letter-spacing:.3em;margin-left:6px}
 
 /* VIDEO */
+.play-cta{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.play-ico{width:48px;height:48px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:pulso 2s ease-in-out infinite}
+.play-ico svg{width:20px;height:20px;fill:#1d1300;margin-left:3px}
+.play-txt{font-weight:800;font-size:1.25rem;letter-spacing:-.01em}
 .video-box{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);aspect-ratio:16/9;background:var(--card)}
 .video-box iframe,.video-box video{width:100%;height:100%;display:block;border:0}
 .video-box.vertical{aspect-ratio:9/16;max-width:340px;margin:0 auto;border-color:var(--acc);box-shadow:0 12px 40px rgba(255,164,0,.15)}
@@ -266,9 +270,10 @@ footer{padding:36px 0 90px;border-top:1px solid var(--line);text-align:center;co
 <!-- ═══════════ VIDEO ═══════════ -->
 <section id="video" style="display:none;padding-top:0">
   <div class="wrap reveal">
-    <span class="kicker">En 30 segundos</span>
-    <h2>¿Qué es Celada Shopper?</h2>
-    <p class="sub">Dale play 👇</p>
+    <div class="play-cta">
+      <span class="play-ico"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="play-txt">Dale play</span>
+    </div>
     <div class="video-box" id="videoBox"></div>
   </div>
 </section>
@@ -749,6 +754,12 @@ window.addEventListener('load', function(){
       scroll(animate(bImg, { y: [0, 70], scale: [1.12, 1.12] }, { easing: 'linear' }),
         { target: heroSec, offset: ['start start', 'end start'] });
     }
+
+    /* Play que aparece con rebote al llegar al video */
+    inView('#video', function(){
+      animate('.play-ico', { scale: [0, 1.25, 1], rotate: [-90, 0] }, { duration: .65, easing: rebote });
+      animate('.play-txt', { opacity: [0, 1], x: [-14, 0] }, { duration: .5, delay: .15, easing: 'ease-out' });
+    }, { amount: .35 });
 
     /* Línea de tiempo de los pasos: se dibuja con el scroll y enciende cada nodo */
     const stepsEl = document.querySelector('.steps');
