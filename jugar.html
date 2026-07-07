@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Import Challenge | Celada Shopper</title>
+<title>Cómo importar celulares para dummies | Celada Shopper</title>
 <meta name="theme-color" content="#0c0c0e">
 <style>
 :root{--bg:#0c0c0e;--card:#17171c;--txt:#f6f6f8;--txt2:#a8a8b3;--line:#2a2a32;--acc:#ffb300;--gold:#ffc53d;--grad:linear-gradient(135deg,#ffd66b,#ffb300 45%,#ff8a00)}
@@ -58,7 +58,8 @@ function nivel(p){ return p>=300?'🏆 Importador PRO':p>=100?'📦 Importador':
 function pintaPts(){ document.getElementById('badge').style.display='flex'; document.getElementById('pts').textContent = yo.puntos; }
 
 function vRegistro(){
-  app.innerHTML = `<h1>Import Challenge</h1><p class="sub">¿Serás capaz de convertirte en importador en 30 minutos? Regístrate y juega 🎮</p>
+  app.innerHTML = `<div style="text-align:center;margin-bottom:20px"><img src="logo.png" alt="Celada Shopper" style="height:62px;width:auto"></div>
+  <h1 style="font-size:1.9rem">Cómo importar celulares<br>para dummies</h1><p class="sub">¿Serás capaz de convertirte en importador en 30 minutos? Regístrate y juega 🎮</p>
   <input id="rn" placeholder="Tu nombre" autocomplete="name">
   <input id="rw" placeholder="Tu WhatsApp" inputmode="tel" autocomplete="tel">
   <button class="btn" id="rb">🚀 Entrar al reto</button>`;
@@ -116,7 +117,9 @@ async function vFinal(){
   burst(20,'🏆');
 }
 function render(){
-  if(!yo){ vRegistro(); return; }
+  const top=document.querySelector('.top');
+  if(!yo){ if(top) top.style.display='none'; vRegistro(); return; }
+  if(top) top.style.display='flex';
   pintaPts();
   const e = estadoActual.replace(/^rev:/,'');
   if(e==='espera'){ vEspera(); }
