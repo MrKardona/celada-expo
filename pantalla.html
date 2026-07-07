@@ -85,6 +85,12 @@ async function vFinal(){
 }
 function vSlide(id){
   const s = SLIDES[id]; if(!s) return vEspera();
+  if(s.img){
+    app.innerHTML = `<img src="${s.img}" alt="" style="max-width:96%;max-height:86vh;border-radius:22px;box-shadow:0 0 80px rgba(255,164,0,.25)" class="sl-img">`;
+    const el=document.querySelector('.sl-img');
+    if(el&&el.animate) el.animate([{opacity:0,transform:'scale(1.06)'},{opacity:1,transform:'scale(1)'}],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'});
+    return;
+  }
   app.innerHTML = `<div class="slide">
     <div style="font-size:5rem;margin-bottom:14px" class="sl-a">${s.emoji}</div>
     <div class="sub sl-b" style="letter-spacing:.2em;font-weight:800;font-size:1rem;text-transform:uppercase;color:var(--gold)">${s.kicker}</div>

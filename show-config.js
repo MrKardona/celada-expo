@@ -58,7 +58,8 @@ const IX = {
    - emoji: ícono grande superior
 ============================================================ */
 const SLIDES = {
-  portada:    { emoji:'🎮', kicker:'CELADA SHOPPER PRESENTA', titulo:'IMPORT CHALLENGE', texto:'¿Serás capaz de convertirte en importador en 20 minutos?' },
+  /* Si una diapositiva tiene "img", se muestra la imagen a pantalla completa */
+  portada:    { img:'portada-show.webp' },
   manos:      { emoji:'📱', kicker:'LEVANTA LA MANO 🙋', titulo:'¿Has visto un iPhone en Amazon y pensaste…', texto:'"seguro aquí me sale MUCHO más barato"? …¿Y cuántos no lo compraron por miedo?' },
   quitamiedo: { emoji:'🔥', kicker:'HOY', titulo:'Vamos a quitarles ese miedo.', texto:'Saquen el celular: durante toda la charla ustedes van a jugar.' },
   historia:   { emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo de importar.', texto:'Primeros paquetes, primeros errores, primeros clientes… +7 años después: miles de entregas.' },
