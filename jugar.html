@@ -150,6 +150,19 @@ async function init(){
     await verificaYo();
     render();
   }).subscribe();
+  /* efectos del presentador: lluvia de emojis también en el celular */
+  sb.channel('fx').on('broadcast',{event:'fx'},function(m){
+    const emo = (m.payload && m.payload.emo) || '🙋';
+    for(let i=0;i<14;i++){
+      const p=document.createElement('span'); p.className='pop'; p.textContent=emo;
+      p.style.fontSize=(18+Math.random()*16)+'px'; document.body.appendChild(p);
+      const x=Math.random()*innerWidth, d=1800+Math.random()*1200;
+      p.animate([
+        {transform:`translate(${x}px,-40px)`,opacity:1},
+        {transform:`translate(${x+(Math.random()-.5)*90}px,${innerHeight+50}px) rotate(${(Math.random()-.5)*200}deg)`,opacity:.9}
+      ],{duration:d,delay:Math.random()*600,easing:'ease-in',fill:'backwards'}).onfinish=()=>p.remove();
+    }
+  }).subscribe();
 }
 init();
 </script>

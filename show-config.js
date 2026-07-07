@@ -18,6 +18,11 @@ const URL_JUGAR = 'https://expo.celadashopper.com/jugar.html';
    Puedes agregar más: copia un bloque, cambia el id y agrégalo a la ESCALETA.
 ============================================================ */
 const IX = {
+  tepaso: {
+    tipo: 'encuesta', puntos: 50,
+    pregunta: '¿Te ha pasado? 😅',
+    opciones: ['🙋 Sí, me ha pasado', '👀 Nunca']
+  },
   miedo: {
     tipo: 'encuesta', puntos: 50,
     pregunta: '¿Cuál es tu mayor miedo al importar?',
@@ -60,7 +65,12 @@ const IX = {
 const SLIDES = {
   /* Si una diapositiva tiene "img", se muestra la imagen a pantalla completa */
   portada:    { img:'portada-show.webp' },
-  manos:      { emoji:'📱', kicker:'LEVANTA LA MANO 🙋', titulo:'¿Has visto un iPhone en Amazon y pensaste…', texto:'"seguro aquí me sale MUCHO más barato"? …¿Y cuántos no lo compraron por miedo?' },
+  /* tipo 'revelado': las frases aparecen UNA POR UNA — cada frase es un paso en la escaleta (control total del timing) */
+  manos:      { tipo:'revelado', kicker:'LEVANTA LA MANO 🙋', frases:[
+                 '¿Has visto un iPhone en Amazon…',
+                 '…y pensaste…',
+                 '“seguro aquí me sale MUCHO más barato” 🤑'
+               ] },
   quitamiedo: { emoji:'🔥', kicker:'HOY', titulo:'Vamos a quitarles ese miedo.', texto:'Saquen el celular: durante toda la charla ustedes van a jugar.' },
   historia:   { emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo de importar.', texto:'Primeros paquetes, primeros errores, primeros clientes… +7 años después: miles de entregas.' },
   diego:      { emoji:'🎤', kicker:'CON USTEDES', titulo:'DIEGO CELADA', texto:'La persona que les va a enseñar a importar celulares. 👏👏👏' },
@@ -76,7 +86,10 @@ const SLIDES = {
 const ESCALETA = [
   { id:'slide:portada',    t:'🎬 Portada: IMPORT CHALLENGE' },
   { id:'espera',           t:'🏠 QR gigante: que entren al reto' },
-  { id:'slide:manos',      t:'🙋 "Levanta la mano… iPhone en Amazon"' },
+  { id:'slide:manos.1',    t:'🙋 Frase 1: "¿Has visto un iPhone en Amazon…"' },
+  { id:'slide:manos.2',    t:'🎭 Frase 2: "…y pensaste…"' },
+  { id:'slide:manos.3',    t:'🤑 Frase 3: "seguro me sale MUCHO más barato"' },
+  { id:'tepaso',           t:'🙋 ENCUESTA relámpago: ¿Te ha pasado?' },
   { id:'slide:quitamiedo', t:'🔥 "Hoy vamos a quitarles ese miedo"' },
   { id:'miedo',            t:'📊 ENCUESTA: ¿tu mayor miedo al importar?' },
   { id:'slide:historia',   t:'📦 Historia de Celada Shopper' },

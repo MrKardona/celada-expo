@@ -97,7 +97,21 @@ async function vFinal(){
   burst(30,'🏆');
 }
 function vSlide(id){
+  /* soporta pasos: 'manos.2' = slide "manos", frase 2 */
+  let paso = 0;
+  if(id.includes('.')){ const par = id.split('.'); id = par[0]; paso = +par[1]; }
   const s = SLIDES[id]; if(!s) return vEspera();
+  if(s.tipo === 'revelado'){
+    const visibles = s.frases.slice(0, paso || 1);
+    app.innerHTML = `<div class="sub" style="letter-spacing:.2em;font-weight:800;font-size:1.1rem;text-transform:uppercase;color:var(--gold);margin-bottom:26px">${s.kicker}</div>
+      <div>${visibles.map(function(f,i){
+        const ultima = i === visibles.length-1;
+        return '<div class="frase'+(ultima?' nueva':'')+'" style="font-size:clamp(2rem,4.6vw,3.8rem);font-weight:900;letter-spacing:-.02em;line-height:1.2;margin-bottom:18px;'+(ultima?'color:var(--txt)':'color:#6a6a75')+'">'+f+'</div>';
+      }).join('')}</div>`;
+    const n = document.querySelector('.frase.nueva');
+    if(n && n.animate) n.animate([{opacity:0,transform:'translateY(34px) scale(.94)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.22,1.3,.36,1)'});
+    return;
+  }
   if(s.img){
     app.innerHTML = `<img src="${s.img}" alt="" style="max-width:96%;max-height:86vh;border-radius:22px;box-shadow:0 0 80px rgba(255,164,0,.25)" class="sl-img">`;
     const el=document.querySelector('.sl-img');
@@ -140,6 +154,19 @@ async function init(){
     if(p.new.interaccion===actual){ conteos[+p.new.respuesta]=(conteos[+p.new.respuesta]||0)+1; pintaConteo(); }
   }).subscribe();
   sb.channel('p').on('postgres_changes',{event:'INSERT',schema:'public',table:'ic_participantes'},function(){ nJugadores(); }).subscribe();
+  /* efectos lanzados desde el panel (no cambian la diapositiva actual) */
+  sb.channel('fx').on('broadcast',{event:'fx'},function(m){ lluvia(m.payload && m.payload.emo || '🙋', 44); }).subscribe();
+}
+function lluvia(emo, n){
+  for(let i=0;i<n;i++){
+    const p=document.createElement('span'); p.className='pop'; p.textContent=emo;
+    p.style.fontSize=(26+Math.random()*30)+'px'; document.body.appendChild(p);
+    const x=Math.random()*innerWidth, d=2200+Math.random()*1800, giro=(Math.random()-.5)*260;
+    p.animate([
+      {transform:`translate(${x}px,-60px) rotate(0deg)`,opacity:1},
+      {transform:`translate(${x+(Math.random()-.5)*160}px,${innerHeight+80}px) rotate(${giro}deg)`,opacity:.9}
+    ],{duration:d,delay:Math.random()*900,easing:'cubic-bezier(.3,.1,.6,1)',fill:'backwards'}).onfinish=()=>p.remove();
+  }
 }
 init();
 </script>

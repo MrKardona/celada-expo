@@ -40,6 +40,7 @@ h1{font-size:1.2rem;margin-bottom:4px}
 <div id="escaleta"></div>
 <div class="fila2">
   <button class="paso rev" id="btnRev">✅ Revelar respuesta</button>
+  <button class="paso" id="btnLluvia" style="border-color:rgba(255,179,0,.5)">🙋 Lluvia de manos</button>
 </div>
 <button class="paso peligro" id="btnReset">🗑️ Reiniciar TODO (borra jugadores y puntos)</button>
 <div class="aviso" id="aviso">Enviado ✓</div>
@@ -91,6 +92,12 @@ document.getElementById('btnRev').onclick = function(){
   const e = actual.replace(/^rev:/,'');
   if(e==='espera'||e==='final'){ aviso('Lanza una pregunta primero'); return; }
   enviar('rev:'+e);
+};
+const fxCanal = sb.channel('fx');
+fxCanal.subscribe();
+document.getElementById('btnLluvia').onclick = function(){
+  fxCanal.send({ type:'broadcast', event:'fx', payload:{ emo:'🙋' } });
+  aviso('Lluvia enviada 🙋');
 };
 document.getElementById('btnReset').onclick = function(){
   if(confirm('¿Seguro? Se borran TODOS los jugadores, puntos y respuestas.')) enviar('__reset__');
