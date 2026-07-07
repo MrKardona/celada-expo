@@ -127,12 +127,28 @@ function render(){
   else if(IX[e]){ vPregunta(e); }
   else { vEspera(); }
 }
+/* Si el presentador reinició el show, este jugador ya no existe en la base:
+   limpiamos su sesión local y vuelve al registro con puntos en 0 */
+async function verificaYo(){
+  if(!yo) return;
+  const { data } = await sb.from('ic_participantes').select('id,puntos').eq('id', yo.id).maybeSingle();
+  if(!data){
+    yo = null; contestadas = {};
+    localStorage.removeItem('ic_yo'); localStorage.removeItem('ic_resp');
+    document.getElementById('badge').style.display = 'none';
+  } else if(data.puntos !== yo.puntos){
+    yo.puntos = data.puntos; localStorage.setItem('ic_yo', JSON.stringify(yo));
+  }
+}
 async function init(){
   const { data } = await sb.from('ic_estado').select('interaccion').eq('id',1).single();
   if(data) estadoActual = data.interaccion;
+  await verificaYo();
   render();
-  sb.channel('estado').on('postgres_changes',{event:'UPDATE',schema:'public',table:'ic_estado'},function(p){
-    estadoActual = p.new.interaccion; render();
+  sb.channel('estado').on('postgres_changes',{event:'UPDATE',schema:'public',table:'ic_estado'},async function(p){
+    estadoActual = p.new.interaccion;
+    await verificaYo();
+    render();
   }).subscribe();
 }
 init();
