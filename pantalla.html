@@ -15,6 +15,9 @@ body{background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,164,0,.12),
 @keyframes lat{0%,100%{opacity:1}50%{opacity:.3}}
 main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px;text-align:center}
 h1{font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line-height:1.1;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px}
+.titulazo{font-size:clamp(2.6rem,6.5vw,5.2rem);font-weight:900;line-height:1.06;background:linear-gradient(90deg,#f6f6f8 30%,#c9c9d4 50%,#f6f6f8 70%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:brillo 3.5s linear infinite}
+.titulazo .dum{background:linear-gradient(90deg,#ffd66b,#ff8a00,#ffd66b);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:brillo 3.5s linear infinite}
+@keyframes brillo{to{background-position:200% center}}
 .sub{color:var(--txt2);font-size:1.3rem;margin-bottom:26px}
 .qr{background:#fff;padding:18px;border-radius:24px;box-shadow:0 0 60px rgba(255,164,0,.25)}
 .qr img{display:block;width:min(38vh,340px);height:min(38vh,340px)}
@@ -58,9 +61,16 @@ async function nJugadores(){
   document.getElementById('nJug').textContent = count||0;
 }
 function vEspera(){
-  app.innerHTML = `<h1>IMPORT CHALLENGE</h1>
-  <p class="sub">¿Serás capaz de convertirte en importador en 20 minutos?<br><b style="color:var(--txt)">Escanea y entra al reto</b> 👇</p>
+  app.innerHTML = `<h1 class="titulazo">Cómo importar celulares<br>para <span class="dum">DUMMIES</span></h1>
+  <p class="sub">¿Serás capaz de convertirte en importador en 30 minutos?<br><b style="color:var(--txt)">Escanea y entra al reto</b> 👇</p>
   <div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(URL_JUGAR)}" alt="QR"></div>`;
+  const t = document.querySelector('.titulazo');
+  if(t && t.animate){
+    [['.titulazo',0],['.sub',200],['.qr',400]].forEach(function(par){
+      const el = document.querySelector(par[0]);
+      if(el) el.animate([{opacity:0,transform:'translateY(30px) scale(.96)'},{opacity:1,transform:'none'}],{duration:700,delay:par[1],easing:'cubic-bezier(.22,1.3,.36,1)',fill:'backwards'});
+    });
+  }
 }
 async function vPregunta(id, revelar){
   const q = IX[id];
