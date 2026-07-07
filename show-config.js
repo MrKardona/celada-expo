@@ -9,7 +9,8 @@
 const SB_URL = 'https://igijeqhyppvpennjdkiu.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnaWplcWh5cHB2cGVubmpka2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDc5NTksImV4cCI6MjA5MTU4Mzk1OX0.5JdsyKQ3Mscpun1efjKarvcz9q032n-TpYOHaszQ5qw';
 const URL_JUGAR = 'https://expo.celadashopper.com/jugar.html';
-const GAL_MS = 3200; /* ⏱️ milisegundos que dura cada foto en la galería de historia (3200 = 3,2s) */
+const GAL_MS = 3200;   /* ⏱️ milisegundos que dura cada foto en la galería de historia (3200 = 3,2s) */
+const FRASE_MS = 2200; /* ⏱️ milisegundos entre cada frase del gancho animado antes del carrusel de productos */
 
 /* ============================================================
    🧠 PREGUNTAS (quiz = tiene respuesta correcta y da puntos;
@@ -66,12 +67,15 @@ const IX = {
 const SLIDES = {
   /* Si una diapositiva tiene "img", se muestra la imagen a pantalla completa */
   portada:    { img:'portada-show.webp' },
-  /* tipo 'revelado': las frases aparecen UNA POR UNA — cada frase es un paso en la escaleta (control total del timing) */
-  manos:      { tipo:'revelado', kicker:'LEVANTA LA MANO 🙋', frases:[
+  /* tipo 'gancho': UNA sola slide que se reproduce sola. Primero muestra las 'frases'
+     una por una (cada FRASE_MS), y luego arranca un carrusel a pantalla completa con las
+     'fotos' de productos (precios ya incluidos en la imagen), cada una dura GAL_MS.
+     Deja 'fotos' vacío [] para mostrar solo las frases. */
+  gancho:     { tipo:'gancho', kicker:'LEVANTA LA MANO 🙋', frases:[
                  '¿Has visto un iPhone en Amazon…',
                  '…y pensaste…',
                  '"seguro aquí me sale MUCHO más barato" 🤑'
-               ] },
+               ], fotos:[] },
   quitamiedo: { emoji:'🔥', kicker:'HOY', titulo:'Vamos a quitarles ese miedo.', texto:'Saquen el celular: durante toda la charla ustedes van a jugar.' },
   /* 'galeria' = texto fijo a la IZQUIERDA + fotos/videos que pasan solos a la DERECHA.
      Pon los nombres de tus archivos dentro de 'fotos' (deben estar en la misma carpeta).
@@ -90,9 +94,7 @@ const SLIDES = {
 const ESCALETA = [
   { id:'slide:portada',    t:'🎬 Portada: IMPORT CHALLENGE' },
   { id:'espera',           t:'🏠 QR gigante: que entren al reto' },
-  { id:'slide:manos.1',    t:'🙋 Frase 1: "¿Has visto un iPhone en Amazon…"' },
-  { id:'slide:manos.2',    t:'🎭 Frase 2: "…y pensaste…"' },
-  { id:'slide:manos.3',    t:'🤑 Frase 3: "seguro me sale MUCHO más barato"' },
+  { id:'slide:gancho',     t:'🎣 Gancho animado + productos con precios (se reproduce solo)' },
   { id:'tepaso',           t:'🙋 ENCUESTA relámpago: ¿Te ha pasado?' },
   { id:'slide:quitamiedo', t:'🔥 "Hoy vamos a quitarles ese miedo"' },
   { id:'miedo',            t:'📊 ENCUESTA: ¿tu mayor miedo al importar?' },

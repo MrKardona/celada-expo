@@ -63,7 +63,7 @@ h1{font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line-height:1.1;backgr
 <script>
 const sb = supabase.createClient(SB_URL, SB_KEY);
 const app = document.getElementById('app');
-let estado='espera', conteos={}, actual='', galeriaTimer=null;
+let estado='espera', conteos={}, actual='', galeriaTimer=null, ganchoTimers=[];
 
 function burst(n,emo){for(let i=0;i<n;i++){const p=document.createElement('span');p.className='pop';p.textContent=emo;p.style.fontSize=(22+Math.random()*22)+'px';document.body.appendChild(p);const x=innerWidth/2,y=innerHeight/2,a=Math.PI*2*i/n,v=250+Math.random()*350;p.animate([{transform:`translate(${x}px,${y}px) scale(.5)`,opacity:1},{transform:`translate(${x+Math.cos(a)*v}px,${y+Math.sin(a)*v}px) rotate(${(Math.random()-.5)*540}deg)`,opacity:0}],{duration:1100,easing:'ease-out'}).onfinish=()=>p.remove();}}
 
@@ -121,6 +121,29 @@ function vSlide(id){
       }).join('')}</div>`;
     const n = document.querySelector('.frase.nueva');
     if(n && n.animate) n.animate([{opacity:0,transform:'translateY(34px) scale(.94)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.22,1.3,.36,1)'});
+    return;
+  }
+  if(s.tipo === 'gancho'){
+    app.innerHTML = `<div style="width:min(1100px,92vw)">
+      <div class="sub" style="letter-spacing:.2em;font-weight:800;font-size:1.1rem;text-transform:uppercase;color:var(--gold);margin-bottom:26px">${s.kicker||''}</div>
+      <div id="frasesBox"></div>
+    </div>`;
+    const box = document.getElementById('frasesBox');
+    const frases = s.frases || [];
+    frases.forEach(function(f,i){
+      const t = setTimeout(function(){
+        const d = document.createElement('div');
+        d.style.cssText = 'font-size:clamp(2rem,4.6vw,3.8rem);font-weight:900;letter-spacing:-.02em;line-height:1.2;margin-bottom:18px;color:'+(i===frases.length-1?'var(--txt)':'#6a6a75');
+        d.innerHTML = f;
+        box.appendChild(d);
+        if(d.animate) d.animate([{opacity:0,transform:'translateY(34px) scale(.94)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.22,1.3,.36,1)'});
+      }, i*FRASE_MS);
+      ganchoTimers.push(t);
+    });
+    if(s.fotos && s.fotos.length){
+      const t2 = setTimeout(function(){ carruselProductos(s.fotos); }, frases.length*FRASE_MS + 1700);
+      ganchoTimers.push(t2);
+    }
     return;
   }
   if(s.tipo === 'galeria' && s.fotos && s.fotos.length){
@@ -185,8 +208,31 @@ function vSlide(id){
     if(el&&el.animate) el.animate([{opacity:0,transform:'translateY(26px)'},{opacity:1,transform:'none'}],{duration:600,delay:i*180,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'});
   });
 }
+function carruselProductos(fotos){
+  app.innerHTML = '<div style="position:relative;width:min(1200px,94vw);height:min(82vh,800px)" id="prodCar"></div>';
+  const wrap = document.getElementById('prodCar');
+  const imgs = fotos.map(function(f){
+    const im = document.createElement('img');
+    im.src = f;
+    im.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .8s ease;filter:drop-shadow(0 24px 70px rgba(0,0,0,.55))';
+    wrap.appendChild(im); return im;
+  });
+  if(!imgs.length) return;
+  imgs[0].style.opacity = '1';
+  if(imgs[0].animate) imgs[0].animate([{opacity:0,transform:'scale(1.05)'},{opacity:1,transform:'scale(1)'}],{duration:800,easing:'cubic-bezier(.22,1,.36,1)'});
+  if(imgs.length <= 1) return;
+  let pi = 0;
+  function next(){
+    imgs[pi].style.opacity = '0';
+    pi = (pi+1) % imgs.length;
+    imgs[pi].style.opacity = '1';
+    galeriaTimer = setTimeout(next, GAL_MS);
+  }
+  galeriaTimer = setTimeout(next, GAL_MS);
+}
 function render(){
   if(galeriaTimer){ clearTimeout(galeriaTimer); galeriaTimer=null; }
+  if(ganchoTimers.length){ ganchoTimers.forEach(clearTimeout); ganchoTimers=[]; }
   const rev = estado.startsWith('rev:');
   const e = estado.replace(/^rev:/,'');
   if(e==='espera'){ actual=''; vEspera(); }
