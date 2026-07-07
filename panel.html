@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panel | Import Challenge</title>
+<style>
+:root{--bg:#0c0c0e;--card:#17171c;--txt:#f6f6f8;--txt2:#a8a8b3;--line:#2a2a32;--acc:#ffb300;--gold:#ffc53d;--grad:linear-gradient(135deg,#ffd66b,#ffb300 45%,#ff8a00)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:18px;max-width:480px;margin:0 auto}
+h1{font-size:1.2rem;margin-bottom:4px}
+.sub{color:var(--txt2);font-size:.85rem;margin-bottom:16px}
+.stats{display:flex;gap:10px;margin-bottom:18px}
+.st{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.st b{display:block;font-size:1.4rem;color:var(--gold)}
+.st small{color:var(--txt2);font-size:.7rem}
+.paso{display:flex;align-items:center;gap:10px;width:100%;padding:15px 14px;margin-bottom:9px;border:1.5px solid var(--line);border-radius:13px;background:var(--card);color:var(--txt);font-size:.95rem;font-weight:700;cursor:pointer;text-align:left}
+.paso:active{transform:scale(.98)}
+.paso.activo{border-color:var(--acc);background:rgba(255,179,0,.1)}
+.paso .num{width:28px;height:28px;border-radius:50%;background:var(--grad);color:#1d1300;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0}
+.fila2{display:flex;gap:9px}
+.fila2 .paso{flex:1}
+.rev{background:rgba(34,197,94,.12);border-color:#22c55e}
+.peligro{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.4);color:#ef4444;margin-top:16px}
+.aviso{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--grad);color:#1d1300;font-weight:800;padding:10px 22px;border-radius:100px;opacity:0;transition:opacity .3s;pointer-events:none}
+.aviso.ver{opacity:1}
+</style>
+</head>
+<body>
+<h1>🎛️ Panel del presentador</h1>
+<p class="sub">Toca una interacción para lanzarla a todas las pantallas.</p>
+<div class="stats">
+  <div class="st"><b id="nJ">0</b><small>jugadores</small></div>
+  <div class="st"><b id="nR">0</b><small>respuestas (actual)</small></div>
+  <div class="st"><b id="act" style="font-size:.85rem;line-height:2">espera</b><small>en pantalla</small></div>
+</div>
+<button class="paso" data-i="espera"><span class="num">🏠</span> Sala de espera (QR gigante)</button>
+<button class="paso" data-i="miedo"><span class="num">1</span> Encuesta: ¿Tu mayor miedo al importar?</button>
+<button class="paso" data-i="mito1"><span class="num">2</span> Mito o realidad: "Importar es ilegal"</button>
+<button class="paso" data-i="precio"><span class="num">3</span> Adivina el precio: iPhone 16 Pro</button>
+<button class="paso" data-i="dificil"><span class="num">4</span> ¿Importar es difícil? (entrada de Diego)</button>
+<button class="paso" data-i="impuestos"><span class="num">5</span> Quiz: impuestos de un celular</button>
+<button class="paso" data-i="mito2"><span class="num">6</span> Mito o realidad: "La DIAN lo retiene"</button>
+<div class="fila2">
+  <button class="paso rev" id="btnRev">✅ Revelar respuesta</button>
+  <button class="paso" data-i="final"><span class="num">🏆</span> Ranking final</button>
+</div>
+<button class="paso peligro" id="btnReset">🗑️ Reiniciar TODO (borra jugadores y puntos)</button>
+<div class="aviso" id="aviso">Enviado ✓</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL='https://igijeqhyppvpennjdkiu.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnaWplcWh5cHB2cGVubmpka2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDc5NTksImV4cCI6MjA5MTU4Mzk1OX0.5JdsyKQ3Mscpun1efjKarvcz9q032n-TpYOHaszQ5qw';
+const TOKEN='celada-show-2026';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+let actual = 'espera';
+
+function aviso(t){ const a=document.getElementById('aviso'); a.textContent=t; a.classList.add('ver'); setTimeout(()=>a.classList.remove('ver'),1400); }
+async function enviar(interaccion){
+  const r = await fetch(SB_URL+'/functions/v1/ic-control',{method:'POST',headers:{'Content-Type':'application/json','X-Panel-Token':TOKEN},body:JSON.stringify({interaccion})});
+  if(r.ok){ aviso('Enviado ✓'); } else { aviso('Error ✗'); }
+}
+function marca(){
+  document.querySelectorAll('.paso[data-i]').forEach(b=>b.classList.toggle('activo', b.dataset.i===actual.replace(/^rev:/,'')));
+  document.getElementById('act').textContent = actual;
+  refrescaR();
+}
+async function refrescaN(){
+  const { count } = await sb.from('ic_participantes').select('*',{count:'exact',head:true});
+  document.getElementById('nJ').textContent = count||0;
+}
+async function refrescaR(){
+  const e = actual.replace(/^rev:/,'');
+  if(e==='espera'||e==='final'){ document.getElementById('nR').textContent='—'; return; }
+  const { count } = await sb.from('ic_respuestas').select('*',{count:'exact',head:true}).eq('interaccion',e);
+  document.getElementById('nR').textContent = count||0;
+}
+document.querySelectorAll('.paso[data-i]').forEach(function(b){
+  b.onclick = function(){ enviar(b.dataset.i); };
+});
+document.getElementById('btnRev').onclick = function(){
+  const e = actual.replace(/^rev:/,'');
+  if(e==='espera'||e==='final'){ aviso('Lanza una pregunta primero'); return; }
+  enviar('rev:'+e);
+};
+document.getElementById('btnReset').onclick = function(){
+  if(confirm('¿Seguro? Se borran TODOS los jugadores, puntos y respuestas.')) enviar('__reset__');
+};
+async function init(){
+  const { data } = await sb.from('ic_estado').select('interaccion').eq('id',1).single();
+  if(data){ actual=data.interaccion; marca(); }
+  refrescaN();
+  sb.channel('e').on('postgres_changes',{event:'UPDATE',schema:'public',table:'ic_estado'},function(p){ actual=p.new.interaccion; marca(); }).subscribe();
+  sb.channel('p').on('postgres_changes',{event:'INSERT',schema:'public',table:'ic_participantes'},refrescaN).subscribe();
+  sb.channel('r').on('postgres_changes',{event:'INSERT',schema:'public',table:'ic_respuestas'},refrescaR).subscribe();
+}
+init();
+</script>
+</body>
+</html>

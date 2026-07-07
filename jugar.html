@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Import Challenge | Celada Shopper</title>
+<meta name="theme-color" content="#0c0c0e">
+<style>
+:root{--bg:#0c0c0e;--card:#17171c;--txt:#f6f6f8;--txt2:#a8a8b3;--line:#2a2a32;--acc:#ffb300;--gold:#ffc53d;--grad:linear-gradient(135deg,#ffd66b,#ffb300 45%,#ff8a00)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100svh;display:flex;flex-direction:column}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.top .marca{font-weight:800;font-size:.85rem;letter-spacing:.06em}
+.badge{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:100px;padding:6px 13px;font-size:.78rem;font-weight:700}
+.badge .pts{color:var(--gold)}
+main{flex:1;display:flex;flex-direction:column;justify-content:center;padding:22px;max-width:480px;margin:0 auto;width:100%}
+h1{font-size:1.7rem;line-height:1.15;letter-spacing:-.02em;margin-bottom:6px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
+.sub{color:var(--txt2);font-size:.92rem;margin-bottom:22px}
+input{width:100%;padding:15px 16px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;color:var(--txt);font-size:1rem;margin-bottom:12px}
+input:focus{outline:none;border-color:var(--acc)}
+.btn{width:100%;padding:16px;border:none;border-radius:13px;font-size:1.02rem;font-weight:800;cursor:pointer;background:var(--grad);color:#1d1300;box-shadow:0 8px 26px rgba(255,164,0,.3)}
+.btn:active{transform:scale(.97)}
+.op{width:100%;padding:16px;margin-bottom:10px;border:1.5px solid var(--line);border-radius:13px;background:var(--card);color:var(--txt);font-size:1rem;font-weight:600;cursor:pointer;text-align:left;transition:border-color .2s,background .2s}
+.op:active{transform:scale(.98)}
+.op.eleg{border-color:var(--acc);background:rgba(255,179,0,.1)}
+.op.ok{border-color:#22c55e;background:rgba(34,197,94,.12)}
+.op.mal{border-color:#ef4444;background:rgba(239,68,68,.1)}
+.centro{text-align:center}
+.gigante{font-size:3.2rem;margin-bottom:10px}
+.nivel{display:inline-block;background:rgba(255,197,61,.12);border:1px solid rgba(255,197,61,.4);color:var(--gold);border-radius:100px;padding:8px 18px;font-weight:800;font-size:.9rem;margin-top:10px}
+.fb{margin-top:14px;font-weight:800;font-size:1.05rem;text-align:center}
+.fb.ok{color:#22c55e}.fb.mal{color:#ef4444}
+.rk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;justify-content:space-between;font-weight:700}
+.rk.yo{border-color:var(--acc);background:rgba(255,179,0,.08)}
+.pop{position:fixed;left:0;top:0;z-index:99;pointer-events:none;user-select:none}
+</style>
+</head>
+<body>
+<div class="top"><span class="marca">CELADA · IMPORT CHALLENGE</span><span class="badge" id="badge" style="display:none">⭐ <span class="pts" id="pts">0</span> pts</span></div>
+<main id="app"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL='https://igijeqhyppvpennjdkiu.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnaWplcWh5cHB2cGVubmpka2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDc5NTksImV4cCI6MjA5MTU4Mzk1OX0.5JdsyKQ3Mscpun1efjKarvcz9q032n-TpYOHaszQ5qw';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+const IX = {
+  miedo:{tipo:'encuesta',pregunta:'¿Cuál es tu mayor miedo al importar?',opciones:['😱 Que me estafen','🛃 Que la DIAN lo retenga','💸 Que salga más caro','📦 Que nunca llegue'],puntos:50},
+  mito1:{tipo:'quiz',pregunta:'"Importar un celular a Colombia es ilegal"',opciones:['🚫 Mito','✅ Realidad'],correcta:0,puntos:100},
+  precio:{tipo:'quiz',pregunta:'iPhone 16 Pro 256GB nuevo en USA: ¿precio aproximado?',opciones:['$999 USD','$1.099 USD','$1.299 USD','$1.499 USD'],correcta:1,puntos:100},
+  dificil:{tipo:'encuesta',pregunta:'¿Crees que importar un celular es difícil?',opciones:['😰 Sí','😎 No'],puntos:50},
+  impuestos:{tipo:'quiz',pregunta:'¿Cuánto paga aprox. de impuestos un celular de $1.000 USD?',opciones:['0%','19%','35%','50%'],correcta:1,puntos:100},
+  mito2:{tipo:'quiz',pregunta:'"Si la DIAN revisa tu paquete, lo pierdes"',opciones:['🚫 Mito','✅ Realidad'],correcta:0,puntos:100}
+};
+const app = document.getElementById('app');
+let yo = JSON.parse(localStorage.getItem('ic_yo')||'null');
+let contestadas = JSON.parse(localStorage.getItem('ic_resp')||'{}');
+let estadoActual = 'espera';
+
+function burst(n, emo){
+  for(let i=0;i<n;i++){
+    const p=document.createElement('span');p.className='pop';p.textContent=emo;
+    p.style.fontSize=(18+Math.random()*16)+'px';document.body.appendChild(p);
+    const x=innerWidth/2,y=innerHeight/2,a=Math.PI*2*i/n,v=150+Math.random()*200;
+    p.animate([{transform:`translate(${x}px,${y}px) scale(.5)`,opacity:1},{transform:`translate(${x+Math.cos(a)*v}px,${y+Math.sin(a)*v}px) rotate(${(Math.random()-.5)*360}deg)`,opacity:0}],{duration:900,easing:'ease-out'}).onfinish=()=>p.remove();
+  }
+}
+function nivel(p){ return p>=300?'🏆 Importador PRO':p>=100?'📦 Importador':'🟢 Novato'; }
+function pintaPts(){ document.getElementById('badge').style.display='flex'; document.getElementById('pts').textContent = yo.puntos; }
+
+function vRegistro(){
+  app.innerHTML = `<h1>Import Challenge</h1><p class="sub">¿Serás capaz de convertirte en importador en 20 minutos? Regístrate y juega 🎮</p>
+  <input id="rn" placeholder="Tu nombre" autocomplete="name">
+  <input id="rw" placeholder="Tu WhatsApp" inputmode="tel" autocomplete="tel">
+  <button class="btn" id="rb">🚀 Entrar al reto</button>`;
+  document.getElementById('rb').onclick = async function(){
+    const n=document.getElementById('rn').value.trim(), w=document.getElementById('rw').value.replace(/\D/g,'');
+    if(n.length<2 || w.length<10){ alert('Escribe tu nombre y WhatsApp'); return; }
+    this.disabled=true; this.textContent='Entrando...';
+    const { data, error } = await sb.from('ic_participantes').insert({nombre:n,whatsapp:w}).select().single();
+    if(error){ alert('Error, intenta de nuevo'); this.disabled=false; this.textContent='🚀 Entrar al reto'; return; }
+    yo = data; localStorage.setItem('ic_yo', JSON.stringify(yo));
+    burst(14,'🎉'); pintaPts(); render();
+  };
+}
+function vEspera(){
+  app.innerHTML = `<div class="centro"><div class="gigante">🎮</div><h1 style="margin:0 auto">¡Estás dentro, ${yo.nombre.split(' ')[0]}!</h1>
+  <p class="sub" style="margin-top:8px">Atento a la pantalla. Cuando arranque la primera pregunta, aparecerá aquí.</p>
+  <span class="nivel">${nivel(yo.puntos)} · ${yo.puntos} pts</span></div>`;
+}
+function vPregunta(id){
+  const q = IX[id];
+  if(contestadas[id]){ vEspera(); return; }
+  app.innerHTML = `<p class="sub" style="margin-bottom:8px">${q.tipo==='quiz'?'🧠 Quiz · '+q.puntos+' pts':'📊 Encuesta · '+q.puntos+' pts'}</p>
+  <h1 style="font-size:1.4rem;-webkit-text-fill-color:var(--txt);background:none">${q.pregunta}</h1>
+  <div style="margin-top:18px" id="ops">${q.opciones.map((o,i)=>`<button class="op" data-i="${i}">${o}</button>`).join('')}</div><div id="fb"></div>`;
+  document.querySelectorAll('.op').forEach(function(b){
+    b.onclick = async function(){
+      if(contestadas[id]) return;
+      const i = +b.dataset.i;
+      contestadas[id] = i; localStorage.setItem('ic_resp', JSON.stringify(contestadas));
+      document.querySelectorAll('.op').forEach(x=>x.disabled=true);
+      let gana = q.puntos, ok = true, msg = '+'+q.puntos+' pts por participar 🎉';
+      if(q.tipo==='quiz'){
+        ok = i===q.correcta;
+        gana = ok? q.puntos : 0;
+        b.classList.add(ok?'ok':'mal');
+        document.querySelector('.op[data-i="'+q.correcta+'"]').classList.add('ok');
+        msg = ok? '¡Correcto! +'+q.puntos+' pts 🔥' : 'Casi... la respuesta era otra 😅';
+      } else { b.classList.add('eleg'); }
+      document.getElementById('fb').innerHTML = '<div class="fb '+(ok?'ok':'mal')+'">'+msg+'</div>';
+      if(gana>0){ burst(12, ok?'⭐':'🎉'); }
+      await sb.from('ic_respuestas').insert({participante_id:yo.id, interaccion:id, respuesta:String(i), puntos:gana});
+      if(gana>0){ yo.puntos += gana; localStorage.setItem('ic_yo', JSON.stringify(yo)); pintaPts();
+        await sb.from('ic_participantes').update({puntos:yo.puntos}).eq('id',yo.id); }
+    };
+  });
+}
+async function vFinal(){
+  const { data } = await sb.from('ic_participantes').select('nombre,puntos').order('puntos',{ascending:false}).limit(10);
+  const top = data||[];
+  app.innerHTML = `<div class="centro"><div class="gigante">🏆</div><h1 style="margin:0 auto">Ranking final</h1>
+  <p class="sub" style="margin-top:6px">TOP 1 gana el <b style="color:var(--gold)">envío de su celular GRATIS</b> 📱✈️</p></div>
+  <div style="margin-top:10px">${top.map((p,i)=>`<div class="rk ${p.nombre===yo.nombre?'yo':''}"><span>${i===0?'👑':(i+1)+'.'} ${p.nombre}</span><span style="color:var(--gold)">${p.puntos} pts</span></div>`).join('')}</div>
+  <div class="centro" style="margin-top:14px"><span class="nivel">Tú: ${nivel(yo.puntos)} · ${yo.puntos} pts</span>
+  <p class="sub" style="margin-top:14px">🎁 Y por participar: tus <b style="color:var(--gold)">5 LIBRAS GRATIS</b> te esperan en el stand de Celada Shopper.</p></div>`;
+  burst(20,'🏆');
+}
+function render(){
+  if(!yo){ vRegistro(); return; }
+  pintaPts();
+  const e = estadoActual.replace(/^rev:/,'');
+  if(e==='espera'){ vEspera(); }
+  else if(e==='final'){ vFinal(); }
+  else if(IX[e]){ vPregunta(e); }
+  else { vEspera(); }
+}
+async function init(){
+  const { data } = await sb.from('ic_estado').select('interaccion').eq('id',1).single();
+  if(data) estadoActual = data.interaccion;
+  render();
+  sb.channel('estado').on('postgres_changes',{event:'UPDATE',schema:'public',table:'ic_estado'},function(p){
+    estadoActual = p.new.interaccion; render();
+  }).subscribe();
+}
+init();
+</script>
+</body>
+</html>

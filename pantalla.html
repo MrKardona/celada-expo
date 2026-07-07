@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pantalla | Import Challenge</title>
+<style>
+:root{--bg:#0c0c0e;--card:#17171c;--txt:#f6f6f8;--txt2:#a8a8b3;--line:#2a2a32;--acc:#ffb300;--gold:#ffc53d;--grad:linear-gradient(135deg,#ffd66b,#ffb300 45%,#ff8a00)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,164,0,.12),transparent),var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.top{display:flex;justify-content:space-between;align-items:center;padding:22px 40px;border-bottom:1px solid var(--line)}
+.marca{font-weight:900;font-size:1.3rem;letter-spacing:.04em}
+.marca b{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.vivo{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:100px;padding:10px 20px;font-weight:800;font-size:1.05rem}
+.vivo .dot{width:10px;height:10px;border-radius:50%;background:#22c55e;animation:lat 1.5s infinite}
+@keyframes lat{0%,100%{opacity:1}50%{opacity:.3}}
+main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px;text-align:center}
+h1{font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line-height:1.1;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px}
+.sub{color:var(--txt2);font-size:1.3rem;margin-bottom:26px}
+.qr{background:#fff;padding:18px;border-radius:24px;box-shadow:0 0 60px rgba(255,164,0,.25)}
+.qr img{display:block;width:min(38vh,340px);height:min(38vh,340px)}
+.preg{font-size:clamp(1.8rem,4vw,3.2rem);max-width:900px;color:var(--txt);letter-spacing:-.02em;line-height:1.15;margin-bottom:36px}
+.barras{width:min(760px,90vw);display:flex;flex-direction:column;gap:16px}
+.fila{text-align:left}
+.fila .lab{display:flex;justify-content:space-between;font-weight:800;font-size:1.25rem;margin-bottom:7px}
+.fila .lab .n{color:var(--gold)}
+.track{background:var(--card);border:1px solid var(--line);border-radius:12px;height:34px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--grad);border-radius:12px;transition:width .6s cubic-bezier(.4,0,.2,1);min-width:0}
+.fila.ok .fill{background:linear-gradient(90deg,#34d399,#22c55e)}
+.fila.ok .lab{color:#22c55e}
+.rk{width:min(640px,90vw)}
+.rk .item{display:flex;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 22px;margin-bottom:9px;font-weight:800;font-size:1.3rem;opacity:0;transform:translateY(16px);animation:sube .5s forwards}
+.rk .item:nth-child(1){border-color:var(--gold);background:rgba(255,179,0,.1);font-size:1.5rem}
+@keyframes sube{to{opacity:1;transform:none}}
+.premio{margin-top:18px;font-size:1.35rem;color:var(--gold);font-weight:800}
+.pop{position:fixed;left:0;top:0;z-index:99;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="marca">CELADA SHOPPER · <b>IMPORT CHALLENGE</b></span>
+  <span class="vivo"><span class="dot"></span><span id="nJug">0</span> jugando</span>
+</div>
+<main id="app"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL='https://igijeqhyppvpennjdkiu.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnaWplcWh5cHB2cGVubmpka2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDc5NTksImV4cCI6MjA5MTU4Mzk1OX0.5JdsyKQ3Mscpun1efjKarvcz9q032n-TpYOHaszQ5qw';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+const URL_JUGAR = 'https://expo.celadashopper.com/jugar.html';
+const IX = {
+  miedo:{pregunta:'¿Cuál es tu mayor miedo al importar?',opciones:['😱 Que me estafen','🛃 Que la DIAN lo retenga','💸 Que salga más caro','📦 Que nunca llegue']},
+  mito1:{pregunta:'"Importar un celular a Colombia es ilegal"',opciones:['🚫 Mito','✅ Realidad'],correcta:0},
+  precio:{pregunta:'iPhone 16 Pro 256GB nuevo en USA: ¿precio aproximado?',opciones:['$999 USD','$1.099 USD','$1.299 USD','$1.499 USD'],correcta:1},
+  dificil:{pregunta:'¿Crees que importar un celular es difícil?',opciones:['😰 Sí','😎 No']},
+  impuestos:{pregunta:'¿Cuánto paga aprox. de impuestos un celular de $1.000 USD?',opciones:['0%','19%','35%','50%'],correcta:1},
+  mito2:{pregunta:'"Si la DIAN revisa tu paquete, lo pierdes"',opciones:['🚫 Mito','✅ Realidad'],correcta:0}
+};
+const app = document.getElementById('app');
+let estado='espera', conteos={}, actual='';
+
+function burst(n,emo){for(let i=0;i<n;i++){const p=document.createElement('span');p.className='pop';p.textContent=emo;p.style.fontSize=(22+Math.random()*22)+'px';document.body.appendChild(p);const x=innerWidth/2,y=innerHeight/2,a=Math.PI*2*i/n,v=250+Math.random()*350;p.animate([{transform:`translate(${x}px,${y}px) scale(.5)`,opacity:1},{transform:`translate(${x+Math.cos(a)*v}px,${y+Math.sin(a)*v}px) rotate(${(Math.random()-.5)*540}deg)`,opacity:0}],{duration:1100,easing:'ease-out'}).onfinish=()=>p.remove();}}
+
+async function nJugadores(){
+  const { count } = await sb.from('ic_participantes').select('*',{count:'exact',head:true});
+  document.getElementById('nJug').textContent = count||0;
+}
+function vEspera(){
+  app.innerHTML = `<h1>IMPORT CHALLENGE</h1>
+  <p class="sub">¿Serás capaz de convertirte en importador en 20 minutos?<br><b style="color:var(--txt)">Escanea y entra al reto</b> 👇</p>
+  <div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(URL_JUGAR)}" alt="QR"></div>`;
+}
+async function vPregunta(id, revelar){
+  const q = IX[id];
+  if(actual!==id){ conteos = {}; q.opciones.forEach((_,i)=>conteos[i]=0);
+    const { data } = await sb.from('ic_respuestas').select('respuesta').eq('interaccion',id);
+    (data||[]).forEach(r=>{ conteos[+r.respuesta]=(conteos[+r.respuesta]||0)+1; });
+    actual = id;
+  }
+  const total = Object.values(conteos).reduce((a,b)=>a+b,0)||1;
+  app.innerHTML = `<div class="preg">${q.pregunta}</div>
+  <div class="barras">${q.opciones.map((o,i)=>`
+    <div class="fila ${revelar && q.correcta===i ? 'ok':''}">
+      <div class="lab"><span>${o}</span><span class="n" id="n${i}">${conteos[i]||0}</span></div>
+      <div class="track"><div class="fill" id="f${i}" style="width:${Math.round((conteos[i]||0)/total*100)}%"></div></div>
+    </div>`).join('')}</div>`;
+  if(revelar) burst(16,'✅');
+}
+async function vFinal(){
+  const { data } = await sb.from('ic_participantes').select('nombre,puntos').order('puntos',{ascending:false}).limit(10);
+  app.innerHTML = `<h1>🏆 RANKING FINAL</h1><div class="rk">${(data||[]).map((p,i)=>`
+    <div class="item" style="animation-delay:${i*.15}s"><span>${i===0?'👑':(i+1)+'.'} ${p.nombre}</span><span style="color:var(--gold)">${p.puntos} pts</span></div>`).join('')}</div>
+  <div class="premio">👑 TOP 1 gana el envío de su celular GRATIS 📱✈️</div>
+  <p class="sub" style="margin-top:10px">Y todos: 5 LIBRAS GRATIS registrándose en el stand 🎁</p>`;
+  burst(30,'🏆');
+}
+function render(){
+  const rev = estado.startsWith('rev:');
+  const e = estado.replace(/^rev:/,'');
+  if(e==='espera'){ actual=''; vEspera(); }
+  else if(e==='final'){ actual=''; vFinal(); }
+  else if(IX[e]){ vPregunta(e, rev); }
+}
+function pintaConteo(){
+  const total = Object.values(conteos).reduce((a,b)=>a+b,0)||1;
+  Object.keys(conteos).forEach(function(i){
+    const n=document.getElementById('n'+i), f=document.getElementById('f'+i);
+    if(n){ n.textContent=conteos[i]; f.style.width=Math.round(conteos[i]/total*100)+'%'; }
+  });
+}
+async function init(){
+  nJugadores();
+  const { data } = await sb.from('ic_estado').select('interaccion').eq('id',1).single();
+  if(data) estado = data.interaccion;
+  render();
+  sb.channel('e').on('postgres_changes',{event:'UPDATE',schema:'public',table:'ic_estado'},function(p){ estado=p.new.interaccion; render(); }).subscribe();
+  sb.channel('r').on('postgres_changes',{event:'INSERT',schema:'public',table:'ic_respuestas'},function(p){
+    if(p.new.interaccion===actual){ conteos[+p.new.respuesta]=(conteos[+p.new.respuesta]||0)+1; pintaConteo(); }
+  }).subscribe();
+  sb.channel('p').on('postgres_changes',{event:'INSERT',schema:'public',table:'ic_participantes'},function(){ nJugadores(); }).subscribe();
+}
+init();
+</script>
+</body>
+</html>
