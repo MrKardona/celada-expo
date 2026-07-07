@@ -75,7 +75,7 @@ const SLIDES = {
                  '¿Has visto un iPhone en Amazon…',
                  '…y pensaste…',
                  '"seguro aquí me sale MUCHO más barato" 🤑'
-               ], fotos:['producto-5.webp','producto-1.webp','producto-2.webp','producto-3.webp','producto-4.webp'] },
+               ], fotos:['producto-1.webp','producto-2.webp','producto-3.webp','producto-4.webp','producto-5.webp','producto-6.webp'] },
   quitamiedo: { emoji:'🔥', kicker:'HOY', titulo:'Vamos a quitarles ese miedo.', texto:'Saquen el celular: durante toda la charla ustedes van a jugar.' },
   /* 'galeria' = texto fijo a la IZQUIERDA + fotos/videos que pasan solos a la DERECHA.
      Pon los nombres de tus archivos dentro de 'fotos' (deben estar en la misma carpeta).
