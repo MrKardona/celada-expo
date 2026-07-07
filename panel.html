@@ -33,16 +33,13 @@ h1{font-size:1.2rem;margin-bottom:4px}
   <div class="st"><b id="nR">0</b><small>respuestas (actual)</small></div>
   <div class="st"><b id="act" style="font-size:.85rem;line-height:2">espera</b><small>en pantalla</small></div>
 </div>
-<button class="paso" data-i="espera"><span class="num">🏠</span> Sala de espera (QR gigante)</button>
-<button class="paso" data-i="miedo"><span class="num">1</span> Encuesta: ¿Tu mayor miedo al importar?</button>
-<button class="paso" data-i="mito1"><span class="num">2</span> Mito o realidad: "Importar es ilegal"</button>
-<button class="paso" data-i="precio"><span class="num">3</span> Adivina el precio: iPhone 16 Pro</button>
-<button class="paso" data-i="dificil"><span class="num">4</span> ¿Importar es difícil? (entrada de Diego)</button>
-<button class="paso" data-i="impuestos"><span class="num">5</span> Quiz: impuestos de un celular</button>
-<button class="paso" data-i="mito2"><span class="num">6</span> Mito o realidad: "La DIAN lo retiene"</button>
+<div class="fila2" style="margin-bottom:12px">
+  <button class="paso" id="btnAntes" style="flex:0 0 30%">⬅ Antes</button>
+  <button class="paso" id="btnSig" style="background:var(--grad);color:#1d1300;border-color:transparent;font-weight:800;justify-content:center">SIGUIENTE ▶</button>
+</div>
+<div id="escaleta"></div>
 <div class="fila2">
   <button class="paso rev" id="btnRev">✅ Revelar respuesta</button>
-  <button class="paso" data-i="final"><span class="num">🏆</span> Ranking final</button>
 </div>
 <button class="paso peligro" id="btnReset">🗑️ Reiniciar TODO (borra jugadores y puntos)</button>
 <div class="aviso" id="aviso">Enviado ✓</div>
@@ -53,6 +50,23 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const TOKEN='celada-show-2026';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 let actual = 'espera';
+/* ESCALETA — el orden completo del show. Edita textos/orden aquí. */
+const ESCALETA = [
+  {id:'slide:portada', t:'🎬 Portada: IMPORT CHALLENGE'},
+  {id:'espera',        t:'🏠 QR gigante: que entren al reto'},
+  {id:'slide:manos',   t:'🙋 "Levanta la mano… iPhone en Amazon"'},
+  {id:'slide:quitamiedo', t:'🔥 "Hoy vamos a quitarles ese miedo"'},
+  {id:'miedo',         t:'📊 ENCUESTA: ¿tu mayor miedo al importar?'},
+  {id:'slide:historia', t:'📦 Historia de Celada Shopper'},
+  {id:'mito1',         t:'🧠 QUIZ: "Importar es ilegal" (Mito)'},
+  {id:'precio',        t:'🧠 QUIZ: adivina el precio del iPhone'},
+  {id:'dificil',       t:'📊 ENCUESTA: ¿importar es difícil?'},
+  {id:'slide:diego',   t:'🎤 Entrada de DIEGO'},
+  {id:'impuestos',     t:'🧠 QUIZ: impuestos de un celular (19%)'},
+  {id:'mito2',         t:'🧠 QUIZ: "La DIAN lo retiene" (Mito)'},
+  {id:'slide:oferta',  t:'🎁 Oferta: 5 libras gratis en el stand'},
+  {id:'final',         t:'🏆 RANKING FINAL + premio celular'}
+];
 
 function aviso(t){ const a=document.getElementById('aviso'); a.textContent=t; a.classList.add('ver'); setTimeout(()=>a.classList.remove('ver'),1400); }
 async function enviar(interaccion){
@@ -74,9 +88,23 @@ async function refrescaR(){
   const { count } = await sb.from('ic_respuestas').select('*',{count:'exact',head:true}).eq('interaccion',e);
   document.getElementById('nR').textContent = count||0;
 }
+/* pinta la escaleta */
+document.getElementById('escaleta').innerHTML = ESCALETA.map(function(p,i){
+  return '<button class="paso" data-i="'+p.id+'"><span class="num">'+(i+1)+'</span> '+p.t+'</button>';
+}).join('');
 document.querySelectorAll('.paso[data-i]').forEach(function(b){
   b.onclick = function(){ enviar(b.dataset.i); };
 });
+function idx(){ return ESCALETA.findIndex(function(p){ return p.id === actual.replace(/^rev:/,''); }); }
+document.getElementById('btnSig').onclick = function(){
+  const i = idx();
+  if(i < ESCALETA.length - 1) enviar(ESCALETA[i+1].id);
+  else aviso('Fin del show 🏆');
+};
+document.getElementById('btnAntes').onclick = function(){
+  const i = idx();
+  if(i > 0) enviar(ESCALETA[i-1].id);
+};
 document.getElementById('btnRev').onclick = function(){
   const e = actual.replace(/^rev:/,'');
   if(e==='espera'||e==='final'){ aviso('Lanza una pregunta primero'); return; }

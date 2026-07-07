@@ -130,6 +130,9 @@ function render(){
   const e = estadoActual.replace(/^rev:/,'');
   if(e==='espera'){ vEspera(); }
   else if(e==='final'){ vFinal(); }
+  else if(e.startsWith('slide:')){
+    app.innerHTML = '<div class="centro"><div class="gigante">👀</div><h1 style="margin:0 auto">Mira la pantalla</h1><p class="sub" style="margin-top:8px">Atento, en cualquier momento llega la siguiente pregunta…</p><span class="nivel">'+nivel(yo.puntos)+' · '+yo.puntos+' pts</span></div>';
+  }
   else if(IX[e]){ vPregunta(e); }
   else { vEspera(); }
 }
