@@ -38,18 +38,9 @@ input:focus{outline:none;border-color:var(--acc)}
 <div class="top"><span class="marca">CELADA · IMPORT CHALLENGE</span><span class="badge" id="badge" style="display:none">⭐ <span class="pts" id="pts">0</span> pts</span></div>
 <main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="show-config.js"></script>
 <script>
-const SB_URL='https://igijeqhyppvpennjdkiu.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnaWplcWh5cHB2cGVubmpka2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDc5NTksImV4cCI6MjA5MTU4Mzk1OX0.5JdsyKQ3Mscpun1efjKarvcz9q032n-TpYOHaszQ5qw';
 const sb = supabase.createClient(SB_URL, SB_KEY);
-const IX = {
-  miedo:{tipo:'encuesta',pregunta:'¿Cuál es tu mayor miedo al importar?',opciones:['😱 Que me estafen','🛃 Que la DIAN lo retenga','💸 Que salga más caro','📦 Que nunca llegue'],puntos:50},
-  mito1:{tipo:'quiz',pregunta:'"Importar un celular a Colombia es ilegal"',opciones:['🚫 Mito','✅ Realidad'],correcta:0,puntos:100},
-  precio:{tipo:'quiz',pregunta:'iPhone 16 Pro 256GB nuevo en USA: ¿precio aproximado?',opciones:['$999 USD','$1.099 USD','$1.299 USD','$1.499 USD'],correcta:1,puntos:100},
-  dificil:{tipo:'encuesta',pregunta:'¿Crees que importar un celular es difícil?',opciones:['😰 Sí','😎 No'],puntos:50},
-  impuestos:{tipo:'quiz',pregunta:'¿Cuánto paga aprox. de impuestos un celular de $1.000 USD?',opciones:['0%','19%','35%','50%'],correcta:1,puntos:100},
-  mito2:{tipo:'quiz',pregunta:'"Si la DIAN revisa tu paquete, lo pierdes"',opciones:['🚫 Mito','✅ Realidad'],correcta:0,puntos:100}
-};
 const app = document.getElementById('app');
 let yo = JSON.parse(localStorage.getItem('ic_yo')||'null');
 let contestadas = JSON.parse(localStorage.getItem('ic_resp')||'{}');

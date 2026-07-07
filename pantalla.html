@@ -42,27 +42,9 @@ h1{font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line-height:1.1;backgr
 </div>
 <main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="show-config.js"></script>
 <script>
-const SB_URL='https://igijeqhyppvpennjdkiu.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnaWplcWh5cHB2cGVubmpka2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDc5NTksImV4cCI6MjA5MTU4Mzk1OX0.5JdsyKQ3Mscpun1efjKarvcz9q032n-TpYOHaszQ5qw';
 const sb = supabase.createClient(SB_URL, SB_KEY);
-const URL_JUGAR = 'https://expo.celadashopper.com/jugar.html';
-const IX = {
-  miedo:{pregunta:'¿Cuál es tu mayor miedo al importar?',opciones:['😱 Que me estafen','🛃 Que la DIAN lo retenga','💸 Que salga más caro','📦 Que nunca llegue']},
-  mito1:{pregunta:'"Importar un celular a Colombia es ilegal"',opciones:['🚫 Mito','✅ Realidad'],correcta:0},
-  precio:{pregunta:'iPhone 16 Pro 256GB nuevo en USA: ¿precio aproximado?',opciones:['$999 USD','$1.099 USD','$1.299 USD','$1.499 USD'],correcta:1},
-  dificil:{pregunta:'¿Crees que importar un celular es difícil?',opciones:['😰 Sí','😎 No']},
-  impuestos:{pregunta:'¿Cuánto paga aprox. de impuestos un celular de $1.000 USD?',opciones:['0%','19%','35%','50%'],correcta:1},
-  mito2:{pregunta:'"Si la DIAN revisa tu paquete, lo pierdes"',opciones:['🚫 Mito','✅ Realidad'],correcta:0}
-};
-const SLIDES = {
-  portada:{kicker:'CELADA SHOPPER PRESENTA',titulo:'IMPORT CHALLENGE',texto:'¿Serás capaz de convertirte en importador en 20 minutos?',emoji:'🎮'},
-  manos:{kicker:'LEVANTA LA MANO 🙋',titulo:'¿Has visto un iPhone en Amazon y pensaste…',texto:'"seguro aquí me sale MUCHO más barato"? …¿Y cuántos no lo compraron por miedo?',emoji:'📱'},
-  quitamiedo:{kicker:'HOY',titulo:'Vamos a quitarles ese miedo.',texto:'Saquen el celular: durante toda la charla ustedes van a jugar.',emoji:'🔥'},
-  historia:{kicker:'NUESTRA HISTORIA',titulo:'Nosotros también tuvimos miedo de importar.',texto:'Primeros paquetes, primeros errores, primeros clientes… +7 años después: miles de entregas.',emoji:'📦'},
-  diego:{kicker:'CON USTEDES',titulo:'DIEGO CELADA',texto:'La persona que les va a enseñar a importar celulares. 👏👏👏',emoji:'🎤'},
-  oferta:{kicker:'SOLO POR HOY EN EXPOMOBILE',titulo:'5 LIBRAS GRATIS',texto:'Activa tu casillero en el stand de Celada Shopper y estrena tu beneficio.',emoji:'🎁'}
-};
 const app = document.getElementById('app');
 let estado='espera', conteos={}, actual='';
 
@@ -97,8 +79,8 @@ async function vFinal(){
   const { data } = await sb.from('ic_participantes').select('nombre,puntos').order('puntos',{ascending:false}).limit(10);
   app.innerHTML = `<h1>🏆 RANKING FINAL</h1><div class="rk">${(data||[]).map((p,i)=>`
     <div class="item" style="animation-delay:${i*.15}s"><span>${i===0?'👑':(i+1)+'.'} ${p.nombre}</span><span style="color:var(--gold)">${p.puntos} pts</span></div>`).join('')}</div>
-  <div class="premio">👑 TOP 1 gana el envío de su celular GRATIS 📱✈️</div>
-  <p class="sub" style="margin-top:10px">Y todos: 5 LIBRAS GRATIS registrándose en el stand 🎁</p>`;
+  <div class="premio">${PREMIOS.top1}</div>
+  <p class="sub" style="margin-top:10px">${PREMIOS.todos}</p>`;
   burst(30,'🏆');
 }
 function vSlide(id){

@@ -44,29 +44,11 @@ h1{font-size:1.2rem;margin-bottom:4px}
 <button class="paso peligro" id="btnReset">🗑️ Reiniciar TODO (borra jugadores y puntos)</button>
 <div class="aviso" id="aviso">Enviado ✓</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="show-config.js"></script>
 <script>
-const SB_URL='https://igijeqhyppvpennjdkiu.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnaWplcWh5cHB2cGVubmpka2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDc5NTksImV4cCI6MjA5MTU4Mzk1OX0.5JdsyKQ3Mscpun1efjKarvcz9q032n-TpYOHaszQ5qw';
 const TOKEN='celada-show-2026';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 let actual = 'espera';
-/* ESCALETA — el orden completo del show. Edita textos/orden aquí. */
-const ESCALETA = [
-  {id:'slide:portada', t:'🎬 Portada: IMPORT CHALLENGE'},
-  {id:'espera',        t:'🏠 QR gigante: que entren al reto'},
-  {id:'slide:manos',   t:'🙋 "Levanta la mano… iPhone en Amazon"'},
-  {id:'slide:quitamiedo', t:'🔥 "Hoy vamos a quitarles ese miedo"'},
-  {id:'miedo',         t:'📊 ENCUESTA: ¿tu mayor miedo al importar?'},
-  {id:'slide:historia', t:'📦 Historia de Celada Shopper'},
-  {id:'mito1',         t:'🧠 QUIZ: "Importar es ilegal" (Mito)'},
-  {id:'precio',        t:'🧠 QUIZ: adivina el precio del iPhone'},
-  {id:'dificil',       t:'📊 ENCUESTA: ¿importar es difícil?'},
-  {id:'slide:diego',   t:'🎤 Entrada de DIEGO'},
-  {id:'impuestos',     t:'🧠 QUIZ: impuestos de un celular (19%)'},
-  {id:'mito2',         t:'🧠 QUIZ: "La DIAN lo retiene" (Mito)'},
-  {id:'slide:oferta',  t:'🎁 Oferta: 5 libras gratis en el stand'},
-  {id:'final',         t:'🏆 RANKING FINAL + premio celular'}
-];
 
 function aviso(t){ const a=document.getElementById('aviso'); a.textContent=t; a.classList.add('ver'); setTimeout(()=>a.classList.remove('ver'),1400); }
 async function enviar(interaccion){
