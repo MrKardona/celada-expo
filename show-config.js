@@ -9,6 +9,7 @@
 const SB_URL = 'https://igijeqhyppvpennjdkiu.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnaWplcWh5cHB2cGVubmpka2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDc5NTksImV4cCI6MjA5MTU4Mzk1OX0.5JdsyKQ3Mscpun1efjKarvcz9q032n-TpYOHaszQ5qw';
 const URL_JUGAR = 'https://expo.celadashopper.com/jugar.html';
+const GAL_MS = 3200; /* ⏱️ milisegundos que dura cada foto en la galería de historia (3200 = 3,2s) */
 
 /* ============================================================
    🧠 PREGUNTAS (quiz = tiene respuesta correcta y da puntos;
@@ -69,10 +70,13 @@ const SLIDES = {
   manos:      { tipo:'revelado', kicker:'LEVANTA LA MANO 🙋', frases:[
                  '¿Has visto un iPhone en Amazon…',
                  '…y pensaste…',
-                 '“seguro aquí me sale MUCHO más barato” 🤑'
+                 '"seguro aquí me sale MUCHO más barato" 🤑'
                ] },
   quitamiedo: { emoji:'🔥', kicker:'HOY', titulo:'Vamos a quitarles ese miedo.', texto:'Saquen el celular: durante toda la charla ustedes van a jugar.' },
-  historia:   { emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo de importar.', texto:'Primeros paquetes, primeros errores, primeros clientes… +7 años después: miles de entregas.' },
+  /* 'galeria' = texto fijo a la IZQUIERDA + fotos/videos que pasan solos a la DERECHA.
+     Pon los nombres de tus archivos dentro de 'fotos' (deben estar en la misma carpeta).
+     Acepta imágenes (.webp/.jpg/.png) y videos (.mp4). Vacío [] = solo texto. */
+  historia:   { tipo:'galeria', emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo de importar.', texto:'Primeros paquetes, primeros errores, primeros clientes… +7 años después: miles de entregas.', fotos:['historia-1.webp','video1.mp4','historia-2.webp'] },
   diego:      { emoji:'🎤', kicker:'CON USTEDES', titulo:'DIEGO CELADA', texto:'La persona que les va a enseñar a importar celulares. 👏👏👏' },
   oferta:     { emoji:'🎁', kicker:'SOLO POR HOY EN EXPOMOBILE', titulo:'5 LIBRAS GRATIS', texto:'Activa tu casillero en el stand de Celada Shopper y estrena tu beneficio.' }
 };

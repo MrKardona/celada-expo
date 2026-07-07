@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pantalla | Import Challenge</title>
+<title>Pantalla | Cómo importar celulares para dummies</title>
 <style>
 :root{--bg:#0c0c0e;--card:#17171c;--txt:#f6f6f8;--txt2:#a8a8b3;--line:#2a2a32;--acc:#ffb300;--gold:#ffc53d;--grad:linear-gradient(135deg,#ffd66b,#ffb300 45%,#ff8a00)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -36,6 +36,17 @@ h1{font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line-height:1.1;backgr
 @keyframes sube{to{opacity:1;transform:none}}
 .premio{margin-top:18px;font-size:1.35rem;color:var(--gold);font-weight:800}
 .pop{position:fixed;left:0;top:0;z-index:99;pointer-events:none}
+/* ── Galería de HISTORIA: texto fijo izquierda + fotos pasando derecha ── */
+.hist{display:flex;align-items:stretch;gap:clamp(28px,4vw,64px);width:min(1500px,94vw);height:min(74vh,720px)}
+.hist-txt{flex:0 0 40%;display:flex;flex-direction:column;justify-content:center;text-align:left}
+.hist-txt .kick{letter-spacing:.2em;font-weight:800;font-size:1rem;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.hist-txt .emo{font-size:3.4rem;margin-bottom:12px}
+.hist-txt h1{font-size:clamp(1.9rem,3.2vw,3rem);line-height:1.12;margin-bottom:16px;text-align:left}
+.hist-txt p{color:var(--txt);font-size:clamp(1.1rem,1.5vw,1.5rem);line-height:1.4}
+.hist-gal{flex:1;position:relative;border-radius:24px;overflow:hidden;background:var(--card);border:1px solid var(--line);box-shadow:0 0 70px rgba(255,164,0,.18)}
+.hist-gal img,.hist-gal video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease}
+.hist-gal img.on,.hist-gal video.on{opacity:1}
+.hist-gal .cont{position:absolute;bottom:14px;right:16px;z-index:2;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);color:#fff;font-weight:700;font-size:.95rem;padding:5px 13px;border-radius:100px}
 </style>
 </head>
 <body>
@@ -52,7 +63,7 @@ h1{font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line-height:1.1;backgr
 <script>
 const sb = supabase.createClient(SB_URL, SB_KEY);
 const app = document.getElementById('app');
-let estado='espera', conteos={}, actual='';
+let estado='espera', conteos={}, actual='', galeriaTimer=null;
 
 function burst(n,emo){for(let i=0;i<n;i++){const p=document.createElement('span');p.className='pop';p.textContent=emo;p.style.fontSize=(22+Math.random()*22)+'px';document.body.appendChild(p);const x=innerWidth/2,y=innerHeight/2,a=Math.PI*2*i/n,v=250+Math.random()*350;p.animate([{transform:`translate(${x}px,${y}px) scale(.5)`,opacity:1},{transform:`translate(${x+Math.cos(a)*v}px,${y+Math.sin(a)*v}px) rotate(${(Math.random()-.5)*540}deg)`,opacity:0}],{duration:1100,easing:'ease-out'}).onfinish=()=>p.remove();}}
 
@@ -112,6 +123,51 @@ function vSlide(id){
     if(n && n.animate) n.animate([{opacity:0,transform:'translateY(34px) scale(.94)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.22,1.3,.36,1)'});
     return;
   }
+  if(s.tipo === 'galeria' && s.fotos && s.fotos.length){
+    const media = s.fotos.map(function(f,i){
+      const on = i===0?'on':'';
+      if(/\.(mp4|webm|mov)$/i.test(f))
+        return '<video src="'+f+'" class="'+on+'" muted playsinline preload="auto"></video>';
+      return '<img src="'+f+'" alt="" class="'+on+'">';
+    }).join('');
+    app.innerHTML = `<div class="hist">
+      <div class="hist-txt">
+        <div class="emo">${s.emoji||''}</div>
+        <div class="kick">${s.kicker}</div>
+        <h1>${s.titulo}</h1>
+        <p>${s.texto}</p>
+      </div>
+      <div class="hist-gal" id="gal">
+        ${media}
+        <div class="cont" id="galCont">1 / ${s.fotos.length}</div>
+      </div>
+    </div>`;
+    [['.hist-txt',0],['.hist-gal',150]].forEach(function(par){
+      const el=document.querySelector(par[0]);
+      if(el&&el.animate) el.animate([{opacity:0,transform:'translateY(24px)'},{opacity:1,transform:'none'}],{duration:650,delay:par[1],easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'});
+    });
+    const items = document.querySelectorAll('#gal img, #gal video'), cont = document.getElementById('galCont');
+    if(items.length<=1){
+      if(cont) cont.style.display='none';
+      const u=items[0]; if(u && u.tagName==='VIDEO'){ u.loop=true; u.play().catch(function(){}); }
+      return;
+    }
+    let gi=0;
+    function mostrar(i){
+      items.forEach(function(el){ el.classList.remove('on'); if(el.tagName==='VIDEO') el.pause(); });
+      const el=items[i]; el.classList.add('on');
+      if(cont) cont.textContent=(i+1)+' / '+items.length;
+      if(el.tagName==='VIDEO'){
+        el.currentTime=0; el.onended=avanzar;
+        el.play().catch(function(){ galeriaTimer=setTimeout(avanzar, GAL_MS); });
+      } else {
+        galeriaTimer=setTimeout(avanzar, GAL_MS);
+      }
+    }
+    function avanzar(){ gi=(gi+1)%items.length; mostrar(gi); }
+    mostrar(0);
+    return;
+  }
   if(s.img){
     app.innerHTML = `<img src="${s.img}" alt="" style="max-width:96%;max-height:86vh;border-radius:22px;box-shadow:0 0 80px rgba(255,164,0,.25)" class="sl-img">`;
     const el=document.querySelector('.sl-img');
@@ -130,6 +186,7 @@ function vSlide(id){
   });
 }
 function render(){
+  if(galeriaTimer){ clearTimeout(galeriaTimer); galeriaTimer=null; }
   const rev = estado.startsWith('rev:');
   const e = estado.replace(/^rev:/,'');
   if(e==='espera'){ actual=''; vEspera(); }
