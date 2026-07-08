@@ -22,8 +22,8 @@ const FRASE_MS = 2200; /* ⏱️ milisegundos entre cada frase del gancho animad
 const IX = {
   frenaste: {
     tipo: 'encuesta', puntos: 50,
-    pregunta: '¿Alguna vez quisiste comprar en USA… y te frenaste?',
-    opciones: ['🙋 Sí, muchas veces', '😬 Lo intenté una vez', '🤔 No sabía que se podía']
+    pregunta: '¿Alguna vez quisiste comprar teléfonos en USA y no lo hiciste por miedo a que algo saliera mal?',
+    opciones: ['🙋 Sí, el miedo me frenó', '📦 Traigo pocas unidades', '😎 Ya tengo experiencia', '🚀 Es mi primera vez']
   },
   miedo: {
     tipo: 'encuesta', puntos: 50,
