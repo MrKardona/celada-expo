@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Panel | Cómo importar celulares para dummies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0c0c0e;--card:#17171c;--txt:#f6f6f8;--txt2:#a8a8b3;--line:#2a2a32;--acc:#ffb300;--gold:#ffc53d;--grad:linear-gradient(135deg,#ffd66b,#ffb300 45%,#ff8a00)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:18px;max-width:480px;margin:0 auto}
+body{background:var(--bg);color:var(--txt);font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:18px;max-width:480px;margin:0 auto}
 h1{font-size:1.2rem;margin-bottom:4px}
 .sub{color:var(--txt2);font-size:.85rem;margin-bottom:16px}
 .stats{display:flex;gap:10px;margin-bottom:18px}
@@ -17,6 +19,8 @@ h1{font-size:1.2rem;margin-bottom:4px}
 .paso:active{transform:scale(.98)}
 .paso.activo{border-color:var(--acc);background:rgba(255,179,0,.1)}
 .paso .num{width:28px;height:28px;border-radius:50%;background:var(--grad);color:#1d1300;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0}
+.paso .ptxt{display:flex;flex-direction:column;gap:3px;text-align:left}
+.ok-hint{color:#22c55e;font-weight:700;font-size:.72rem}
 .fila2{display:flex;gap:9px}
 .fila2 .paso{flex:1}
 .rev{background:rgba(34,197,94,.12);border-color:#22c55e}
@@ -73,7 +77,9 @@ async function refrescaR(){
 }
 /* pinta la escaleta */
 document.getElementById('escaleta').innerHTML = ESCALETA.map(function(p,i){
-  return '<button class="paso" data-i="'+p.id+'"><span class="num">'+(i+1)+'</span> '+p.t+'</button>';
+  const q = IX[p.id];
+  const hint = (q && q.tipo==='quiz') ? '<small class="ok-hint">✓ Correcta: '+q.opciones[q.correcta]+'</small>' : '';
+  return '<button class="paso" data-i="'+p.id+'"><span class="num">'+(i+1)+'</span><span class="ptxt">'+p.t+hint+'</span></button>';
 }).join('');
 document.querySelectorAll('.paso[data-i]').forEach(function(b){
   b.onclick = function(){ enviar(b.dataset.i); };

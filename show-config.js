@@ -11,6 +11,7 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const URL_JUGAR = 'https://expo.celadashopper.com/jugar.html';
 const GAL_MS = 3200;   /* ⏱️ milisegundos que dura cada foto en la galería de historia (3200 = 3,2s) */
 const FRASE_MS = 2200; /* ⏱️ milisegundos entre cada frase del gancho animado antes del carrusel de productos */
+const TIEMPO_PREGUNTA = 30; /* ⏱️ segundos del temporizador de cada pregunta (0 = sin temporizador) */
 
 /* ============================================================
    🧠 PREGUNTAS (quiz = tiene respuesta correcta y da puntos;
@@ -27,38 +28,60 @@ const IX = {
   },
   miedo: {
     tipo: 'encuesta', puntos: 50,
-    pregunta: '¿Cuál es tu mayor miedo al importar?',
+    pregunta: '¿Cuál es tu mayor miedo al importar de otro país a Colombia?',
     opciones: ['😱 Que me estafen', '🛃 Que la DIAN lo retenga', '💸 Que salga más caro', '📦 Que nunca llegue']
   },
   legal: {
     tipo: 'quiz', puntos: 100, correcta: 0,
     pregunta: '"Importar un celular a Colombia es ILEGAL"',
-    opciones: ['🚫 Mito', '✅ Realidad']
+    opciones: ['🚫 Mito', '✅ Realidad'],
+    dato: 'Importar tu propio celular a Colombia es 100% legal.'
+  },
+  experto: {
+    tipo: 'quiz', puntos: 100, correcta: 0,
+    pregunta: '"Comprar en USA es solo para expertos en tecnología"',
+    opciones: ['🚫 Mito', '✅ Realidad'],
+    dato: 'Si sabes pedir un domicilio, sabes importar. Celada hace lo difícil.'
   },
   tarjeta: {
     tipo: 'quiz', puntos: 100, correcta: 0,
     pregunta: '"Para comprar en USA necesitas tarjeta internacional sí o sí"',
-    opciones: ['🚫 Mito', '✅ Realidad']
+    opciones: ['🚫 Mito', '✅ Realidad'],
+    dato: 'No necesitas tarjeta internacional: Celada compra por ti.'
   },
-  ahorro: {
-    tipo: 'quiz', puntos: 100, correcta: 3,
-    pregunta: 'Trayendo tu iPhone desde USA en vez de comprarlo aquí, ¿cuánto te ahorras?',
-    opciones: ['Casi nada', 'Hasta $500 mil', 'Hasta $1 millón', 'Más de $1 millón']
-  },
-  tiempo: {
-    tipo: 'quiz', puntos: 100, correcta: 2,
-    pregunta: '¿Cuánto tarda en llegar tu paquete de USA a Colombia?',
-    opciones: ['Más de 1 mes', '3-4 semanas', '10 a 15 días', '2-3 días']
+  imei: {
+    tipo: 'quiz', puntos: 100, correcta: 0,
+    pregunta: 'Traes tu celular de USA. Para que NO te lo bloqueen a los 20 días, ¿qué debes hacer?',
+    opciones: ['📲 Registrar el IMEI (gratis)', '😎 Nada, funciona solo', '🔁 Comprar otro chip', '🙏 Rezar'],
+    dato: 'Registrar el IMEI es gratis y se hace con la factura. Celada te la entrega.'
   },
   dian: {
     tipo: 'quiz', puntos: 100, correcta: 0,
     pregunta: '"Si la DIAN revisa tu paquete, lo pierdes"',
-    opciones: ['🚫 Mito', '✅ Realidad']
+    opciones: ['🚫 Mito', '✅ Realidad'],
+    dato: 'Aunque la DIAN lo revise, tu paquete NO se pierde.'
+  },
+  tiempo: {
+    tipo: 'quiz', puntos: 100, correcta: 2,
+    pregunta: '¿Cuánto tarda en llegar tu paquete de USA a Colombia?',
+    opciones: ['Más de 1 mes', '3-4 semanas', '10 a 15 días', '2-3 días'],
+    dato: 'Tu paquete llega en solo 10 a 15 días.'
+  },
+  precio: {
+    tipo: 'quiz', puntos: 200, correcta: 1,
+    pregunta: 'En Colombia un iPhone 16 Pro cuesta ~$6.000.000. ¿Cuánto cuesta NUEVO en USA? (¡DOBLE PUNTOS!)',
+    opciones: ['~$5,5 millones', '~$4 millones (US$999)', '~$2,5 millones', '~$800 mil'],
+    dato: 'US$999 ≈ $4 millones. Trayéndolo tú te ahorras casi $2 millones.'
   },
   traer: {
     tipo: 'encuesta', puntos: 50,
     pregunta: '¿Qué traerías primero con tu casillero?',
     opciones: ['📱 Tecnología', '👟 Sneakers', '👕 Ropa', '🎮 Gadgets / consolas']
+  },
+  personalidad: {
+    tipo: 'encuesta', puntos: 50,
+    pregunta: 'Te llega un iPhone nuevo mañana. ¿Qué haces primero? 😏',
+    opciones: ['📸 Story presumido', '💰 Lo revendo', '🙈 Se lo escondo a mi pareja', '👶 Lo cuido como un bebé']
   }
 };
 
@@ -80,14 +103,21 @@ const SLIDES = {
                  '¿Has visto un iPhone en Amazon…',
                  '…y pensaste…',
                  '"seguro aquí me sale MUCHO más barato" 🤑'
-               ], fotos:['producto-1.webp','producto-2.webp','producto-3.webp','producto-4.webp','producto-5.webp','producto-6.webp'] },
-  quitamiedo: { emoji:'🔥', kicker:'HOY', titulo:'Hoy le perdemos el miedo a importar.', texto:'Saca tu celular: durante toda la charla vas a jugar, aprender y ganar.' },
+               ], fotos:['producto-1.webp','producto-2.webp','producto-3.webp','producto-4.webp','producto-5.webp'] },
+  /* un slide normal puede llevar 'gif' o 'img' pequeña (reemplaza el emoji de arriba) */
+  quitamiedo: { gif:'tengo-miedo.mp4', titulo:'Hoy le perdemos el miedo a importar celulares de Estados Unidos para Colombia.', texto:'Ese miedo es normal… y hoy te vamos a demostrar que no hay nada que temer.' },
   /* 'galeria' = texto fijo a la IZQUIERDA + fotos/videos que pasan solos a la DERECHA.
      Pon los nombres de tus archivos dentro de 'fotos' (deben estar en la misma carpeta).
      Acepta imágenes (.webp/.jpg/.png) y videos (.mp4). Vacío [] = solo texto. */
-  historia:   { tipo:'galeria', emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo de importar.', texto:'Primeros paquetes, primeros errores, primeros clientes… +7 años después: miles de entregas.', fotos:['historia-1.webp','video1.mp4','historia-2.webp'] },
+  historia:   { tipo:'galeria', emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo… al principio.', texto:'Primeros paquetes, primeros errores, primeros clientes. Con el tiempo, estos fueron los resultados: +7 años importando y miles de entregas. 📦', fotos:['historia-1.webp','historia-vid-1.mp4','historia-2.webp','historia-vid-2.mp4','video1.mp4','historia-vid-3.mp4'] },
   diego:      { emoji:'🎤', kicker:'CON USTEDES', titulo:'DIEGO CELADA', texto:'La persona que les va a enseñar a importar celulares. 👏👏👏' },
-  oferta:     { emoji:'🎁', kicker:'SOLO HOY EN EXPOMOBILE', titulo:'5 LIBRAS GRATIS', texto:'Activa tu casillero en el stand de Celada Shopper y estrena tu primer envío. Cupos limitados a los asistentes de hoy.' }
+  /* 'oferta' = slide especial estilo $100M Offers: título + stack de valor + urgencia + CTA */
+  oferta:     { tipo:'oferta', kicker:'SOLO HOY EN EXPOMOBILE', titulo:'Estrena tu casillero con 5 LIBRAS GRATIS', bullets:[
+                 'Tu casillero en Estados Unidos — GRATIS',
+                 '5 libras de envío gratis en tu primer pedido',
+                 'Compramos por ti: sin tarjeta internacional',
+                 'Asesoría 1 a 1 para tu primera importación'
+               ], urgencia:'Cupos limitados · solo para los asistentes de hoy', cta:'Actívalo en el stand de Celada Shopper 👉' }
 };
 
 /* ============================================================
@@ -97,19 +127,22 @@ const SLIDES = {
    - Especiales: 'espera' (QR gigante) y 'final' (ranking)
 ============================================================ */
 const ESCALETA = [
-  { id:'slide:portada',    t:'🎬 Portada' },
-  { id:'espera',           t:'🏠 QR gigante: que entren al reto' },
+  { id:'espera',           t:'🏠 QR gigante: que entren al reto (PRIMERO)' },
+  { id:'slide:portada',    t:'🎬 Portada de la presentación' },
   { id:'slide:gancho',     t:'🎣 Gancho + precios USA (se reproduce solo)' },
   { id:'frenaste',         t:'📊 ENCUESTA: ¿quisiste comprar en USA y te frenaste?' },
   { id:'miedo',            t:'📊 ENCUESTA: ¿tu mayor miedo al importar?' },
   { id:'slide:quitamiedo', t:'🔥 "Hoy te quitamos el miedo"' },
   { id:'slide:historia',   t:'📦 Historia de Celada Shopper' },
+  { id:'slide:diego',      t:'🎤 Entrada de DIEGO (el guía que enseña)' },
   { id:'legal',            t:'🧠 QUIZ: "Importar es ilegal" → Mito' },
+  { id:'experto',          t:'🧠 QUIZ: "Solo para expertos" → Mito' },
   { id:'tarjeta',          t:'🧠 QUIZ: "Necesitas tarjeta internacional" → Mito' },
-  { id:'ahorro',           t:'🧠 QUIZ: ¿cuánto te ahorras? 💥' },
-  { id:'slide:diego',      t:'🎤 Entrada de DIEGO' },
-  { id:'tiempo',           t:'🧠 QUIZ: ¿cuánto tarda en llegar? (10-15 días)' },
+  { id:'imei',             t:'💎 QUIZ IMEI: cómo evitar que te lo bloqueen' },
+  { id:'personalidad',     t:'😜 ENCUESTA divertida: te llega un iPhone gratis…' },
   { id:'dian',             t:'🧠 QUIZ: "La DIAN lo retiene" → Mito' },
+  { id:'tiempo',           t:'🧠 QUIZ: ¿cuánto tarda? (10-15 días)' },
+  { id:'precio',           t:'💥 QUIZ DOBLE: precio del iPhone en USA' },
   { id:'traer',            t:'📊 ENCUESTA: ¿qué traerías primero?' },
   { id:'slide:oferta',     t:'🎁 Oferta: 5 libras gratis en el stand' },
   { id:'final',            t:'🏆 RANKING FINAL + premio celular' }

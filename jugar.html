@@ -4,16 +4,20 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Cómo importar celulares para dummies | Celada Shopper</title>
 <meta name="theme-color" content="#0c0c0e">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0c0c0e;--card:#17171c;--txt:#f6f6f8;--txt2:#a8a8b3;--line:#2a2a32;--acc:#ffb300;--gold:#ffc53d;--grad:linear-gradient(135deg,#ffd66b,#ffb300 45%,#ff8a00)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100svh;display:flex;flex-direction:column}
+body{background:radial-gradient(ellipse 90% 45% at 50% -5%,rgba(255,164,0,.10),transparent),var(--bg);color:var(--txt);font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-variant-numeric:tabular-nums;min-height:100svh;display:flex;flex-direction:column}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.top,main{position:relative;z-index:2}
 .top{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
 .top .marca{font-weight:800;font-size:.85rem;letter-spacing:.06em}
 .badge{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:100px;padding:6px 13px;font-size:.78rem;font-weight:700}
 .badge .pts{color:var(--gold)}
 main{flex:1;display:flex;flex-direction:column;justify-content:center;padding:22px;max-width:480px;margin:0 auto;width:100%}
-h1{font-size:1.7rem;line-height:1.15;letter-spacing:-.02em;margin-bottom:6px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
+h1{color:var(--gold);font-size:1.7rem;line-height:1.15;letter-spacing:-.02em;margin-bottom:6px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
 .sub{color:var(--txt2);font-size:.92rem;margin-bottom:22px}
 input{width:100%;padding:15px 16px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;color:var(--txt);font-size:1rem;margin-bottom:12px}
 input:focus{outline:none;border-color:var(--acc)}
@@ -24,17 +28,27 @@ input:focus{outline:none;border-color:var(--acc)}
 .op.eleg{border-color:var(--acc);background:rgba(255,179,0,.1)}
 .op.ok{border-color:#22c55e;background:rgba(34,197,94,.12)}
 .op.mal{border-color:#ef4444;background:rgba(239,68,68,.1)}
+.op:disabled{opacity:.55}
+.timer{height:7px;border-radius:100px;background:var(--card);border:1px solid var(--line);overflow:hidden;margin-bottom:16px}
+.timer .barra{height:100%;background:var(--grad);transform-origin:left}
+.jgal{position:relative;width:100%;aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:var(--card);border:1px solid var(--line);box-shadow:0 0 40px rgba(255,164,0,.15)}
+.jgal img,.jgal video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .6s}
+.jgal .on{opacity:1}
 .centro{text-align:center}
 .gigante{font-size:3.2rem;margin-bottom:10px}
 .nivel{display:inline-block;background:rgba(255,197,61,.12);border:1px solid rgba(255,197,61,.4);color:var(--gold);border-radius:100px;padding:8px 18px;font-weight:800;font-size:.9rem;margin-top:10px}
 .fb{margin-top:14px;font-weight:800;font-size:1.05rem;text-align:center}
 .fb.ok{color:#22c55e}.fb.mal{color:#ef4444}
+.dato{margin-top:10px;text-align:center;color:var(--gold);font-weight:700;font-size:.95rem;background:rgba(255,197,61,.1);border:1px solid rgba(255,197,61,.32);border-radius:12px;padding:11px 14px}
+.rerr{display:none;color:#ff6b6b;font-weight:700;font-size:.9rem;margin:-4px 0 12px;padding:0 2px}
+.mini{color:var(--txt2);font-size:.8rem;text-align:center;margin-top:12px}
 .rk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;justify-content:space-between;font-weight:700}
 .rk.yo{border-color:var(--acc);background:rgba(255,179,0,.08)}
 .pop{position:fixed;left:0;top:0;z-index:99;pointer-events:none;user-select:none}
 </style>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div class="top"><span class="marca" style="display:flex;align-items:center"><img src="logo.png" alt="Celada Shopper" style="height:34px;width:auto"></span><span class="badge" id="badge" style="display:none">⭐ <span class="pts" id="pts">0</span> pts</span></div>
 <main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -45,6 +59,8 @@ const app = document.getElementById('app');
 let yo = JSON.parse(localStorage.getItem('ic_yo')||'null');
 let contestadas = JSON.parse(localStorage.getItem('ic_resp')||'{}');
 let estadoActual = 'espera';
+let preguntaTimerJ = null;
+let galTimerJ = null;
 
 function burst(n, emo){
   for(let i=0;i<n;i++){
@@ -54,57 +70,85 @@ function burst(n, emo){
     p.animate([{transform:`translate(${x}px,${y}px) scale(.5)`,opacity:1},{transform:`translate(${x+Math.cos(a)*v}px,${y+Math.sin(a)*v}px) rotate(${(Math.random()-.5)*360}deg)`,opacity:0}],{duration:900,easing:'ease-out'}).onfinish=()=>p.remove();
   }
 }
+function vibra(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
 function nivel(p){ return p>=300?'🏆 Importador PRO':p>=100?'📦 Importador':'🟢 Novato'; }
 function pintaPts(){ document.getElementById('badge').style.display='flex'; document.getElementById('pts').textContent = yo.puntos; }
 
 function vRegistro(){
   app.innerHTML = `<div style="text-align:center;margin-bottom:20px"><img src="logo.png" alt="Celada Shopper" style="height:62px;width:auto"></div>
-  <h1 style="font-size:1.9rem">Cómo importar celulares<br>para dummies</h1><p class="sub">¿Serás capaz de convertirte en importador en 30 minutos? Regístrate y juega 🎮</p>
+  <h1 style="font-size:1.9rem">Cómo importar celulares<br>para dummies</h1><p class="sub">Juega, gana puntos y compite por un <b style="color:var(--gold)">celular gratis</b> 🎮</p>
   <input id="rn" placeholder="Tu nombre" autocomplete="name">
   <input id="rw" placeholder="Tu WhatsApp" inputmode="tel" autocomplete="tel">
-  <button class="btn" id="rb">🚀 Entrar al reto</button>`;
+  <div id="rerr" class="rerr"></div>
+  <button class="btn" id="rb">🚀 Entrar al reto</button>
+  <p class="mini">🔒 Solo para tu asesoría. Nada de spam.</p>`;
+  const err = document.getElementById('rerr');
+  function showErr(m){ err.textContent=m; err.style.display='block'; }
   document.getElementById('rb').onclick = async function(){
     const n=document.getElementById('rn').value.trim(), w=document.getElementById('rw').value.replace(/\D/g,'');
-    if(n.length<2 || w.length<10){ alert('Escribe tu nombre y WhatsApp'); return; }
+    err.style.display='none';
+    if(n.length<2){ showErr('Escribe tu nombre 🙂'); document.getElementById('rn').focus(); return; }
+    if(w.length<10){ showErr('Escribe tu WhatsApp (10 dígitos) 📱'); document.getElementById('rw').focus(); return; }
     this.disabled=true; this.textContent='Entrando...';
     const { data, error } = await sb.from('ic_participantes').insert({nombre:n,whatsapp:w}).select().single();
-    if(error){ alert('Error, intenta de nuevo'); this.disabled=false; this.textContent='🚀 Entrar al reto'; return; }
+    if(error){ showErr('No se pudo registrar. Revisa tu conexión e intenta de nuevo.'); this.disabled=false; this.textContent='🚀 Entrar al reto'; return; }
     yo = data; localStorage.setItem('ic_yo', JSON.stringify(yo));
     burst(14,'🎉'); pintaPts(); render();
   };
 }
 function vEspera(){
-  app.innerHTML = `<div class="centro"><div class="gigante">🎮</div><h1 style="margin:0 auto">¡Estás dentro, ${yo.nombre.split(' ')[0]}!</h1>
-  <p class="sub" style="margin-top:8px">Atento a la pantalla. Cuando arranque la primera pregunta, aparecerá aquí.</p>
+  app.innerHTML = `<div class="centro" style="width:100%">
+  <img src="portada-show.webp" alt="Cómo importar celulares para dummies" style="width:100%;border-radius:16px;box-shadow:0 0 44px rgba(255,164,0,.22);margin-bottom:16px">
+  <h1 style="margin:0 auto;font-size:1.45rem">¡Estás dentro, ${yo.nombre.split(' ')[0]}! 🎉</h1>
+  <p class="sub" style="margin-top:8px">Ya quedaste en el reto. Cuando arranque la primera pregunta, aparecerá aquí. 👀</p>
   <span class="nivel">${nivel(yo.puntos)} · ${yo.puntos} pts</span></div>`;
 }
 function vPregunta(id){
   const q = IX[id];
-  if(contestadas[id]){ vEspera(); return; }
-  app.innerHTML = `<p class="sub" style="margin-bottom:8px">${q.tipo==='quiz'?'🧠 Quiz · '+q.puntos+' pts':'📊 Encuesta · '+q.puntos+' pts'}</p>
+  if(contestadas[id]!==undefined){ vEspera(); return; }
+  app.innerHTML = `${TIEMPO_PREGUNTA>0 ? '<div class="timer" id="timerJ"><div class="barra" id="timerBarJ"></div></div>' : ''}<p class="sub" style="margin-bottom:8px">${q.tipo==='quiz'?'🧠 Quiz · '+q.puntos+' pts':'📊 Encuesta · '+q.puntos+' pts'}</p>
   <h1 style="font-size:1.4rem;-webkit-text-fill-color:var(--txt);background:none">${q.pregunta}</h1>
   <div style="margin-top:18px" id="ops">${q.opciones.map((o,i)=>`<button class="op" data-i="${i}">${o}</button>`).join('')}</div><div id="fb"></div>`;
+  vibra([70,50,70]);
   document.querySelectorAll('.op').forEach(function(b){
     b.onclick = async function(){
-      if(contestadas[id]) return;
+      if(contestadas[id]!==undefined) return;
       const i = +b.dataset.i;
+      if(preguntaTimerJ){ clearTimeout(preguntaTimerJ); preguntaTimerJ=null; }
       contestadas[id] = i; localStorage.setItem('ic_resp', JSON.stringify(contestadas));
       document.querySelectorAll('.op').forEach(x=>x.disabled=true);
       let gana = q.puntos, ok = true, msg = '+'+q.puntos+' pts por participar 🎉';
       if(q.tipo==='quiz'){
         ok = i===q.correcta;
-        gana = ok? q.puntos : 0;
+        gana = ok? q.puntos : 25;
         b.classList.add(ok?'ok':'mal');
         document.querySelector('.op[data-i="'+q.correcta+'"]').classList.add('ok');
-        msg = ok? '¡Correcto! +'+q.puntos+' pts 🔥' : 'Casi... la respuesta era otra 😅';
+        msg = ok? '¡Correcto! +'+q.puntos+' pts 🔥' : 'Casi... ¡pero igual +25 pts! 😅';
       } else { b.classList.add('eleg'); }
-      document.getElementById('fb').innerHTML = '<div class="fb '+(ok?'ok':'mal')+'">'+msg+'</div>';
+      vibra(ok ? [30,45,130] : 70);
+      document.getElementById('fb').innerHTML = '<div class="fb '+(ok?'ok':'mal')+'">'+msg+'</div>'
+        + (q.tipo==='quiz' && q.dato ? '<div class="dato">💡 '+q.dato+'</div>' : '');
       if(gana>0){ burst(12, ok?'⭐':'🎉'); }
       await sb.from('ic_respuestas').insert({participante_id:yo.id, interaccion:id, respuesta:String(i), puntos:gana});
       if(gana>0){ yo.puntos += gana; localStorage.setItem('ic_yo', JSON.stringify(yo)); pintaPts();
         await sb.from('ic_participantes').update({puntos:yo.puntos}).eq('id',yo.id); }
     };
   });
+  if(TIEMPO_PREGUNTA>0) arrancaTimerJ(id, q);
+}
+function arrancaTimerJ(id, q){
+  const bar=document.getElementById('timerBarJ');
+  if(!bar) return;
+  bar.style.transform='scaleX(1)';
+  requestAnimationFrame(function(){ bar.style.transition='transform '+TIEMPO_PREGUNTA+'s linear'; bar.style.transform='scaleX(0)'; });
+  preguntaTimerJ=setTimeout(function(){
+    if(contestadas[id]!==undefined) return;
+    document.querySelectorAll('.op').forEach(x=>x.disabled=true);
+    vibra([120,60,120]);
+    contestadas[id]=-1; localStorage.setItem('ic_resp', JSON.stringify(contestadas));
+    const fb=document.getElementById('fb');
+    if(fb) fb.innerHTML='<div class="fb mal">⏱️ ¡Se acabó el tiempo!</div>'+(q.tipo==='quiz'&&q.dato?'<div class="dato">💡 '+q.dato+'</div>':'');
+  }, TIEMPO_PREGUNTA*1000);
 }
 async function vFinal(){
   const { data } = await sb.from('ic_participantes').select('nombre,puntos').order('puntos',{ascending:false}).limit(10);
@@ -118,6 +162,8 @@ async function vFinal(){
 }
 function render(){
   const top=document.querySelector('.top');
+  if(preguntaTimerJ){ clearTimeout(preguntaTimerJ); preguntaTimerJ=null; }
+  if(galTimerJ){ clearInterval(galTimerJ); galTimerJ=null; }
   if(!yo){ if(top) top.style.display='none'; vRegistro(); return; }
   if(top) top.style.display='flex';
   pintaPts();
@@ -125,7 +171,23 @@ function render(){
   if(e==='espera'){ vEspera(); }
   else if(e==='final'){ vFinal(); }
   else if(e.startsWith('slide:')){
-    app.innerHTML = '<div class="centro"><div class="gigante">👀</div><h1 style="margin:0 auto">Mira la pantalla</h1><p class="sub" style="margin-top:8px">Atento, en cualquier momento llega la siguiente pregunta…</p><span class="nivel">'+nivel(yo.puntos)+' · '+yo.puntos+' pts</span></div>';
+    const sname = e.slice(6).split('.')[0];
+    const s = (typeof SLIDES!=='undefined') ? SLIDES[sname] : null;
+    if(s && s.fotos && s.fotos.length){
+      app.innerHTML = '<div class="centro" style="width:100%"><div class="jgal" id="jgal">'+s.fotos.map(function(f,i){
+        if(/\.(mp4|webm|mov)$/i.test(f)) return '<video src="'+f+'" class="'+(i===0?'on':'')+'" muted playsinline loop></video>';
+        return '<img src="'+f+'" alt="" class="'+(i===0?'on':'')+'">';
+      }).join('')+'</div><p class="sub" style="margin-top:12px">👀 Míralo también en la pantalla grande</p></div>';
+      const items = document.querySelectorAll('#jgal img, #jgal video');
+      const v0=items[0]; if(v0 && v0.tagName==='VIDEO') v0.play().catch(function(){});
+      if(items.length>1){ let gi=0; galTimerJ=setInterval(function(){
+        items[gi].classList.remove('on'); if(items[gi].tagName==='VIDEO') items[gi].pause();
+        gi=(gi+1)%items.length; const el=items[gi]; el.classList.add('on');
+        if(el.tagName==='VIDEO'){ el.currentTime=0; el.play().catch(function(){}); }
+      }, GAL_MS); }
+    } else {
+      app.innerHTML = '<div class="centro"><div class="gigante">👀</div><h1 style="margin:0 auto">Mira la pantalla</h1><p class="sub" style="margin-top:8px">Atento, en cualquier momento llega la siguiente pregunta…</p><span class="nivel">'+nivel(yo.puntos)+' · '+yo.puntos+' pts</span></div>';
+    }
   }
   else if(IX[e]){ vPregunta(e); }
   else { vEspera(); }
