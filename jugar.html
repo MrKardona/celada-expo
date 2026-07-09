@@ -35,7 +35,8 @@ input:focus{outline:none;border-color:var(--acc)}
 .jgal img,.jgal video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .6s}
 .jgal .on{opacity:1}
 .jlogos{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%}
-.jchip{background:var(--card);border:1px solid var(--line);border-radius:14px;height:88px;display:flex;align-items:center;justify-content:center;padding:14px}
+.jchip{background:var(--card);border:1px solid var(--line);border-radius:14px;height:88px;display:flex;align-items:center;justify-content:center;padding:14px;cursor:pointer}
+.jchip:active{border-color:var(--acc);background:rgba(255,179,0,.08)}
 .jchip img{max-width:100%;max-height:100%;object-fit:contain}
 .centro{text-align:center}
 .gigante{font-size:3.2rem;margin-bottom:10px}
@@ -64,6 +65,7 @@ let contestadas = JSON.parse(localStorage.getItem('ic_resp')||'{}');
 let estadoActual = 'espera';
 let preguntaTimerJ = null;
 let galTimerJ = null;
+let pushCanal = null;
 
 function burst(n, emo){
   for(let i=0;i<n;i++){
@@ -182,9 +184,17 @@ function render(){
     const s = (typeof SLIDES!=='undefined') ? SLIDES[sname] : null;
     if(s && s.tipo==='logos' && s.fotos && s.fotos.length){
       app.innerHTML = '<div class="centro" style="width:100%">'
-        + (s.titulo ? '<h1 style="margin:0 auto 14px;font-size:1.35rem;text-align:center">'+s.titulo+'</h1>' : '')
+        + (s.titulo ? '<h1 style="margin:0 auto 10px;font-size:1.35rem;text-align:center">'+s.titulo+'</h1>' : '')
+        + '<p class="sub" style="margin-bottom:14px">👆 Toca tu tienda favorita</p>'
         + '<div class="jlogos">'+s.fotos.map(function(f){ return '<div class="jchip"><img src="'+f+'" alt=""></div>'; }).join('')+'</div></div>';
       const jc=Array.prototype.slice.call(document.querySelectorAll('.jchip'));
+      jc.forEach(function(c){
+        c.onclick=function(){
+          vibra(35);
+          if(c.animate) c.animate([{transform:'scale(1)'},{transform:'scale(1.14)'},{transform:'scale(1)'}],{duration:320,easing:'ease-out'});
+          if(pushCanal) pushCanal.send({type:'broadcast',event:'push',payload:{nombre: yo.nombre.split(' ')[0]}});
+        };
+      });
       const jo=jc.map(function(_,i){ return i; });
       for(let i=jo.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=jo[i]; jo[i]=jo[j]; jo[j]=t; }
       jo.forEach(function(idx,pos){ const el=jc[idx]; if(el&&el.animate) el.animate([{opacity:0,transform:'scale(.5)'},{opacity:1,transform:'none'}],{duration:500,delay:pos*200,easing:'cubic-bezier(.22,1.5,.36,1)',fill:'backwards'}); });
@@ -262,6 +272,7 @@ async function init(){
       ],{duration:d,delay:Math.random()*600,easing:'ease-in',fill:'backwards'}).onfinish=()=>p.remove();
     }
   }).subscribe();
+  pushCanal = sb.channel('push'); pushCanal.subscribe();
 }
 init();
 </script>

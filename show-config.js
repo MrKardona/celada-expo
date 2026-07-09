@@ -83,6 +83,11 @@ const IX = {
     tipo: 'encuesta', puntos: 50,
     pregunta: 'Te llega un iPhone nuevo mañana. ¿Qué haces primero? 😏',
     opciones: ['📸 Story presumido', '💰 Lo revendo', '🙈 Se lo escondo a mi pareja', '👶 Lo cuido como un bebé']
+  },
+  dondepoll: {
+    tipo: 'encuesta', puntos: 25,
+    pregunta: '¿Dónde comprarías tú?',
+    opciones: ['🛒 Amazon', '🏷️ eBay', '🤝 Swappa', '🍏 Apple', '♻️ Back Market', '🏭 Mayoristas']
   }
 };
 
@@ -142,6 +147,7 @@ const ESCALETA = [
   { id:'slide:aprendimos', t:'🚀 Con el tiempo aprendimos a hacerlo (fotos/videos)' },
   { id:'slide:diego',      t:'🎤 Entrada de DIEGO (el guía que enseña)' },
   { id:'slide:dondecomprar', t:'🛒 Dónde comprar en USA (logos)' },
+  { id:'dondepoll',        t:'📊 ENCUESTA: ¿dónde comprarías tú? (resultados en vivo)' },
   { id:'legal',            t:'🧠 QUIZ: "Importar es ilegal" → Mito' },
   { id:'experto',          t:'🧠 QUIZ: "Solo para expertos" → Mito' },
   { id:'tarjeta',          t:'🧠 QUIZ: "Necesitas tarjeta internacional" → Mito' },
