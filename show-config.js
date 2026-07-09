@@ -88,6 +88,15 @@ const IX = {
     tipo: 'encuesta', puntos: 25,
     pregunta: '¿Dónde comprarías tú?',
     opciones: ['🛒 Amazon', '🏷️ eBay', '🤝 Swappa', '🍏 Apple', '♻️ Back Market', '🏭 Mayoristas']
+  },
+  /* quiz con IMÁGENES: imgsPantalla = las que ve el público (con precio); imgsCelular = las que toca el usuario */
+  comprarias: {
+    tipo: 'quiz', puntos: 100, correcta: 2,
+    pregunta: '¿Cuál de estos celulares comprarías?',
+    opciones: ['iPhone 14 Pro Max', 'iPhone 13 Pro Max', 'iPhone 15 Pro Max'],
+    imgsPantalla: ['comprar-p1.webp','comprar-p2.webp','comprar-p3.webp'],
+    imgsCelular: ['comprar-c1.webp','comprar-c2.webp','comprar-c3.webp'],
+    dato: 'El iPhone 15 Pro Max: lo más nuevo, mejor cámara y mejor reventa.'
   }
 };
 
@@ -148,6 +157,7 @@ const ESCALETA = [
   { id:'slide:diego',      t:'🎤 Entrada de DIEGO (el guía que enseña)' },
   { id:'slide:dondecomprar', t:'🛒 Dónde comprar en USA (logos)' },
   { id:'dondepoll',        t:'📊 ENCUESTA: ¿dónde comprarías tú? (resultados en vivo)' },
+  { id:'comprarias',       t:'📱 QUIZ visual: ¿cuál celular comprarías? (15 Pro Max)' },
   { id:'legal',            t:'🧠 QUIZ: "Importar es ilegal" → Mito' },
   { id:'experto',          t:'🧠 QUIZ: "Solo para expertos" → Mito' },
   { id:'tarjeta',          t:'🧠 QUIZ: "Necesitas tarjeta internacional" → Mito' },
