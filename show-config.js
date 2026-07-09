@@ -12,6 +12,7 @@ const URL_JUGAR = 'https://expo.celadashopper.com/jugar.html';
 const GAL_MS = 3200;   /* ⏱️ milisegundos que dura cada foto en la galería de historia (3200 = 3,2s) */
 const FRASE_MS = 2200; /* ⏱️ milisegundos entre cada frase del gancho animado antes del carrusel de productos */
 const TIEMPO_PREGUNTA = 30; /* ⏱️ segundos del temporizador de cada pregunta (0 = sin temporizador) */
+const QUIZ_IMG_MS = 7000;   /* ⏱️ milisegundos que dura cada imagen grande en el quiz visual (7000 = 7s) */
 
 /* ============================================================
    🧠 PREGUNTAS (quiz = tiene respuesta correcta y da puntos;
