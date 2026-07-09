@@ -102,6 +102,18 @@ h1{color:var(--gold);font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line
 .of-urg{background:rgba(255,179,0,.14);border:1px solid rgba(255,179,0,.45);color:var(--gold);font-weight:800;font-size:clamp(1rem,1.8vw,1.35rem);padding:12px 28px;border-radius:100px;margin-bottom:22px}
 .of-cta{font-size:clamp(1.3rem,2.6vw,2rem);font-weight:900;color:var(--txt)}
 .sl-gif{width:min(400px,72vw);border-radius:20px;margin-bottom:24px;box-shadow:0 18px 55px rgba(0,0,0,.55)}
+/* ── Presentación del presentador (luces + nombre) ── */
+.presenta{position:relative;width:min(1100px,92vw);display:flex;flex-direction:column;align-items:center;text-align:center}
+.pr-kick{letter-spacing:.24em;font-weight:800;font-size:clamp(1rem,1.6vw,1.3rem);text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.pr-name{font-size:clamp(3rem,8vw,6.5rem);font-weight:900;line-height:1;letter-spacing:-.02em;color:var(--txt);background:linear-gradient(90deg,#ffffff 20%,#ffd66b 50%,#ffffff 80%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:brillo 3s linear infinite;margin-bottom:16px}
+.pr-sub{color:var(--txt2);font-size:clamp(1.1rem,1.8vw,1.5rem);max-width:720px;margin-bottom:26px}
+.pr-media{width:min(420px,70vw);border-radius:20px;box-shadow:0 0 70px rgba(255,179,0,.4)}
+.luces{position:absolute;left:0;right:0;top:-25%;bottom:0;z-index:-1;pointer-events:none;overflow:visible}
+.luces span{position:absolute;top:-30%;width:22%;height:170%;filter:blur(55px);opacity:.55;transform-origin:top center;mix-blend-mode:screen}
+.luces span:nth-child(1){left:10%;background:linear-gradient(180deg,rgba(255,179,0,.7),transparent 72%);animation:barrer 5s ease-in-out infinite}
+.luces span:nth-child(2){left:42%;background:linear-gradient(180deg,rgba(255,120,0,.6),transparent 72%);animation:barrer 6.5s ease-in-out infinite reverse}
+.luces span:nth-child(3){left:72%;background:linear-gradient(180deg,rgba(255,214,107,.6),transparent 72%);animation:barrer 5.8s ease-in-out infinite}
+@keyframes barrer{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
 .slide{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:min(1100px,92vw);margin:0 auto}
 .slide h1{text-align:center}
 .slide .sub{text-align:center}
@@ -291,6 +303,21 @@ function vSlide(id){
     }
     function avanzar(){ gi=(gi+1)%items.length; mostrar(gi); }
     mostrar(0);
+    return;
+  }
+  if(s.tipo === 'presenta'){
+    app.innerHTML = `<div class="presenta">
+      <div class="luces" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="pr-kick">🎤 ${s.kicker||''}</div>
+      <h1 class="pr-name">${s.titulo||''}</h1>
+      ${s.texto ? '<p class="pr-sub">'+s.texto+'</p>' : ''}
+      ${s.gif ? '<video src="'+s.gif+'" class="pr-media" autoplay loop muted playsinline></video>' : ''}
+    </div>`;
+    [['.pr-kick',0],['.pr-name',180],['.pr-sub',440],['.pr-media',640]].forEach(function(par){
+      const el=document.querySelector(par[0]);
+      if(el&&el.animate) el.animate([{opacity:0,transform:'translateY(34px) scale(.95)'},{opacity:1,transform:'none'}],{duration:680,delay:par[1],easing:'cubic-bezier(.22,1.3,.36,1)',fill:'backwards'});
+    });
+    setTimeout(function(){ burst(34,'👏'); }, 480);
     return;
   }
   if(s.tipo === 'oferta'){

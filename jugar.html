@@ -200,9 +200,11 @@ function render(){
       const media = /\.(mp4|webm|mov)$/i.test(m)
         ? '<video src="'+m+'" autoplay loop muted playsinline style="width:100%;border-radius:16px"></video>'
         : '<img src="'+m+'" alt="" style="width:100%;border-radius:16px">';
-      app.innerHTML = '<div class="centro" style="width:100%">'+media
-        + (s.titulo ? '<h1 style="margin:14px auto 0;font-size:1.3rem;text-align:center">'+s.titulo+'</h1>' : '')
-        + (s.texto ? '<p class="sub" style="margin-top:8px">'+s.texto+'</p>' : '')
+      app.innerHTML = '<div class="centro" style="width:100%">'
+        + (s.kicker ? '<div class="sub" style="letter-spacing:.18em;font-weight:800;text-transform:uppercase;color:var(--gold);font-size:.85rem;margin-bottom:8px">'+s.kicker+'</div>' : '')
+        + (s.titulo ? '<h1 style="margin:0 auto 6px;font-size:1.5rem;text-align:center">'+s.titulo+'</h1>' : '')
+        + (s.texto ? '<p class="sub" style="margin-bottom:16px">'+s.texto+'</p>' : '')
+        + media
         + '</div>';
       const v=document.querySelector('.centro video'); if(v) v.play().catch(function(){});
     } else {

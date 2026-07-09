@@ -112,7 +112,8 @@ const SLIDES = {
      Acepta imágenes (.webp/.jpg/.png) y videos (.mp4). Vacío [] = solo texto. */
   historia:   { tipo:'galeria', emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo… al principio.', texto:'Primeros paquetes, primeros errores, primeros clientes. Con el tiempo, estos fueron los resultados: +7 años importando y miles de entregas. 📦', fotos:['historia-1.webp','video1.mp4','historia-2.webp'] },
   aprendimos: { tipo:'galeria', emoji:'🚀', kicker:'CON EL TIEMPO', titulo:'Con el paso del tiempo, aprendimos poco a poco cómo hacerlo.', texto:'', fotos:['historia-vid-1.mp4','historia-vid-2.mp4','historia-vid-3.mp4'] },
-  diego:      { gif:'aplausos.mp4', kicker:'CON USTEDES', titulo:'DIEGO CELADA', texto:'La persona que les va a enseñar a importar celulares. 👏👏👏' },
+  /* 'presenta' = slide de presentación del presentador: nombre grande arriba, video (aplausos) abajo, luces de escenario animadas */
+  diego:      { tipo:'presenta', gif:'aplausos.mp4', kicker:'CON USTEDES', titulo:'DIEGO CELADA', texto:'La persona que les va a enseñar a importar celulares.' },
   /* 'oferta' = slide especial estilo $100M Offers: título + stack de valor + urgencia + CTA */
   oferta:     { tipo:'oferta', kicker:'SOLO HOY EN EXPOMOBILE', titulo:'Estrena tu casillero con 5 LIBRAS GRATIS', bullets:[
                  'Tu casillero en Estados Unidos — GRATIS',
