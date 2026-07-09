@@ -76,6 +76,7 @@ function burst(n, emo){
   }
 }
 function vibra(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
+function colorDe(str){ str=String(str||''); let h=0; for(let i=0;i<str.length;i++){ h=str.charCodeAt(i)+((h<<5)-h); } return 'hsl('+(Math.abs(h)%360)+' 85% 62%)'; }
 function nivel(p){ return p>=300?'🏆 Importador PRO':p>=100?'📦 Importador':'🟢 Novato'; }
 function pintaPts(){ document.getElementById('badge').style.display='flex'; document.getElementById('pts').textContent = yo.puntos; }
 
@@ -192,7 +193,7 @@ function render(){
         c.onclick=function(){
           vibra(35);
           if(c.animate) c.animate([{transform:'scale(1)'},{transform:'scale(1.14)'},{transform:'scale(1)'}],{duration:320,easing:'ease-out'});
-          if(pushCanal) pushCanal.send({type:'broadcast',event:'push',payload:{nombre: yo.nombre.split(' ')[0]}});
+          if(pushCanal) pushCanal.send({type:'broadcast',event:'push',payload:{nombre: yo.nombre.split(' ')[0], color: colorDe(yo.id||yo.nombre)}});
         };
       });
       const jo=jc.map(function(_,i){ return i; });

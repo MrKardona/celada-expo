@@ -452,12 +452,13 @@ async function init(){
   /* efectos lanzados desde el panel (no cambian la diapositiva actual) */
   sb.channel('fx').on('broadcast',{event:'fx'},function(m){ lluvia(m.payload && m.payload.emo || '🙋', 44); }).subscribe();
   sb.channel('push').on('broadcast',{event:'push'},function(m){
-    if(estado.replace(/^rev:/,'')==='slide:dondecomprar') burbuja((m.payload && m.payload.nombre) || 'Alguien', (m.payload && m.payload.emoji) || '');
+    if(estado.replace(/^rev:/,'')==='slide:dondecomprar') burbuja((m.payload && m.payload.nombre) || 'Alguien', (m.payload && m.payload.color));
   }).subscribe();
 }
-function burbuja(nombre, emoji){
+function burbuja(nombre, color){
   const b=document.createElement('div'); b.className='burbuja';
-  b.textContent=(emoji?emoji+' ':'')+nombre;
+  b.textContent=nombre;
+  if(color){ b.style.background=color; b.style.color='#141414'; }
   b.style.left=(6+Math.random()*76)+'vw';
   document.body.appendChild(b);
   b.animate([
