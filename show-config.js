@@ -23,8 +23,8 @@ const TIEMPO_PREGUNTA = 30; /* ⏱️ segundos del temporizador de cada pregunta
 const IX = {
   frenaste: {
     tipo: 'encuesta', puntos: 50,
-    pregunta: '¿Alguna vez quisiste comprar teléfonos en USA y no lo hiciste por miedo a que algo saliera mal?',
-    opciones: ['🙋 Sí, el miedo me frenó', '📦 Traigo pocas unidades', '😎 Ya tengo experiencia', '🚀 Es mi primera vez']
+    pregunta: '¿Alguna vez quisiste comprar teléfonos en el exterior?',
+    opciones: ['🙋 Sí, pero me dio miedo', '💭 Sí, pero no supe cómo', '😎 Sí, y ya lo hago', '🚀 Nunca, pero quiero']
   },
   miedo: {
     tipo: 'encuesta', puntos: 50,
