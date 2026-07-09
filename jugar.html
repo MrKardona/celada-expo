@@ -115,7 +115,7 @@ function vEspera(){
 function vPregunta(id){
   const q = IX[id];
   if(contestadas[id]!==undefined){ vEspera(); return; }
-  app.innerHTML = `${TIEMPO_PREGUNTA>0 ? '<div class="timer" id="timerJ"><div class="barra" id="timerBarJ"></div></div>' : ''}<p class="sub" style="margin-bottom:8px">${q.tipo==='quiz'?'🧠 Quiz · '+q.puntos+' pts':'📊 Encuesta · '+q.puntos+' pts'}</p>
+  app.innerHTML = `${(TIEMPO_PREGUNTA>0 && !q.sinTimer) ? '<div class="timer" id="timerJ"><div class="barra" id="timerBarJ"></div></div>' : ''}<p class="sub" style="margin-bottom:8px">${q.tipo==='quiz'?'🧠 Quiz · '+q.puntos+' pts':'📊 Encuesta · '+q.puntos+' pts'}</p>
   <h1 style="font-size:1.4rem;-webkit-text-fill-color:var(--txt);background:none">${q.pregunta}</h1>
   <div style="margin-top:18px" id="ops">${q.opciones.map(function(o,i){ return q.imgsCelular ? '<button class="op op-img" data-i="'+i+'"><img src="'+q.imgsCelular[i]+'" alt=""><span>'+o+'</span></button>' : '<button class="op" data-i="'+i+'">'+o+'</button>'; }).join('')}</div><div id="fb"></div>`;
   vibra([70,50,70]);
@@ -147,7 +147,7 @@ function vPregunta(id){
         await sb.from('ic_participantes').update({puntos:yo.puntos}).eq('id',yo.id); }
     };
   });
-  if(TIEMPO_PREGUNTA>0) arrancaTimerJ(id, q);
+  if(TIEMPO_PREGUNTA>0 && !q.sinTimer) arrancaTimerJ(id, q);
 }
 function arrancaTimerJ(id, q){
   const bar=document.getElementById('timerBarJ');

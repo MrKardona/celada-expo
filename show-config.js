@@ -91,7 +91,7 @@ const IX = {
   },
   /* quiz con IMÁGENES: imgsPantalla = las que ve el público (con precio); imgsCelular = las que toca el usuario */
   comprarias: {
-    tipo: 'quiz', puntos: 100, correcta: 2,
+    tipo: 'quiz', puntos: 100, correcta: 2, sinTimer: true,
     pregunta: '¿Cuál de estos celulares comprarías?',
     opciones: ['iPhone 14 Pro Max', 'iPhone 13 Pro Max', 'iPhone 15 Pro Max'],
     imgsPantalla: ['comprar-p1.webp','comprar-p2.webp','comprar-p3.webp'],
