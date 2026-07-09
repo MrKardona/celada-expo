@@ -185,8 +185,9 @@ function render(){
         var jshow=function(k){
           items.forEach(function(el){ el.classList.remove('on'); if(el.tagName==='VIDEO') el.pause(); });
           const el=items[k]; el.classList.add('on');
-          if(el.tagName==='VIDEO'){ el.currentTime=0; el.onended=function(){ gi=(gi+1)%items.length; jshow(gi); }; el.play().catch(function(){ galTimerJ=setTimeout(function(){ gi=(gi+1)%items.length; jshow(gi); }, GAL_MS); }); }
-          else { galTimerJ=setTimeout(function(){ gi=(gi+1)%items.length; jshow(gi); }, GAL_MS); }
+          const avanza=function(){ if(galTimerJ){ clearTimeout(galTimerJ); galTimerJ=null; } gi=(gi+1)%items.length; jshow(gi); };
+          if(el.tagName==='VIDEO'){ el.currentTime=0; el.onended=avanza; galTimerJ=setTimeout(avanza, 20000); el.play().catch(function(){}); }
+          else { galTimerJ=setTimeout(avanza, GAL_MS); }
         };
         jshow(0);
       }
