@@ -34,6 +34,9 @@ input:focus{outline:none;border-color:var(--acc)}
 .jgal{position:relative;width:100%;aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:var(--card);border:1px solid var(--line);box-shadow:0 0 40px rgba(255,164,0,.15)}
 .jgal img,.jgal video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .6s}
 .jgal .on{opacity:1}
+.jlogos{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%}
+.jchip{background:var(--card);border:1px solid var(--line);border-radius:14px;height:88px;display:flex;align-items:center;justify-content:center;padding:14px}
+.jchip img{max-width:100%;max-height:100%;object-fit:contain}
 .centro{text-align:center}
 .gigante{font-size:3.2rem;margin-bottom:10px}
 .nivel{display:inline-block;background:rgba(255,197,61,.12);border:1px solid rgba(255,197,61,.4);color:var(--gold);border-radius:100px;padding:8px 18px;font-weight:800;font-size:.9rem;margin-top:10px}
@@ -177,7 +180,16 @@ function render(){
   else if(e.startsWith('slide:')){
     const sname = e.slice(6).split('.')[0];
     const s = (typeof SLIDES!=='undefined') ? SLIDES[sname] : null;
-    if(s && s.fotos && s.fotos.length){
+    if(s && s.tipo==='logos' && s.fotos && s.fotos.length){
+      app.innerHTML = '<div class="centro" style="width:100%">'
+        + (s.titulo ? '<h1 style="margin:0 auto 14px;font-size:1.35rem;text-align:center">'+s.titulo+'</h1>' : '')
+        + '<div class="jlogos">'+s.fotos.map(function(f){ return '<div class="jchip"><img src="'+f+'" alt=""></div>'; }).join('')+'</div></div>';
+      const jc=Array.prototype.slice.call(document.querySelectorAll('.jchip'));
+      const jo=jc.map(function(_,i){ return i; });
+      for(let i=jo.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=jo[i]; jo[i]=jo[j]; jo[j]=t; }
+      jo.forEach(function(idx,pos){ const el=jc[idx]; if(el&&el.animate) el.animate([{opacity:0,transform:'scale(.5)'},{opacity:1,transform:'none'}],{duration:500,delay:pos*200,easing:'cubic-bezier(.22,1.5,.36,1)',fill:'backwards'}); });
+    }
+    else if(s && s.fotos && s.fotos.length){
       app.innerHTML = '<div class="centro" style="width:100%"><div class="jgal" id="jgal">'+s.fotos.map(function(f,i){
         if(/\.(mp4|webm|mov)$/i.test(f)) return '<video src="'+f+'" class="'+(i===0?'on':'')+'" muted playsinline loop></video>';
         return '<img src="'+f+'" alt="" class="'+(i===0?'on':'')+'">';

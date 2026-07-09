@@ -114,6 +114,8 @@ const SLIDES = {
   aprendimos: { tipo:'galeria', emoji:'🚀', kicker:'CON EL TIEMPO', titulo:'Con el paso del tiempo, aprendimos poco a poco cómo hacerlo.', texto:'', fotos:['historia-vid-1.mp4','historia-vid-2.mp4','historia-vid-3.mp4'] },
   /* 'presenta' = slide de presentación del presentador: nombre grande arriba, video (aplausos) abajo, luces de escenario animadas */
   diego:      { tipo:'presenta', gif:'aplausos.mp4', kicker:'CON USTEDES', titulo:'DIEGO CELADA', texto:'La persona que les va a enseñar a importar celulares.' },
+  /* 'logos' = grilla de logos que aparecen en orden aleatorio con animación (también en el celular) */
+  dondecomprar: { tipo:'logos', kicker:'DÓNDE COMPRAR', titulo:'¿Dónde comprar en Estados Unidos?', texto:'Las tiendas donde conseguimos todo por ti.', fotos:['logo-1.webp','logo-2.webp','logo-3.webp','logo-4.webp','logo-5.webp','logo-6.webp'] },
   /* 'oferta' = slide especial estilo $100M Offers: título + stack de valor + urgencia + CTA */
   oferta:     { tipo:'oferta', kicker:'SOLO HOY EN EXPOMOBILE', titulo:'Estrena tu casillero con 5 LIBRAS GRATIS', bullets:[
                  'Tu casillero en Estados Unidos — GRATIS',
@@ -139,6 +141,7 @@ const ESCALETA = [
   { id:'slide:historia',   t:'📦 Historia de Celada Shopper' },
   { id:'slide:aprendimos', t:'🚀 Con el tiempo aprendimos a hacerlo (fotos/videos)' },
   { id:'slide:diego',      t:'🎤 Entrada de DIEGO (el guía que enseña)' },
+  { id:'slide:dondecomprar', t:'🛒 Dónde comprar en USA (logos)' },
   { id:'legal',            t:'🧠 QUIZ: "Importar es ilegal" → Mito' },
   { id:'experto',          t:'🧠 QUIZ: "Solo para expertos" → Mito' },
   { id:'tarjeta',          t:'🧠 QUIZ: "Necesitas tarjeta internacional" → Mito' },

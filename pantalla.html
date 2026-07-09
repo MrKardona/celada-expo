@@ -114,6 +114,14 @@ h1{color:var(--gold);font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line
 .luces span:nth-child(2){left:42%;background:linear-gradient(180deg,rgba(255,120,0,.6),transparent 72%);animation:barrer 6.5s ease-in-out infinite reverse}
 .luces span:nth-child(3){left:72%;background:linear-gradient(180deg,rgba(255,214,107,.6),transparent 72%);animation:barrer 5.8s ease-in-out infinite}
 @keyframes barrer{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+/* ── Slide de logos (dónde comprar) ── */
+.logos-wrap{width:min(1200px,94vw);display:flex;flex-direction:column;align-items:center;text-align:center}
+.lg-kick{letter-spacing:.24em;font-weight:800;font-size:clamp(1rem,1.5vw,1.25rem);text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.lg-title{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.05;color:var(--txt);margin-bottom:8px}
+.lg-sub{color:var(--txt2);font-size:clamp(1.05rem,1.6vw,1.4rem);margin-bottom:34px}
+.logos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;width:100%}
+.logo-chip{background:var(--card);border:1px solid var(--line);border-radius:20px;height:clamp(120px,17vh,190px);display:flex;align-items:center;justify-content:center;padding:26px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.logo-chip img{max-width:100%;max-height:100%;object-fit:contain}
 .slide{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:min(1100px,92vw);margin:0 auto}
 .slide h1{text-align:center}
 .slide .sub{text-align:center}
@@ -303,6 +311,26 @@ function vSlide(id){
     }
     function avanzar(){ gi=(gi+1)%items.length; mostrar(gi); }
     mostrar(0);
+    return;
+  }
+  if(s.tipo === 'logos'){
+    app.innerHTML = `<div class="logos-wrap">
+      <div class="lg-kick">🇺🇸 ${s.kicker||''}</div>
+      <h1 class="lg-title">${s.titulo||''}</h1>
+      ${s.texto ? '<p class="lg-sub">'+s.texto+'</p>' : ''}
+      <div class="logos-grid">${(s.fotos||[]).map(function(f){ return '<div class="logo-chip"><img src="'+f+'" alt=""></div>'; }).join('')}</div>
+    </div>`;
+    [['.lg-kick',0],['.lg-title',150],['.lg-sub',350]].forEach(function(par){
+      const el=document.querySelector(par[0]);
+      if(el&&el.animate) el.animate([{opacity:0,transform:'translateY(26px)'},{opacity:1,transform:'none'}],{duration:600,delay:par[1],easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'});
+    });
+    const chips = Array.prototype.slice.call(document.querySelectorAll('.logo-chip'));
+    const orden = chips.map(function(_,i){ return i; });
+    for(let i=orden.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=orden[i]; orden[i]=orden[j]; orden[j]=t; }
+    orden.forEach(function(idx,pos){
+      const el=chips[idx];
+      if(el&&el.animate) el.animate([{opacity:0,transform:'scale(.4) translateY(24px)'},{opacity:1,transform:'none'}],{duration:600,delay:650+pos*260,easing:'cubic-bezier(.22,1.5,.36,1)',fill:'backwards'});
+    });
     return;
   }
   if(s.tipo === 'presenta'){
