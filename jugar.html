@@ -163,7 +163,7 @@ async function vFinal(){
 function render(){
   const top=document.querySelector('.top');
   if(preguntaTimerJ){ clearTimeout(preguntaTimerJ); preguntaTimerJ=null; }
-  if(galTimerJ){ clearInterval(galTimerJ); galTimerJ=null; }
+  if(galTimerJ){ clearTimeout(galTimerJ); galTimerJ=null; }
   if(!yo){ if(top) top.style.display='none'; vRegistro(); return; }
   if(top) top.style.display='flex';
   pintaPts();
@@ -179,12 +179,27 @@ function render(){
         return '<img src="'+f+'" alt="" class="'+(i===0?'on':'')+'">';
       }).join('')+'</div><p class="sub" style="margin-top:12px">👀 Míralo también en la pantalla grande</p></div>';
       const items = document.querySelectorAll('#jgal img, #jgal video');
-      const v0=items[0]; if(v0 && v0.tagName==='VIDEO') v0.play().catch(function(){});
-      if(items.length>1){ let gi=0; galTimerJ=setInterval(function(){
-        items[gi].classList.remove('on'); if(items[gi].tagName==='VIDEO') items[gi].pause();
-        gi=(gi+1)%items.length; const el=items[gi]; el.classList.add('on');
-        if(el.tagName==='VIDEO'){ el.currentTime=0; el.play().catch(function(){}); }
-      }, GAL_MS); }
+      if(items.length===1){ const u=items[0]; if(u.tagName==='VIDEO'){ u.loop=true; u.play().catch(function(){}); } }
+      else if(items.length>1){
+        let gi=0;
+        var jshow=function(k){
+          items.forEach(function(el){ el.classList.remove('on'); if(el.tagName==='VIDEO') el.pause(); });
+          const el=items[k]; el.classList.add('on');
+          if(el.tagName==='VIDEO'){ el.currentTime=0; el.onended=function(){ gi=(gi+1)%items.length; jshow(gi); }; el.play().catch(function(){ galTimerJ=setTimeout(function(){ gi=(gi+1)%items.length; jshow(gi); }, GAL_MS); }); }
+          else { galTimerJ=setTimeout(function(){ gi=(gi+1)%items.length; jshow(gi); }, GAL_MS); }
+        };
+        jshow(0);
+      }
+    } else if(s && (s.gif || s.img)){
+      const m = s.gif || s.img;
+      const media = /\.(mp4|webm|mov)$/i.test(m)
+        ? '<video src="'+m+'" autoplay loop muted playsinline style="width:100%;border-radius:16px"></video>'
+        : '<img src="'+m+'" alt="" style="width:100%;border-radius:16px">';
+      app.innerHTML = '<div class="centro" style="width:100%">'+media
+        + (s.titulo ? '<h1 style="margin:14px auto 0;font-size:1.3rem;text-align:center">'+s.titulo+'</h1>' : '')
+        + (s.texto ? '<p class="sub" style="margin-top:8px">'+s.texto+'</p>' : '')
+        + '</div>';
+      const v=document.querySelector('.centro video'); if(v) v.play().catch(function(){});
     } else {
       app.innerHTML = '<div class="centro"><div class="gigante">👀</div><h1 style="margin:0 auto">Mira la pantalla</h1><p class="sub" style="margin-top:8px">Atento, en cualquier momento llega la siguiente pregunta…</p><span class="nivel">'+nivel(yo.puntos)+' · '+yo.puntos+' pts</span></div>';
     }

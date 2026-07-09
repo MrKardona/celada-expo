@@ -110,6 +110,7 @@ const SLIDES = {
      Pon los nombres de tus archivos dentro de 'fotos' (deben estar en la misma carpeta).
      Acepta imágenes (.webp/.jpg/.png) y videos (.mp4). Vacío [] = solo texto. */
   historia:   { tipo:'galeria', emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo… al principio.', texto:'Primeros paquetes, primeros errores, primeros clientes. Con el tiempo, estos fueron los resultados: +7 años importando y miles de entregas. 📦', fotos:['historia-1.webp','historia-vid-1.mp4','historia-2.webp','historia-vid-2.mp4','video1.mp4','historia-vid-3.mp4'] },
+  aprendimos: { tipo:'galeria', emoji:'🚀', kicker:'CON EL TIEMPO', titulo:'Con el paso del tiempo, aprendimos poco a poco cómo hacerlo.', texto:'Cada envío nos enseñó algo. Hoy lo tenemos afinado: rápido, seguro y sin sustos. 🚀', fotos:[] },
   diego:      { emoji:'🎤', kicker:'CON USTEDES', titulo:'DIEGO CELADA', texto:'La persona que les va a enseñar a importar celulares. 👏👏👏' },
   /* 'oferta' = slide especial estilo $100M Offers: título + stack de valor + urgencia + CTA */
   oferta:     { tipo:'oferta', kicker:'SOLO HOY EN EXPOMOBILE', titulo:'Estrena tu casillero con 5 LIBRAS GRATIS', bullets:[
@@ -134,6 +135,7 @@ const ESCALETA = [
   { id:'miedo',            t:'📊 ENCUESTA: ¿tu mayor miedo al importar?' },
   { id:'slide:quitamiedo', t:'🔥 "Hoy te quitamos el miedo"' },
   { id:'slide:historia',   t:'📦 Historia de Celada Shopper' },
+  { id:'slide:aprendimos', t:'🚀 Con el tiempo aprendimos a hacerlo (fotos/videos)' },
   { id:'slide:diego',      t:'🎤 Entrada de DIEGO (el guía que enseña)' },
   { id:'legal',            t:'🧠 QUIZ: "Importar es ilegal" → Mito' },
   { id:'experto',          t:'🧠 QUIZ: "Solo para expertos" → Mito' },
