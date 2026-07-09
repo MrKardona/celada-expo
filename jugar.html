@@ -69,6 +69,11 @@ let estadoActual = 'espera';
 let preguntaTimerJ = null;
 let galTimerJ = null;
 let pushCanal = null;
+let wakeLock = null;
+async function mantenerDespierto(){
+  try{ if('wakeLock' in navigator && document.visibilityState==='visible'){ wakeLock = await navigator.wakeLock.request('screen'); } }catch(e){}
+}
+document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') mantenerDespierto(); });
 
 function burst(n, emo){
   for(let i=0;i<n;i++){
@@ -102,7 +107,7 @@ function vRegistro(){
     const { data, error } = await sb.from('ic_participantes').insert({nombre:n,whatsapp:w}).select().single();
     if(error){ showErr('No se pudo registrar. Revisa tu conexión e intenta de nuevo.'); this.disabled=false; this.textContent='🚀 Entrar al reto'; return; }
     yo = data; localStorage.setItem('ic_yo', JSON.stringify(yo));
-    burst(14,'🎉'); pintaPts(); render();
+    burst(14,'🎉'); pintaPts(); render(); mantenerDespierto();
   };
 }
 function vEspera(){
@@ -254,6 +259,7 @@ async function verificaYo(){
   }
 }
 async function init(){
+  mantenerDespierto();
   const { data } = await sb.from('ic_estado').select('interaccion').eq('id',1).single();
   if(data) estadoActual = data.interaccion;
   await verificaYo();

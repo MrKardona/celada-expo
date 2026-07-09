@@ -49,8 +49,11 @@ h1{color:var(--gold);font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line
 .qbig-name{font-weight:900;font-size:clamp(1.8rem,3.4vw,2.9rem)}
 .qbig-vote{color:var(--gold);font-weight:800;font-size:clamp(1.2rem,2vw,1.7rem)}
 .qbig-vote small{color:var(--txt2);font-weight:700;font-size:.7em}
+.qbig-bar{width:min(620px,72vw);height:18px;border-radius:100px;background:var(--line);overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.4)}
+.qbig-fill{display:block;height:100%;width:0;border-radius:100px;background:var(--grad);transition:width .7s cubic-bezier(.22,1,.36,1)}
 .qbig-slide.ok .qbig-img{border:3px solid #22c55e;box-shadow:0 0 65px rgba(34,197,94,.55)}
 .qbig-slide.ok .qbig-name{color:#22c55e}
+.qbig-slide.ok .qbig-fill{background:#22c55e}
 .qbig-dots{display:flex;gap:10px;justify-content:center;margin-top:18px}
 .qbig-dots span{width:12px;height:12px;border-radius:50%;background:var(--line);transition:all .3s}
 .qbig-dots span.on{background:var(--gold);width:32px;border-radius:100px}
@@ -192,7 +195,7 @@ async function vPregunta(id, revelar){
   if(q.imgsPantalla && q.imgsPantalla.length){
     app.innerHTML = `<div class="preg" style="margin-bottom:16px;font-size:clamp(1.7rem,3.4vw,2.8rem)">${q.pregunta}</div>
       <div class="qbig" id="qbig">${q.opciones.map(function(o,i){
-        return '<div class="qbig-slide" id="fila'+i+'"><img class="qbig-img" src="'+q.imgsPantalla[i]+'" alt=""><div class="qbig-foot"><span class="qbig-name">'+o+'</span><span class="qbig-vote"><b><span id="p'+i+'">0</span>%</b> <small id="n'+i+'">'+(conteos[i]||0)+' votos</small></span></div></div>';
+        return '<div class="qbig-slide" id="fila'+i+'"><img class="qbig-img" src="'+q.imgsPantalla[i]+'" alt=""><div class="qbig-foot"><span class="qbig-name">'+o+'</span><div class="qbig-bar"><i class="qbig-fill" id="f'+i+'" style="width:'+(total?Math.round((conteos[i]||0)/total*100):0)+'%"></i></div><span class="qbig-vote"><b><span id="p'+i+'">0</span>%</b> <small id="n'+i+'">'+(conteos[i]||0)+' votos</small></span></div></div>';
       }).join('')}</div>
       <div class="qbig-dots" id="qbigDots">${q.opciones.map(function(){ return '<span></span>'; }).join('')}</div>`;
     q.opciones.forEach(function(o,i){ const c=conteos[i]||0, pct=total?Math.round(c/total*100):0; const p=document.getElementById('p'+i); if(p) p.textContent=pct; });
