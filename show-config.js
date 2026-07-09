@@ -22,12 +22,13 @@ const TIEMPO_PREGUNTA = 30; /* ⏱️ segundos del temporizador de cada pregunta
 ============================================================ */
 const IX = {
   frenaste: {
-    tipo: 'encuesta', puntos: 50,
+    tipo: 'encuesta', puntos: 25,
     pregunta: '¿Alguna vez quisiste comprar teléfonos en el exterior?',
-    opciones: ['🙋 Sí, pero me dio miedo', '💭 Sí, pero no supe cómo', '😎 Sí, y ya lo hago', '🚀 Nunca, pero quiero']
+    opciones: ['🙋 Sí, pero me dio miedo', '💭 Sí, pero no supe cómo', '😎 Sí, y ya lo hago', '🚀 Nunca, pero quiero'],
+    puntosPorOpcion: [25, 25, 0, 25]
   },
   miedo: {
-    tipo: 'encuesta', puntos: 50,
+    tipo: 'encuesta', puntos: 25,
     pregunta: '¿Cuál es tu mayor miedo al importar de otro país a Colombia?',
     opciones: ['😱 Que me estafen', '🛃 Que la DIAN lo retenga', '💸 Que salga más caro', '📦 Que nunca llegue']
   },
@@ -109,8 +110,8 @@ const SLIDES = {
   /* 'galeria' = texto fijo a la IZQUIERDA + fotos/videos que pasan solos a la DERECHA.
      Pon los nombres de tus archivos dentro de 'fotos' (deben estar en la misma carpeta).
      Acepta imágenes (.webp/.jpg/.png) y videos (.mp4). Vacío [] = solo texto. */
-  historia:   { tipo:'galeria', emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo… al principio.', texto:'Primeros paquetes, primeros errores, primeros clientes. Con el tiempo, estos fueron los resultados: +7 años importando y miles de entregas. 📦', fotos:['historia-1.webp','historia-vid-1.mp4','historia-2.webp','historia-vid-2.mp4','video1.mp4','historia-vid-3.mp4'] },
-  aprendimos: { tipo:'galeria', emoji:'🚀', kicker:'CON EL TIEMPO', titulo:'Con el paso del tiempo, aprendimos poco a poco cómo hacerlo.', texto:'Cada envío nos enseñó algo. Hoy lo tenemos afinado: rápido, seguro y sin sustos. 🚀', fotos:[] },
+  historia:   { tipo:'galeria', emoji:'📦', kicker:'NUESTRA HISTORIA', titulo:'Nosotros también tuvimos miedo… al principio.', texto:'Primeros paquetes, primeros errores, primeros clientes. Con el tiempo, estos fueron los resultados: +7 años importando y miles de entregas. 📦', fotos:['historia-1.webp','video1.mp4','historia-2.webp'] },
+  aprendimos: { tipo:'galeria', emoji:'🚀', kicker:'CON EL TIEMPO', titulo:'Con el paso del tiempo, aprendimos poco a poco cómo hacerlo.', texto:'', fotos:['historia-vid-1.mp4','historia-vid-2.mp4','historia-vid-3.mp4'] },
   diego:      { emoji:'🎤', kicker:'CON USTEDES', titulo:'DIEGO CELADA', texto:'La persona que les va a enseñar a importar celulares. 👏👏👏' },
   /* 'oferta' = slide especial estilo $100M Offers: título + stack de valor + urgencia + CTA */
   oferta:     { tipo:'oferta', kicker:'SOLO HOY EN EXPOMOBILE', titulo:'Estrena tu casillero con 5 LIBRAS GRATIS', bullets:[

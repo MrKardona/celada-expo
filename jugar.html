@@ -124,7 +124,11 @@ function vPregunta(id){
         b.classList.add(ok?'ok':'mal');
         document.querySelector('.op[data-i="'+q.correcta+'"]').classList.add('ok');
         msg = ok? '¡Correcto! +'+q.puntos+' pts 🔥' : 'Casi... ¡pero igual +25 pts! 😅';
-      } else { b.classList.add('eleg'); }
+      } else {
+        b.classList.add('eleg');
+        gana = q.puntosPorOpcion ? (q.puntosPorOpcion[i]||0) : q.puntos;
+        msg = gana>0 ? '+'+gana+' pts por participar 🎉' : '¡Gracias por responder! 🙌';
+      }
       vibra(ok ? [30,45,130] : 70);
       document.getElementById('fb').innerHTML = '<div class="fb '+(ok?'ok':'mal')+'">'+msg+'</div>'
         + (q.tipo==='quiz' && q.dato ? '<div class="dato">💡 '+q.dato+'</div>' : '');
