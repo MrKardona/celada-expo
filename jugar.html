@@ -208,6 +208,16 @@ function render(){
       for(let i=jo.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=jo[i]; jo[i]=jo[j]; jo[j]=t; }
       jo.forEach(function(idx,pos){ const el=jc[idx]; if(el&&el.animate) el.animate([{opacity:0,transform:'scale(.5)'},{opacity:1,transform:'none'}],{duration:500,delay:pos*200,easing:'cubic-bezier(.22,1.5,.36,1)',fill:'backwards'}); });
     }
+    else if(s && s.tipo==='checklist'){
+      app.innerHTML = '<div style="width:100%;max-height:80vh;overflow-y:auto;padding:2px">'
+        + (s.titulo ? '<h1 style="margin:0 0 4px;font-size:1.3rem;text-align:center">'+s.titulo+'</h1>' : '')
+        + (s.texto ? '<p class="sub" style="margin-bottom:14px;text-align:center">'+s.texto+'</p>' : '')
+        + (s.items||[]).map(function(it){ return '<div class="jchk-i" style="display:flex;gap:10px;align-items:flex-start;background:var(--card,#17171c);border:1px solid var(--line,#2a2a32);border-radius:12px;padding:10px 12px;margin-bottom:8px"><span style="font-size:1.35rem;line-height:1.2;flex:0 0 auto">'+it.e+'</span><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:.96rem">'+it.t+'</b><small style="color:var(--txt2,#a8a8b3);font-size:.8rem;line-height:1.25">'+it.d+'</small></div></div>'; }).join('')
+        + (s.dato ? '<div style="margin-top:10px;text-align:center;background:rgba(255,197,61,.12);border:1px solid rgba(255,197,61,.4);color:var(--gold,#ffc53d);font-weight:700;padding:10px 14px;border-radius:14px;font-size:.85rem">💡 '+s.dato+'</div>' : '')
+        + '</div>';
+      const its=Array.prototype.slice.call(document.querySelectorAll('.jchk-i'));
+      its.forEach(function(el,i){ if(el.animate) el.animate([{opacity:0,transform:'translateX(-14px)'},{opacity:1,transform:'none'}],{duration:360,delay:60+i*65,easing:'ease-out',fill:'backwards'}); });
+    }
     else if(s && s.fotos && s.fotos.length){
       app.innerHTML = '<div class="centro" style="width:100%"><div class="jgal" id="jgal">'+s.fotos.map(function(f,i){
         if(/\.(mp4|webm|mov)$/i.test(f)) return '<video src="'+f+'" class="'+(i===0?'on':'')+'" muted playsinline loop></video>';

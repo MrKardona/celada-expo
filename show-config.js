@@ -131,6 +131,25 @@ const SLIDES = {
   diego:      { tipo:'presenta', gif:'aplausos.mp4', kicker:'CON USTEDES', titulo:'DIEGO CELADA', texto:'La persona que les va a enseñar a importar celulares.' },
   /* 'logos' = grilla de logos que aparecen en orden aleatorio con animación (también en el celular) */
   dondecomprar: { tipo:'logos', kicker:'DÓNDE COMPRAR', titulo:'¿Dónde comprar en Estados Unidos?', texto:'Las tiendas donde conseguimos todo por ti.', fotos:['logo-1.webp','logo-2.webp','logo-3.webp','logo-4.webp','logo-5.webp','logo-6.webp'] },
+
+  revisar: {
+    tipo:'checklist',
+    kicker:'ANTES DE COMPRAR',
+    titulo:'9 cosas que debes revisar',
+    texto:'Antes de pagar por un celular, revisa esto:',
+    items:[
+      { e:'🔓', t:'Que esté desbloqueado', d:'Factory Unlocked, sin operador que lo limite.' },
+      { e:'📶', t:'Compatible con Colombia', d:'Que sirva con las bandas 4G/5G de aquí.' },
+      { e:'🆔', t:'IMEI limpio', d:'Sin reporte de robo, pérdida o bloqueo.' },
+      { e:'🔒', t:'Sin bloqueo iCloud/Google', d:'Con activación bloqueada, no sirve.' },
+      { e:'🔋', t:'Batería sana', d:'En iPhone, idealmente arriba del 85%.' },
+      { e:'📱', t:'Estado físico', d:'Pantalla, cámaras, Face ID, puertos, golpes.' },
+      { e:'📦', t:'Nuevo o usado', d:'Cambia precio, garantía e importación.' },
+      { e:'💵', t:'Precio real del mercado', d:'Compara en varias plataformas antes de pagar.' },
+      { e:'🛡️', t:'Reputación del vendedor', d:'Mira calificaciones e historial de ventas.' }
+    ],
+    dato:'Con Celada revisamos todo esto por ti antes de comprar.'
+  },
   /* 'oferta' = slide especial estilo $100M Offers: título + stack de valor + urgencia + CTA */
   oferta:     { tipo:'oferta', kicker:'SOLO HOY EN EXPOMOBILE', titulo:'Estrena tu casillero con 5 LIBRAS GRATIS', bullets:[
                  'Tu casillero en Estados Unidos — GRATIS',
@@ -156,6 +175,7 @@ const ESCALETA = [
   { id:'slide:historia',   t:'📦 Historia de Celada Shopper' },
   { id:'slide:aprendimos', t:'🚀 Con el tiempo aprendimos a hacerlo (fotos/videos)' },
   { id:'slide:diego',      t:'🎤 Entrada de DIEGO (el guía que enseña)' },
+  { id:'slide:revisar',    t:'✅ Qué revisar antes de comprar (informativo)' },
   { id:'slide:dondecomprar', t:'🛒 Dónde comprar en USA (logos)' },
   { id:'dondepoll',        t:'📊 ENCUESTA: ¿dónde comprarías tú? (resultados en vivo)' },
   { id:'comprarias',       t:'📱 QUIZ visual: ¿cuál celular comprarías? (15 Pro Max)' },
