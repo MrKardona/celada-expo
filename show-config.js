@@ -90,6 +90,11 @@ const IX = {
     pregunta: '¿Dónde comprarías tú?',
     opciones: ['🛒 Amazon', '🏷️ eBay', '🤝 Swappa', '🍏 Apple', '♻️ Back Market', '🏭 Mayoristas']
   },
+  tipoimport: {
+    tipo: 'encuesta', puntos: 25, estilo: 'tarjetas', /* estilo tarjetas: en pantalla salen tarjetas grandes con el % abajo */
+    pregunta: '✈️ Ya compramos… ¡ahora vamos a importarlo! ¿Tu importación cómo sería?',
+    opciones: ['🛍️ Al detal: de 1 a 9 unidades', '🏭 Mayorista: 10 unidades o más']
+  },
   /* JUEGO 'tienda': las ofertas aparecen UNA POR UNA en el celular con botones COMPRAR / IGNORAR.
      La imagen pasa a la siguiente cuando el usuario responde. En pantalla: carrusel con conteo en vivo.
      - correcta: 'comprar' o 'ignorar' (acierto = puntos, error = puntosError)
@@ -146,6 +151,7 @@ const SLIDES = {
   /* 'logos' = grilla de logos que aparecen en orden aleatorio con animación (también en el celular) */
   dondecomprar: { tipo:'logos', kicker:'DÓNDE COMPRAR', titulo:'¿Dónde comprar en Estados Unidos?', texto:'Las tiendas donde conseguimos todo por ti.', fotos:['logo-1.webp','logo-2.webp','logo-3.webp','logo-4.webp','logo-5.webp','logo-6.webp'] },
 
+
   revisar: {
     tipo:'checklist',
     kicker:'ANTES DE COMPRAR',
@@ -192,6 +198,7 @@ const ESCALETA = [
   { id:'slide:revisar',    t:'✅ Qué revisar antes de comprar (informativo)' },
   { id:'slide:dondecomprar', t:'🛒 Dónde comprar en USA (logos + votación en vivo)' },
   { id:'comprarias',       t:'🛍️ JUEGO: ¿comprar o ignorar? (3 iPhones, feedback al responder)' },
+  { id:'tipoimport',       t:'📊 ENCUESTA: ya compramos, ¿importas al detal (1-9) o mayorista (10+)?' },
   { id:'legal',            t:'🧠 QUIZ: "Importar es ilegal" → Mito' },
   { id:'experto',          t:'🧠 QUIZ: "Solo para expertos" → Mito' },
   { id:'tarjeta',          t:'🧠 QUIZ: "Necesitas tarjeta internacional" → Mito' },

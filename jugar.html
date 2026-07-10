@@ -188,10 +188,14 @@ function vTienda(id, q){
     btn.classList.add(ok?'ok':'mal');
     vibra(ok ? [30,45,130] : [120,60,120]);
     const msg = (eleccion==='comprar') ? it.siCompra : it.siIgnora;
+    const esUltima = (k >= q.items.length-1);
     document.getElementById('fb').innerHTML = '<div class="fb '+(ok?'ok':'mal')+'">'+msg+'</div>'
-      + '<div class="dato">'+(ok?'+'+gana+' pts 🔥':'+'+gana+' pts por jugar')+'</div>';
+      + '<div class="dato">'+(ok?'+'+gana+' pts 🔥':'+'+gana+' pts por jugar')+'</div>'
+      + '<button class="op" id="tSig" style="width:100%;text-align:center;font-weight:800;margin-top:12px;border-color:var(--acc);background:rgba(255,179,0,.1)">'+(esUltima?'🏁 Terminar':'Siguiente oferta ➡')+'</button>';
+    const bs=document.getElementById('tSig');
+    bs.onclick=function(){ vTienda(id, q); };
+    if(bs.animate) bs.animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:380,delay:400,easing:'ease-out',fill:'backwards'});
     burst(12, ok?'⭐':'💸');
-    galTimerJ = setTimeout(function(){ vTienda(id, q); }, 3600);
     await sb.from('ic_respuestas').insert({participante_id:yo.id, interaccion:id+':'+k, respuesta: eleccion==='comprar'?'0':'1', puntos:gana});
     if(gana>0){ yo.puntos += gana; localStorage.setItem('ic_yo', JSON.stringify(yo)); pintaPts();
       await sb.from('ic_participantes').update({puntos:yo.puntos}).eq('id',yo.id); }
