@@ -11,7 +11,7 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const URL_JUGAR = 'https://expo.celadashopper.com/jugar.html';
 const GAL_MS = 3200;   /* ⏱️ milisegundos que dura cada foto en la galería de historia (3200 = 3,2s) */
 const FRASE_MS = 2200; /* ⏱️ milisegundos entre cada frase del gancho animado antes del carrusel de productos */
-const TIEMPO_PREGUNTA = 30; /* ⏱️ segundos del temporizador de cada pregunta (0 = sin temporizador) */
+const TIEMPO_PREGUNTA = 45; /* ⏱️ segundos del temporizador de cada pregunta (0 = sin temporizador; una pregunta puede llevar sinTimer:true para no tener) */
 const QUIZ_IMG_MS = 12000;  /* ⏱️ milisegundos que dura cada imagen grande en el quiz visual (12000 = 12s) */
 
 /* ============================================================
