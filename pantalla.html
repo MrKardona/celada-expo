@@ -72,6 +72,8 @@ h1{color:var(--gold);font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line
 .fila.pulso{animation:pulsoBar .55s ease}
 .fila.pulso .fill{box-shadow:0 0 48px rgba(255,179,0,.75)}
 /* ── Temporizador de pregunta ── */
+.timer-num{font-size:clamp(2.2rem,4.5vw,3.4rem);font-weight:800;color:var(--gold);line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums;text-shadow:0 0 30px rgba(255,179,0,.35)}
+.timer-num.poco{color:#ef4444;text-shadow:0 0 30px rgba(239,68,68,.45)}
 .timer{width:min(900px,92vw);height:8px;border-radius:100px;background:var(--card);border:1px solid var(--line);overflow:hidden;margin-bottom:26px}
 .timer .barra{height:100%;width:100%;background:var(--grad);border-radius:100px;transform-origin:left;transition:transform 1s linear}
 .timer.poco .barra{background:linear-gradient(90deg,#ff8a00,#ef4444)}
@@ -149,8 +151,13 @@ h1{color:var(--gold);font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line
 .lg-title{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.05;color:var(--txt);margin-bottom:8px}
 .lg-sub{color:var(--txt2);font-size:clamp(1.05rem,1.6vw,1.4rem);margin-bottom:34px}
 .logos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;width:100%}
-.logo-chip{background:var(--card);border:1px solid var(--line);border-radius:20px;height:clamp(120px,17vh,190px);display:flex;align-items:center;justify-content:center;padding:26px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
-.logo-chip img{max-width:100%;max-height:100%;object-fit:contain}
+.logo-chip{background:var(--card);border:1px solid var(--line);border-radius:20px;height:clamp(140px,20vh,220px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:22px 26px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.logo-chip img{max-width:100%;max-height:100%;min-height:0;object-fit:contain;flex:1}
+.logo-chip.lead{border-color:var(--gold);box-shadow:0 10px 34px rgba(255,179,0,.25)}
+.lrow{display:flex;align-items:center;gap:12px;width:100%;flex:0 0 auto}
+.lbar{flex:1;height:9px;border-radius:100px;background:rgba(255,255,255,.07);border:1px solid var(--line);overflow:hidden}
+.lfill{display:block;height:100%;width:0;background:var(--grad);border-radius:100px;transition:width .6s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px rgba(255,179,0,.5)}
+.lpct{font-weight:800;color:var(--gold);font-size:1.05rem;min-width:3.2ch;text-align:right;font-variant-numeric:tabular-nums}
 .slide{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:min(1100px,92vw);margin:0 auto}
 .slide h1{text-align:center}
 .slide .sub{text-align:center}
@@ -172,7 +179,18 @@ h1{color:var(--gold);font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line
 <script>
 const sb = supabase.createClient(SB_URL, SB_KEY);
 const app = document.getElementById('app');
-let estado='espera', conteos={}, actual='', galeriaTimer=null, ganchoTimers=[], preguntaTimer=null;
+let estado='espera', conteos={}, actual='', galeriaTimer=null, ganchoTimers=[], preguntaTimer=null, timerNumInt=null, logoConteos={};
+function pintaLogos(){
+  const total = Object.values(logoConteos).reduce(function(a,b){return a+b;},0);
+  const maxv = Math.max.apply(null, [0].concat(Object.values(logoConteos)));
+  Object.keys(logoConteos).forEach(function(i){
+    const pct = total ? Math.round(logoConteos[i]/total*100) : 0;
+    const f=document.getElementById('lf'+i), p=document.getElementById('lp'+i), ch=document.getElementById('lchip'+i);
+    if(f) f.style.width=pct+'%';
+    if(p) p.textContent=pct+'%';
+    if(ch) ch.classList.toggle('lead', logoConteos[i]>0 && logoConteos[i]===maxv);
+  });
+}
 
 function burst(n,emo){for(let i=0;i<n;i++){const p=document.createElement('span');p.className='pop';p.textContent=emo;p.style.fontSize=(22+Math.random()*22)+'px';document.body.appendChild(p);const x=innerWidth/2,y=innerHeight/2,a=Math.PI*2*i/n,v=250+Math.random()*350;p.animate([{transform:`translate(${x}px,${y}px) scale(.5)`,opacity:1},{transform:`translate(${x+Math.cos(a)*v}px,${y+Math.sin(a)*v}px) rotate(${(Math.random()-.5)*540}deg)`,opacity:0}],{duration:1100,easing:'ease-out'}).onfinish=()=>p.remove();}}
 
@@ -194,6 +212,7 @@ function vEspera(){
 }
 async function vPregunta(id, revelar){
   const q = IX[id];
+  if(q.tipo==='tienda'){ return vTiendaP(id, q, revelar); }
   const primera = (actual!==id);
   if(primera){ conteos = {}; q.opciones.forEach((_,i)=>conteos[i]=0);
     const { data } = await sb.from('ic_respuestas').select('respuesta').eq('interaccion',id);
@@ -203,21 +222,7 @@ async function vPregunta(id, revelar){
   const total = Object.values(conteos).reduce((a,b)=>a+b,0);
   const maxv = Math.max(0, ...Object.values(conteos));
   const mostrarTimer = (TIEMPO_PREGUNTA>0 && !revelar && !q.sinTimer);
-  if(q.imgsPantalla && q.imgsPantalla.length){
-    app.innerHTML = `<div class="preg" style="margin-bottom:16px;font-size:clamp(1.7rem,3.4vw,2.8rem)">${q.pregunta}</div>
-      <div class="qbig" id="qbig">${q.opciones.map(function(o,i){
-        return '<div class="qbig-slide" id="fila'+i+'"><img class="qbig-img" src="'+q.imgsPantalla[i]+'" alt=""><div class="qbig-foot"><span class="qbig-name">'+o+'</span><div class="qbig-bar"><i class="qbig-fill" id="f'+i+'" style="width:'+(total?Math.round((conteos[i]||0)/total*100):0)+'%"></i></div><span class="qbig-vote"><b><span id="p'+i+'">0</span>%</b> <small id="n'+i+'">'+(conteos[i]||0)+' votos</small></span></div></div>';
-      }).join('')}</div>
-      <div class="qbig-dots" id="qbigDots">${q.opciones.map(function(){ return '<span></span>'; }).join('')}</div>`;
-    q.opciones.forEach(function(o,i){ const c=conteos[i]||0, pct=total?Math.round(c/total*100):0; const p=document.getElementById('p'+i); if(p) p.textContent=pct; });
-    const slides=Array.prototype.slice.call(document.querySelectorAll('.qbig-slide'));
-    const dots=Array.prototype.slice.call(document.querySelectorAll('#qbigDots span'));
-    function mostrarQ(k){ slides.forEach(function(s,j){ s.classList.toggle('on', j===k); }); dots.forEach(function(d,j){ d.classList.toggle('on', j===k); }); }
-    if(revelar){ mostrarQ(q.correcta); if(slides[q.correcta]) slides[q.correcta].classList.add('ok'); burst(18,'✅'); }
-    else { let qi=0; mostrarQ(0); galeriaTimer=setInterval(function(){ qi=(qi+1)%slides.length; mostrarQ(qi); }, QUIZ_IMG_MS); }
-    return;
-  }
-  app.innerHTML = `${mostrarTimer ? '<div class="timer" id="timer"><div class="barra" id="timerBar"></div></div>' : ''}<div class="preg">${q.pregunta}</div>
+  app.innerHTML = `${mostrarTimer ? '<div class="timer-num" id="timerNum">'+TIEMPO_PREGUNTA+'</div><div class="timer" id="timer"><div class="barra" id="timerBar"></div></div>' : ''}<div class="preg">${q.pregunta}</div>
   <div class="barras">${q.opciones.map(function(o,i){
     const c = conteos[i]||0, pct = total ? Math.round(c/total*100) : 0, lead = c>0 && c===maxv;
     return '<div class="fila '+(revelar && q.correcta===i ? 'ok':'')+' '+(lead?'lead':'')+'" id="fila'+i+'" style="opacity:0">'
@@ -237,12 +242,87 @@ async function vPregunta(id, revelar){
   if(mostrarTimer && primera) arrancaTimer();
   if(revelar) burst(16,'✅');
 }
+/* ── JUEGO tienda: carrusel de ofertas con conteo COMPRAR/IGNORAR en vivo ── */
+let tiendaConteos = {};
+async function vTiendaP(id, q, revelar){
+  const items = q.items||[];
+  const primera = (actual!==id);
+  if(primera){
+    tiendaConteos = {}; items.forEach(function(_,k){ tiendaConteos[k]={c:0,g:0}; });
+    const { data } = await sb.from('ic_respuestas').select('interaccion,respuesta').like('interaccion', id+':%');
+    (data||[]).forEach(function(r){
+      const k = +String(r.interaccion).split(':')[1];
+      if(tiendaConteos[k]){ if(String(r.respuesta)==='0') tiendaConteos[k].c++; else tiendaConteos[k].g++; }
+    });
+    actual = id;
+  }
+  if(revelar){
+    app.innerHTML = '<div class="preg" style="margin-bottom:22px">🛍️ ¿Comprar o ignorar? — Así estaba la cosa:</div>'
+      + '<div style="display:flex;gap:24px;width:min(1560px,95vw);align-items:stretch">'
+      + items.map(function(it,k){
+          const cc = tiendaConteos[k]||{c:0,g:0};
+          const okC = it.correcta==='comprar';
+          return '<div style="flex:1;background:var(--card);border:2px solid '+(okC?'#22c55e':'#ef4444')+';border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:11px;align-items:center;opacity:0" class="trev">'
+            + '<img src="'+(it.imgPantalla||it.imgCelular)+'" style="width:100%;border-radius:14px;background:#fff" alt="">'
+            + '<b style="font-size:1.35rem">'+it.nombre+'</b>'
+            + '<span style="font-weight:800;padding:7px 18px;border-radius:100px;background:'+(okC?'rgba(34,197,94,.15)':'rgba(239,68,68,.12)')+';color:'+(okC?'#22c55e':'#ef4444')+'">'+(okC?'🛒 Había que COMPRARLO':'🙅 Había que IGNORARLO')+'</span>'
+            + (it.resumen ? '<small style="color:var(--txt2);text-align:center;font-size:1.02rem;line-height:1.35">'+it.resumen+'</small>' : '')
+            + '<small style="color:var(--txt2);font-weight:700">🛒 '+cc.c+' compraron · 🙅 '+cc.g+' ignoraron</small></div>';
+        }).join('') + '</div>';
+    Array.prototype.slice.call(document.querySelectorAll('.trev')).forEach(function(el,i){
+      if(el.animate) el.animate([{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:560,delay:i*180,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+      else el.style.opacity='1';
+    });
+    burst(18,'✅');
+    return;
+  }
+  app.innerHTML = '<div class="preg" style="margin-bottom:16px;font-size:clamp(1.7rem,3.4vw,2.8rem)">🛍️ '+(q.pregunta||'¿La compras o la ignoras?')+'</div>'
+    + '<div class="qbig" id="qbig">'
+    + items.map(function(it,k){
+        return '<div class="qbig-slide" id="tslide'+k+'"><img class="qbig-img" src="'+(it.imgPantalla||it.imgCelular)+'" alt="">'
+          + '<div class="qbig-foot" style="flex-direction:column;gap:10px;align-items:stretch">'
+          + '<span class="qbig-name" style="text-align:center">'+it.nombre+'</span>'
+          + '<div style="display:flex;align-items:center;gap:14px"><span style="font-weight:800;flex:0 0 11ch;text-align:left">🛒 Compran</span><div class="qbig-bar" style="width:auto;flex:1"><i class="qbig-fill" id="tc'+k+'" style="background:linear-gradient(90deg,#4ade80,#22c55e)"></i></div><b id="tcn'+k+'" style="flex:0 0 3ch;text-align:right;font-variant-numeric:tabular-nums">0</b></div>'
+          + '<div style="display:flex;align-items:center;gap:14px"><span style="font-weight:800;flex:0 0 11ch;text-align:left">🙅 Ignoran</span><div class="qbig-bar" style="width:auto;flex:1"><i class="qbig-fill" id="tg'+k+'"></i></div><b id="tgn'+k+'" style="flex:0 0 3ch;text-align:right;font-variant-numeric:tabular-nums">0</b></div>'
+          + '</div></div>';
+      }).join('')
+    + '</div><div class="qbig-dots" id="qbigDots">'+items.map(function(){ return '<span></span>'; }).join('')+'</div>';
+  const slides = Array.prototype.slice.call(document.querySelectorAll('.qbig-slide'));
+  const dots = Array.prototype.slice.call(document.querySelectorAll('#qbigDots span'));
+  function mostrarQ(k){ slides.forEach(function(s,j){ s.classList.toggle('on', j===k); }); dots.forEach(function(d,j){ d.classList.toggle('on', j===k); }); }
+  let qi=0; mostrarQ(0);
+  galeriaTimer = setInterval(function(){ qi=(qi+1)%slides.length; mostrarQ(qi); }, QUIZ_IMG_MS);
+  pintaTienda();
+}
+function pintaTienda(){
+  Object.keys(tiendaConteos).forEach(function(k){
+    const cc = tiendaConteos[k], tot = cc.c+cc.g;
+    const pc = tot ? Math.round(cc.c/tot*100) : 0;
+    const pg = tot ? Math.round(cc.g/tot*100) : 0;
+    const fc=document.getElementById('tc'+k), fg=document.getElementById('tg'+k);
+    const nc=document.getElementById('tcn'+k), ng=document.getElementById('tgn'+k);
+    if(fc) fc.style.width=pc+'%';
+    if(fg) fg.style.width=pg+'%';
+    if(nc) nc.textContent=cc.c;
+    if(ng) ng.textContent=cc.g;
+  });
+}
 function arrancaTimer(){
-  const bar=document.getElementById('timerBar'), wrap=document.getElementById('timer');
+  const bar=document.getElementById('timerBar'), wrap=document.getElementById('timer'), num=document.getElementById('timerNum');
   if(!bar) return;
   bar.style.transform='scaleX(1)';
   requestAnimationFrame(function(){ bar.style.transition='transform '+TIEMPO_PREGUNTA+'s linear'; bar.style.transform='scaleX(0)'; });
   preguntaTimer=setTimeout(function(){ if(wrap) wrap.classList.add('poco'); }, Math.max(0,(TIEMPO_PREGUNTA-8))*1000);
+  let t = TIEMPO_PREGUNTA;
+  timerNumInt=setInterval(function(){
+    t--;
+    if(num){
+      num.textContent = Math.max(0,t);
+      if(t<=8) num.classList.add('poco');
+      if(t<=8 && t>0 && num.animate) num.animate([{transform:'scale(1.25)'},{transform:'scale(1)'}],{duration:320,easing:'ease-out'});
+    }
+    if(t<=0){ clearInterval(timerNumInt); timerNumInt=null; }
+  },1000);
 }
 async function vFinal(){
   const { data } = await sb.from('ic_participantes').select('nombre,puntos').order('puntos',{ascending:false}).limit(10);
@@ -361,8 +441,13 @@ function vSlide(id){
       <div class="lg-kick">🇺🇸 ${s.kicker||''}</div>
       <h1 class="lg-title">${s.titulo||''}</h1>
       ${s.texto ? '<p class="lg-sub">'+s.texto+'</p>' : ''}
-      <div class="logos-grid">${(s.fotos||[]).map(function(f){ return '<div class="logo-chip"><img src="'+f+'" alt=""></div>'; }).join('')}</div>
+      <div class="logos-grid">${(s.fotos||[]).map(function(f,i){ return '<div class="logo-chip" id="lchip'+i+'"><img src="'+f+'" alt=""><div class="lrow"><div class="lbar"><i class="lfill" id="lf'+i+'"></i></div><span class="lpct" id="lp'+i+'">0%</span></div></div>'; }).join('')}</div>
     </div>`;
+    logoConteos = {}; (s.fotos||[]).forEach(function(_,i){ logoConteos[i]=0; });
+    sb.from('ic_respuestas').select('respuesta').eq('interaccion','dondelogos').then(function(r){
+      (r.data||[]).forEach(function(x){ logoConteos[+x.respuesta]=(logoConteos[+x.respuesta]||0)+1; });
+      pintaLogos();
+    });
     [['.lg-kick',0],['.lg-title',150],['.lg-sub',350]].forEach(function(par){
       const el=document.querySelector(par[0]);
       if(el&&el.animate) el.animate([{opacity:0,transform:'translateY(26px)'},{opacity:1,transform:'none'}],{duration:600,delay:par[1],easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'});
@@ -461,6 +546,7 @@ function render(){
   if(galeriaTimer){ clearTimeout(galeriaTimer); galeriaTimer=null; }
   if(ganchoTimers.length){ ganchoTimers.forEach(clearTimeout); ganchoTimers=[]; }
   if(preguntaTimer){ clearTimeout(preguntaTimer); preguntaTimer=null; }
+  if(timerNumInt){ clearInterval(timerNumInt); timerNumInt=null; }
   const rev = estado.startsWith('rev:');
   const e = estado.replace(/^rev:/,'');
   const orbs=document.getElementById('orbs'); if(orbs) orbs.classList.toggle('on', e==='espera');
@@ -501,6 +587,20 @@ async function init(){
   sb.channel('e').on('postgres_changes',{event:'UPDATE',schema:'public',table:'ic_estado'},function(p){ estado=p.new.interaccion; render(); }).subscribe();
   sb.channel('r').on('postgres_changes',{event:'INSERT',schema:'public',table:'ic_respuestas'},function(p){
     if(p.new.interaccion===actual){ conteos[+p.new.respuesta]=(conteos[+p.new.respuesta]||0)+1; pintaConteo(); pulso(+p.new.respuesta); }
+    else if(p.new.interaccion==='dondelogos' && estado.replace(/^rev:/,'')==='slide:dondecomprar'){
+      const i=+p.new.respuesta;
+      logoConteos[i]=(logoConteos[i]||0)+1; pintaLogos();
+      const ch=document.getElementById('lchip'+i);
+      if(ch && ch.animate) ch.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:380,easing:'ease-out'});
+    }
+    else if(actual && IX[actual] && IX[actual].tipo==='tienda' && String(p.new.interaccion).lastIndexOf(actual+':',0)===0){
+      const k=+String(p.new.interaccion).split(':')[1];
+      if(!tiendaConteos[k]) tiendaConteos[k]={c:0,g:0};
+      if(String(p.new.respuesta)==='0') tiendaConteos[k].c++; else tiendaConteos[k].g++;
+      pintaTienda();
+      const sl=document.getElementById('tslide'+k);
+      if(sl && sl.classList.contains('on') && sl.animate) sl.animate([{transform:'scale(1)'},{transform:'scale(1.015)'},{transform:'scale(1)'}],{duration:300,easing:'ease-out'});
+    }
   }).subscribe();
   sb.channel('p').on('postgres_changes',{event:'INSERT',schema:'public',table:'ic_participantes'},function(){ nJugadores(); }).subscribe();
   /* efectos lanzados desde el panel (no cambian la diapositiva actual) */

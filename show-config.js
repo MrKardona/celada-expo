@@ -11,7 +11,7 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const URL_JUGAR = 'https://expo.celadashopper.com/jugar.html';
 const GAL_MS = 3200;   /* ⏱️ milisegundos que dura cada foto en la galería de historia (3200 = 3,2s) */
 const FRASE_MS = 2200; /* ⏱️ milisegundos entre cada frase del gancho animado antes del carrusel de productos */
-const TIEMPO_PREGUNTA = 45; /* ⏱️ segundos del temporizador de cada pregunta (0 = sin temporizador; una pregunta puede llevar sinTimer:true para no tener) */
+const TIEMPO_PREGUNTA = 30; /* ⏱️ segundos del temporizador de cada pregunta (0 = sin temporizador; una pregunta puede llevar sinTimer:true para no tener) */
 const QUIZ_IMG_MS = 12000;  /* ⏱️ milisegundos que dura cada imagen grande en el quiz visual (12000 = 12s) */
 
 /* ============================================================
@@ -90,14 +90,28 @@ const IX = {
     pregunta: '¿Dónde comprarías tú?',
     opciones: ['🛒 Amazon', '🏷️ eBay', '🤝 Swappa', '🍏 Apple', '♻️ Back Market', '🏭 Mayoristas']
   },
-  /* quiz con IMÁGENES: imgsPantalla = las que ve el público (con precio); imgsCelular = las que toca el usuario */
+  /* JUEGO 'tienda': las ofertas aparecen UNA POR UNA en el celular con botones COMPRAR / IGNORAR.
+     La imagen pasa a la siguiente cuando el usuario responde. En pantalla: carrusel con conteo en vivo.
+     - correcta: 'comprar' o 'ignorar' (acierto = puntos, error = puntosError)
+     - siCompra / siIgnora: mensaje que ve el usuario en su celular según lo que elija
+     - resumen: texto corto que sale en pantalla al REVELAR */
   comprarias: {
-    tipo: 'quiz', puntos: 100, correcta: 2, sinTimer: true,
-    pregunta: '¿Cuál de estos celulares comprarías?',
-    opciones: ['iPhone 14 Pro Max', 'iPhone 13 Pro Max', 'iPhone 15 Pro Max'],
-    imgsPantalla: ['comprar-p1.webp','comprar-p2.webp','comprar-p3.webp'],
-    imgsCelular: ['comprar-c1.webp','comprar-c2.webp','comprar-c3.webp'],
-    dato: 'El iPhone 15 Pro Max: lo más nuevo, mejor cámara y mejor reventa.'
+    tipo: 'tienda', puntos: 100, puntosError: 25, sinTimer: true,
+    pregunta: '¿La compras o la ignoras?',
+    items: [
+      { nombre:'iPhone 14 Pro Max', imgPantalla:'comprar-p1.webp', imgCelular:'comprar-c1.webp', correcta:'ignorar',
+        siCompra:'📉 Perdiste el 70% de tu inversión: está bloqueado por AT&T y solo te sirve para redes sociales con WiFi, no para llamadas ni datos.',
+        siIgnora:'🛡️ ¡Bien visto! Evitaste perder el 70% de tu inversión: estaba bloqueado por AT&T.',
+        resumen:'Bloqueado por AT&T · comprarlo era perder el 70%' },
+      { nombre:'iPhone 13 Pro Max', imgPantalla:'comprar-p2.webp', imgCelular:'comprar-c2.webp', correcta:'ignorar',
+        siCompra:'🔋 Perdiste el 10% de tu inversión: la batería estaba con fallas y había que repararla.',
+        siIgnora:'✅ Bien visto: la batería tenía fallas, evitaste perder el 10% en la reparación.',
+        resumen:'Batería con fallas · comprarlo era perder el 10%' },
+      { nombre:'iPhone 15 Pro Max', imgPantalla:'comprar-p3.webp', imgCelular:'comprar-c3.webp', correcta:'comprar',
+        siCompra:'🚀 ¡Ganaste un 15% de tu inversión! El equipo está en óptimas condiciones.',
+        siIgnora:'😅 Era una buena oferta: pudiste ganar el 15% de lo invertido.',
+        resumen:'Óptimas condiciones · comprarlo era ganar el 15%' }
+    ]
   }
 };
 
@@ -139,11 +153,11 @@ const SLIDES = {
     texto:'Antes de pagar por un celular, revisa esto:',
     items:[
       { e:'🔓', t:'Que esté desbloqueado', d:'Factory Unlocked, sin operador que lo limite.' },
-      { e:'📶', t:'Compatible con Colombia', d:'Que sirva con las bandas 4G/5G de aquí.' },
+      { e:'📶', t:'Compatible con Colombia', d:'Bandas 4G/5G de aquí y homologado en el país.' },
       { e:'🆔', t:'IMEI limpio', d:'Sin reporte de robo, pérdida o bloqueo.' },
       { e:'🔒', t:'Sin bloqueo iCloud/Google', d:'Con activación bloqueada, no sirve.' },
-      { e:'🔋', t:'Batería sana', d:'En iPhone, idealmente arriba del 85%.' },
-      { e:'📱', t:'Estado físico', d:'Pantalla, cámaras, Face ID, puertos, golpes.' },
+      { e:'🔋', t:'Batería sana', d:'En iPhone, idealmente arriba del 80%.' },
+      { e:'📱', t:'Estado físico', d:'Pantalla, cámaras, Face ID, golpes y sin piezas cambiadas.' },
       { e:'📦', t:'Nuevo o usado', d:'Cambia precio, garantía e importación.' },
       { e:'💵', t:'Precio real del mercado', d:'Compara en varias plataformas antes de pagar.' },
       { e:'🛡️', t:'Reputación del vendedor', d:'Mira calificaciones e historial de ventas.' }
@@ -176,9 +190,8 @@ const ESCALETA = [
   { id:'slide:aprendimos', t:'🚀 Con el tiempo aprendimos a hacerlo (fotos/videos)' },
   { id:'slide:diego',      t:'🎤 Entrada de DIEGO (el guía que enseña)' },
   { id:'slide:revisar',    t:'✅ Qué revisar antes de comprar (informativo)' },
-  { id:'slide:dondecomprar', t:'🛒 Dónde comprar en USA (logos)' },
-  { id:'dondepoll',        t:'📊 ENCUESTA: ¿dónde comprarías tú? (resultados en vivo)' },
-  { id:'comprarias',       t:'📱 QUIZ visual: ¿cuál celular comprarías? (15 Pro Max)' },
+  { id:'slide:dondecomprar', t:'🛒 Dónde comprar en USA (logos + votación en vivo)' },
+  { id:'comprarias',       t:'🛍️ JUEGO: ¿comprar o ignorar? (3 iPhones, feedback al responder)' },
   { id:'legal',            t:'🧠 QUIZ: "Importar es ilegal" → Mito' },
   { id:'experto',          t:'🧠 QUIZ: "Solo para expertos" → Mito' },
   { id:'tarjeta',          t:'🧠 QUIZ: "Necesitas tarjeta internacional" → Mito' },

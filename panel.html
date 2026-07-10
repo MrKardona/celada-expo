@@ -72,7 +72,10 @@ async function refrescaN(){
 async function refrescaR(){
   const e = actual.replace(/^rev:/,'');
   if(e==='espera'||e==='final'){ document.getElementById('nR').textContent='—'; return; }
-  const { count } = await sb.from('ic_respuestas').select('*',{count:'exact',head:true}).eq('interaccion',e);
+  const q = (typeof IX!=='undefined') ? IX[e] : null;
+  let query = sb.from('ic_respuestas').select('*',{count:'exact',head:true});
+  query = (q && q.tipo==='tienda') ? query.like('interaccion', e+':%') : query.eq('interaccion', e);
+  const { count } = await query;
   document.getElementById('nR').textContent = count||0;
 }
 /* pinta la escaleta */
