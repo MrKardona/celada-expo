@@ -233,14 +233,72 @@ function arrancaTimerJ(id, q){
   }, TIEMPO_PREGUNTA*1000);
 }
 async function vFinal(){
-  const { data } = await sb.from('ic_participantes').select('nombre,puntos').order('puntos',{ascending:false}).limit(10);
+  const { data } = await sb.from('ic_participantes').select('id,nombre,puntos').order('puntos',{ascending:false}).limit(10);
   const top = data||[];
-  app.innerHTML = `<div class="centro"><div class="gigante">🏆</div><h1 style="margin:0 auto">Ranking final</h1>
-  <p class="sub" style="margin-top:6px">TOP 1 gana el <b style="color:var(--gold)">envío de su celular GRATIS</b> 📱✈️</p></div>
-  <div style="margin-top:10px">${top.map((p,i)=>`<div class="rk ${p.nombre===yo.nombre?'yo':''}"><span>${i===0?'👑':(i+1)+'.'} ${p.nombre}</span><span style="color:var(--gold)">${p.puntos} pts</span></div>`).join('')}</div>
-  <div class="centro" style="margin-top:14px"><span class="nivel">Tú: ${nivel(yo.puntos)} · ${yo.puntos} pts</span>
-  <p class="sub" style="margin-top:14px">🎁 Y por participar: tus <b style="color:var(--gold)">5 LIBRAS GRATIS</b> te esperan en el stand de Celada Shopper.</p></div>`;
-  burst(20,'🏆');
+  const soyGanador = !!(yo && top.length && top[0].id===yo.id);
+  const podio = `<div style="margin-top:10px">${top.map((p,i)=>`<div class="rk ${p.nombre===yo.nombre?'yo':''}"><span>${i===0?'👑':(i+1)+'.'} ${p.nombre}</span><span style="color:var(--gold)">${p.puntos} pts</span></div>`).join('')}</div>`;
+  if(soyGanador){
+    /* ── GANADOR: reclama el premio dejando sus datos ── */
+    app.innerHTML = `<div class="centro"><div class="gigante">👑</div><h1 style="margin:0 auto">¡GANASTE, ${yo.nombre.split(' ')[0]}!</h1>
+    <p class="sub" style="margin-top:8px">El envío de tu celular es <b style="color:var(--gold)">GRATIS</b> 📱✈️<br>Confirma tus datos para reclamarlo:</p></div>
+    <div style="margin-top:14px">
+      <input id="gNombre" placeholder="Tu nombre completo" value="${yo.nombre}" autocomplete="name">
+      <input id="gWhatsapp" placeholder="Tu WhatsApp" inputmode="tel" value="${yo.whatsapp||''}" autocomplete="tel">
+      <input id="gCorreo" placeholder="Tu correo electrónico" inputmode="email" autocomplete="email">
+      <div id="gErr" class="rerr"></div>
+      <button class="btn" id="gBtn">👑 Reclamar mi premio</button>
+      <p class="mini">🔒 Solo para coordinar tu premio. Nada de spam.</p>
+    </div>`;
+    burst(24,'👑');
+    const err=document.getElementById('gErr');
+    document.getElementById('gBtn').onclick = async function(){
+      const n=document.getElementById('gNombre').value.trim();
+      const w=document.getElementById('gWhatsapp').value.replace(/\D/g,'');
+      const c=document.getElementById('gCorreo').value.trim();
+      err.style.display='none';
+      if(n.length<2){ err.textContent='Escribe tu nombre completo 🙂'; err.style.display='block'; return; }
+      if(w.length<10){ err.textContent='Confirma tu WhatsApp (10 dígitos) 📱'; err.style.display='block'; return; }
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c)){ err.textContent='Escribe un correo válido ✉️'; err.style.display='block'; return; }
+      this.disabled=true; this.textContent='Enviando...';
+      const lead={ evento:'EXPOMOBILE 2026', tag:'GANADOR-SHOW', nombre:n, whatsapp:w, correo:c, ciudad:'',
+        interes:'GANADOR SHOW - envio celular gratis', cuando:'', tipo_cliente:'', fecha:new Date().toISOString(),
+        session_id:'show-ganador-'+yo.id, utm:{}, origen:'show-ganador' };
+      try{ await fetch(CIERRE.webhookUrl,{method:'POST',headers:{'Content-Type':'application/json','X-Landing-Token':CIERRE.webhookToken},body:JSON.stringify(lead),keepalive:true}); }catch(_){}
+      burst(20,'🎉');
+      app.innerHTML = `<div class="centro"><div class="gigante">🎉</div><h1 style="margin:0 auto">¡Datos recibidos!</h1>
+      <p class="sub" style="margin-top:10px">Ya quedaste registrado como el GANADOR 👑<br>Ahora pasa al stand de <b style="color:var(--gold)">Celada Shopper</b> para coordinar tu premio.</p>
+      <button class="btn" style="margin-top:16px" onclick="location.href='https://wa.me/${CIERRE.whatsapp}?text='+encodeURIComponent(CIERRE.msgGanador)">📲 Avisar por WhatsApp</button></div>`;
+    };
+  } else {
+    /* ── LOS DEMÁS: podio + activación de las 5 LIBRAS en el stand ── */
+    app.innerHTML = `<div class="centro"><div class="gigante">🏆</div><h1 style="margin:0 auto">Ranking final</h1>
+    <p class="sub" style="margin-top:6px">TOP 1 gana el <b style="color:var(--gold)">envío de su celular GRATIS</b> 📱✈️</p></div>
+    ${podio}
+    <div class="centro" style="margin-top:14px"><span class="nivel">Tú: ${nivel(yo.puntos)} · ${yo.puntos} pts</span></div>
+    <div style="margin-top:16px;background:rgba(255,179,0,.08);border:1.5px solid rgba(255,179,0,.45);border-radius:16px;padding:16px;text-align:center">
+      <b style="color:var(--gold);font-size:1.15rem">🎁 RECLAMA LAS 5 LIBRAS</b>
+      <div id="librasCard">
+      <div style="background:#fff;padding:12px;border-radius:14px;display:inline-block;margin:12px auto"><img src="https://api.qrserver.com/v1/create-qr-code/?size=380x380&margin=2&data=${encodeURIComponent('CELADALIBRAS|'+(yo.whatsapp||'')+'|'+yo.nombre)}" alt="Tu QR de activación" style="width:min(56vw,230px);height:auto;display:block"></div>
+      <p class="sub" style="margin-top:4px">⚠️ Este QR <b style="color:var(--gold)">debe ser activado en el stand</b> de Celada Shopper. Cuando te lo escaneen, se abrirá WhatsApp automáticamente ✨</p>
+      </div>
+      <button class="btn" style="margin-top:12px" onclick="window.open(CIERRE.urlLanding,'_blank')">🌐 Conocer Celada Shopper</button>
+    </div>`;
+    burst(20,'🏆');
+    escuchaActivacion();
+  }
+}
+/* ── Cuando el stand escanea el QR del cliente, su celular reacciona:
+   confirma la activación y lo manda solo a WhatsApp con el mensaje listo ── */
+let librasCanal = null;
+function escuchaActivacion(){
+  if(librasCanal || !yo || !yo.whatsapp) return;
+  librasCanal = sb.channel('libras-'+yo.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'libras_activadas',filter:'whatsapp=eq.'+yo.whatsapp},function(){
+      burst(22,'🎁'); vibra([60,50,160]);
+      const card=document.getElementById('librasCard');
+      if(card) card.innerHTML = '<div class="gigante" style="margin-top:8px">✅</div><b style="color:#22c55e;font-size:1.2rem">¡TUS 5 LIBRAS QUEDARON ACTIVADAS!</b><p class="sub" style="margin-top:8px">Te llevamos a WhatsApp…</p>';
+      setTimeout(function(){ location.href='https://wa.me/'+CIERRE.whatsapp+'?text='+encodeURIComponent(CIERRE.msgActivar); },1500);
+    }).subscribe();
 }
 function render(){
   const top=document.querySelector('.top');

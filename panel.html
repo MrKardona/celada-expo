@@ -46,9 +46,21 @@ h1{font-size:1.2rem;margin-bottom:4px}
   <button class="paso rev" id="btnRev">✅ Revelar respuesta</button>
   <button class="paso" id="btnLluvia" style="border-color:rgba(255,179,0,.5)">🙋 Lluvia de manos</button>
 </div>
+<button class="paso" id="btnLibras" style="background:var(--grad);color:#1d1300;border-color:transparent;font-weight:800;justify-content:center;margin-top:16px">🎁 ACTIVAR LIBRAS (escanear QR)</button>
 <button class="paso peligro" id="btnReset">🗑️ Reiniciar TODO (borra jugadores y puntos)</button>
+<div id="scanLibras" style="position:fixed;inset:0;background:#000;z-index:99;display:none;flex-direction:column">
+  <div style="padding:14px;text-align:center;background:#0c0c0e"><b style="color:var(--gold)">🎁 ACTIVAR LIBRAS</b> <span style="color:var(--txt2);font-size:.85rem">· apunta al QR del cliente</span></div>
+  <div style="flex:1;position:relative;overflow:hidden">
+    <video id="scanVideo" playsinline muted style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none"><div style="width:min(62vw,300px);aspect-ratio:1;border:3px solid rgba(255,179,0,.85);border-radius:22px;box-shadow:0 0 0 2000px rgba(0,0,0,.35)"></div></div>
+  </div>
+  <div id="scanStatus" style="padding:18px 14px;text-align:center;font-weight:800;font-size:1.15rem;background:#17171c;color:var(--txt2)">Buscando QR…</div>
+  <button class="paso" id="scanCerrar" style="justify-content:center;border-radius:0;margin:0">Cerrar escáner</button>
+</div>
+<canvas id="scanCanvas" style="display:none"></canvas>
 <div class="aviso" id="aviso">Enviado ✓</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <script src="show-config.js"></script>
 <script>
 const TOKEN='celada-show-2026';
@@ -107,6 +119,64 @@ fxCanal.subscribe();
 document.getElementById('btnLluvia').onclick = function(){
   fxCanal.send({ type:'broadcast', event:'fx', payload:{ emo:'🙋' } });
   aviso('Lluvia enviada 🙋');
+};
+/* ── ESCÁNER de libras: la cámara del panel lee el QR personal del cliente
+   (formato CELADALIBRAS|whatsapp|nombre), lo registra en libras_activadas
+   y muestra ACTIVADO abajo. Escanea varios seguidos sin cerrar. ── */
+let scanStream=null, scanRAF=null, scanUltimo='', scanUltimoT=0;
+const scanStatus=document.getElementById('scanStatus');
+function scanMsg(txt, color, bg){ scanStatus.textContent=txt; scanStatus.style.color=color; scanStatus.style.background=bg; }
+function scanReset(){ scanMsg('Buscando QR…','#a8a8b3','#17171c'); }
+async function scanProcesa(codigo){
+  const ahora=Date.now();
+  if(codigo===scanUltimo && ahora-scanUltimoT<4000) return; /* mismo QR aún en cámara */
+  scanUltimo=codigo; scanUltimoT=ahora;
+  if(codigo.indexOf('CELADALIBRAS|')!==0){ scanMsg('❌ Este QR no es de Celada','#fff','#7f1d1d'); setTimeout(scanReset,2200); return; }
+  const partes=codigo.split('|');
+  const whatsapp=(partes[1]||'').replace(/\D/g,''), nombre=partes.slice(2).join('|')||'Cliente';
+  if(whatsapp.length<10){ scanMsg('❌ QR sin WhatsApp válido','#fff','#7f1d1d'); setTimeout(scanReset,2200); return; }
+  scanMsg('Verificando…','#a8a8b3','#17171c');
+  const { error } = await sb.from('libras_activadas').insert({nombre:nombre, whatsapp:whatsapp});
+  if(!error){
+    scanMsg('✅ ACTIVADO · '+nombre.split(' ')[0],'#062e12','#22c55e');
+    if(navigator.vibrate) navigator.vibrate([40,40,120]);
+  } else if(String(error.code)==='23505' || /duplicate|unique/i.test(error.message||'')){
+    scanMsg('🟡 YA ESTABA ACTIVADO · '+nombre.split(' ')[0],'#1d1300','#ffc53d');
+  } else {
+    scanMsg('❌ Error, intenta de nuevo','#fff','#7f1d1d');
+  }
+  setTimeout(scanReset,2600);
+}
+function scanLoop(){
+  const v=document.getElementById('scanVideo'), cv=document.getElementById('scanCanvas');
+  if(v.readyState===v.HAVE_ENOUGH_DATA){
+    cv.width=v.videoWidth; cv.height=v.videoHeight;
+    const cx=cv.getContext('2d',{willReadFrequently:true});
+    cx.drawImage(v,0,0,cv.width,cv.height);
+    try{
+      const img=cx.getImageData(0,0,cv.width,cv.height);
+      const q=jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'});
+      if(q && q.data) scanProcesa(q.data);
+    }catch(e){}
+  }
+  scanRAF=requestAnimationFrame(scanLoop);
+}
+document.getElementById('btnLibras').onclick = async function(){
+  document.getElementById('scanLibras').style.display='flex';
+  scanReset();
+  try{
+    scanStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}, audio:false});
+    const v=document.getElementById('scanVideo');
+    v.srcObject=scanStream; await v.play();
+    scanLoop();
+  }catch(e){
+    scanMsg('❌ No hay acceso a la cámara. Revisa permisos.','#fff','#7f1d1d');
+  }
+};
+document.getElementById('scanCerrar').onclick = function(){
+  if(scanRAF){ cancelAnimationFrame(scanRAF); scanRAF=null; }
+  if(scanStream){ scanStream.getTracks().forEach(function(t){ t.stop(); }); scanStream=null; }
+  document.getElementById('scanLibras').style.display='none';
 };
 document.getElementById('btnReset').onclick = function(){
   if(confirm('¿Seguro? Se borran TODOS los jugadores, puntos y respuestas.')) enviar('__reset__');

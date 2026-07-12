@@ -279,7 +279,7 @@ footer{padding:36px 0 90px;border-top:1px solid var(--line);text-align:center;co
     </div>
     <h1>Compra en <span class="grad">Estados Unidos.</span><br>Nosotros hacemos el resto.</h1>
     <div class="cta-stack">
-      <a href="#registro" class="btn btn-primary" data-track="cta_hero">🎁 Reclamar beneficio EXCLUSIVO Expomobile</a>
+      <a href="#registro" class="btn btn-primary" data-track="cta_hero">🎁 Activar mis 5 LIBRAS GRATIS</a>
       <a href="#como" class="btn btn-ghost" data-track="cta_hero_como">¿Cómo funciona?</a>
     </div>
   </div>
@@ -408,8 +408,10 @@ footer{padding:36px 0 90px;border-top:1px solid var(--line);text-align:center;co
       <div class="success" id="successBox">
         <div class="big">🎉</div>
         <h3>¡Listo, <span id="sNombre"></span>!</h3>
-        <p>Tu beneficio quedó reservado. Te estamos abriendo WhatsApp para activarlo…</p>
-        <a href="#" class="btn btn-wa" id="btnWaRetry">Abrir WhatsApp</a>
+        <p>Muestra este QR en el stand de <b>Celada Shopper</b> para <b style="color:var(--gold,#ffb300)">ACTIVAR tus 5 LIBRAS</b>:</p>
+        <div style="background:#fff;padding:14px;border-radius:16px;display:inline-block;margin:14px auto"><img id="sQr" src="" alt="Tu QR de activación" style="width:min(62vw,260px);height:auto;display:block"></div>
+        <p style="font-size:.9rem;opacity:.85">Después continúa por WhatsApp para tu asesoría:</p>
+        <a href="#" class="btn btn-wa" id="btnWaRetry">📲 Continuar a WhatsApp</a>
       </div>
     </div>
   </div>
@@ -804,17 +806,37 @@ form.addEventListener('submit', function(e){
   const msg = 'Hola, soy '+lead.nombre+'. Vengo de '+CONFIG.eventoNombre+' y quiero activar mis '+CONFIG.beneficioTitulo+'.';
   const url = waLink(msg);
 
-  /* Mostrar éxito y abrir WhatsApp */
+  /* Mostrar éxito: QR personal para activar en el stand + botón WhatsApp (sin redirección automática) */
   form.style.display = 'none';
   document.getElementById('sNombre').textContent = lead.nombre.split(' ')[0];
+  document.getElementById('sQr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=2&data='+encodeURIComponent('CELADALIBRAS|'+lead.whatsapp+'|'+lead.nombre);
   document.getElementById('successBox').style.display = 'block';
   burst(innerWidth/2, innerHeight/2, 40); /* 🎉 celebración grande */
   const retry = document.getElementById('btnWaRetry');
   retry.href = url;
   retry.addEventListener('click', ()=>track('whatsapp_click',{origen:'success_retry'}));
-  track('whatsapp_click',{origen:'form_submit'});
-  setTimeout(()=>{ window.location.href = url; }, 1600); /* deja ver la celebración */
+
+  /* Cuando el stand escanea el QR: el celular confirma solo y salta a WhatsApp */
+  escuchaActivacionLibras(lead.whatsapp, url);
 });
+
+/* ── Escucha en vivo de la activación de libras (Supabase Realtime) ── */
+function escuchaActivacionLibras(whatsapp, urlWa){
+  if(!whatsapp) return;
+  const s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  s.onload = function(){
+    const cli = supabase.createClient('https://igijeqhyppvpennjdkiu.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnaWplcWh5cHB2cGVubmpka2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDc5NTksImV4cCI6MjA5MTU4Mzk1OX0.5JdsyKQ3Mscpun1efjKarvcz9q032n-TpYOHaszQ5qw');
+    cli.channel('libras-landing')
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'libras_activadas',filter:'whatsapp=eq.'+whatsapp},function(){
+        const box=document.getElementById('successBox');
+        if(box) box.innerHTML = '<div class="big">✅</div><h3>¡Tus 5 LIBRAS quedaron ACTIVADAS!</h3><p>Te llevamos a WhatsApp…</p>';
+        track('libras_activadas',{});
+        setTimeout(function(){ location.href = urlWa; }, 1500);
+      }).subscribe();
+  };
+  document.head.appendChild(s);
+}
 
 })();
 </script>

@@ -152,6 +152,113 @@ const SLIDES = {
   dondecomprar: { tipo:'logos', kicker:'DÓNDE COMPRAR', titulo:'¿Dónde comprar en Estados Unidos?', texto:'Las tiendas donde conseguimos todo por ti.', fotos:['logo-1.webp','logo-2.webp','logo-3.webp','logo-4.webp','logo-5.webp','logo-6.webp'] },
 
 
+  /* ── BLOQUE EDUCATIVO: de comprador a importador (pasos 14-22) ── */
+  comprarvsimportar: {
+    tipo:'checklist', kicker:'LA GRAN DIFERENCIA',
+    titulo:'¿Comprar o importar?',
+    texto:'Comprar un celular ≠ importar mercancía.',
+    items:[
+      { e:'📱', t:'Uso personal', d:'Compras un celular para ti.' },
+      { e:'🏪', t:'Actividad comercial', d:'Importas mercancía para vender.' }
+    ],
+    dato:'Cuando cambia el propósito, también cambian las reglas.'
+  },
+  limite: {
+    tipo:'checklist', kicker:'MITO FRECUENTE',
+    titulo:'¿Existe un límite de celulares al mes? NO.',
+    texto:'La ley colombiana no establece un número máximo mensual. Lo que la DIAN analiza es:',
+    items:[
+      { e:'📅', t:'Frecuencia', d:'¿Cada cuánto importas?' },
+      { e:'📦', t:'Cantidad', d:'¿Cuántos equipos traes?' },
+      { e:'🎯', t:'Finalidad', d:'¿Para ti o para vender?' },
+      { e:'🧾', t:'Evidencia comercial', d:'¿Hay señales de negocio?' }
+    ],
+    dato:'No importa solo cuántos importas, sino para qué los importas.'
+  },
+  dianobserva: {
+    tipo:'checklist', kicker:'ASÍ TE VE LA DIAN',
+    titulo:'¿Qué observa la DIAN?',
+    texto:'',
+    items:[
+      { e:'📅', t:'Frecuencia', d:'De tus importaciones.' },
+      { e:'📦', t:'Cantidad', d:'De equipos por envío.' },
+      { e:'💰', t:'Valor', d:'De las operaciones.' },
+      { e:'🏪', t:'Destino', d:'Comercial de la mercancía.' }
+    ],
+    dato:'La DIAN analiza el comportamiento del importador, no únicamente el contenido del paquete.'
+  },
+  uvt: {
+    tipo:'checklist', kicker:'EL NÚMERO CLAVE',
+    titulo:'Las 22 UVT',
+    texto:'',
+    items:[
+      { e:'✅', t:'Hasta 22 UVT', d:'Puede conservar beneficios tributarios.' },
+      { e:'💰', t:'Más de 22 UVT', d:'Se puede importar, pagando los tributos que correspondan.' }
+    ],
+    dato:'22 UVT NO significa que esté prohibido importar.'
+  },
+  nosolocaja: {
+    tipo:'checklist', kicker:'EL PROCESO COMPLETO',
+    titulo:'Importar no es solo traer una caja',
+    texto:'',
+    items:[
+      { e:'✈️', t:'1. Transporte internacional', d:'De USA a Colombia.' },
+      { e:'📑', t:'2. Declaración', d:'De la mercancía.' },
+      { e:'🏛️', t:'3. Nacionalización', d:'Ingreso legal al país.' },
+      { e:'💰', t:'4. Pago de tributos', d:'Los que correspondan.' },
+      { e:'📦', t:'5. Entrega al cliente', d:'El último paso.' }
+    ],
+    dato:'Importar comienza donde termina la compra.'
+  },
+  nacionalizar: {
+    tipo:'checklist', kicker:'LA PALABRA CLAVE',
+    titulo:'¿Qué significa nacionalizar?',
+    texto:'',
+    items:[
+      { e:'📑', t:'Declarar', d:'La mercancía ante la aduana.' },
+      { e:'🏷️', t:'Clasificar', d:'Correctamente el producto.' },
+      { e:'💰', t:'Pagar', d:'Los tributos aplicables.' },
+      { e:'✅', t:'Autorizar', d:'El ingreso legal al país.' }
+    ],
+    dato:'La nacionalización convierte una mercancía en un producto legalmente importado.'
+  },
+  couriervs: {
+    tipo:'checklist', kicker:'DOS CAMINOS',
+    titulo:'Courier vs Importación Ordinaria',
+    texto:'',
+    items:[
+      { e:'📬', t:'Courier (casillero)', d:'Uso personal · pocas unidades · proceso simple.' },
+      { e:'🏗️', t:'Importación ordinaria', d:'Uso comercial · grandes cantidades · agente de aduanas · operación estructurada.' }
+    ],
+    dato:'Cada modalidad responde a una necesidad diferente.'
+  },
+  importador: {
+    tipo:'checklist', kicker:'EL SALTO',
+    titulo:'¿Cuándo te conviertes en importador?',
+    texto:'Cuando dejas de comprar para ti… y comienzas a importar para vender. Necesitas:',
+    items:[
+      { e:'🤝', t:'Proveedor', d:'Confiable en USA.' },
+      { e:'🚚', t:'Logística', d:'Transporte y tiempos claros.' },
+      { e:'🏛️', t:'Nacionalización', d:'Todo en regla.' },
+      { e:'📊', t:'Inventario', d:'Control de tu mercancía.' },
+      { e:'🧠', t:'Planeación', d:'Números antes que impulsos.' }
+    ],
+    dato:'Ya no eres solo un comprador. Ahora eres un importador.'
+  },
+  costoreal: {
+    tipo:'checklist', kicker:'¿REALMENTE ESTÁS GANANDO?',
+    titulo:'El costo real de importar',
+    texto:'Costo del celular ➕ envío ➕ seguro ➕ tributos ➕ otros costos 🟰 COSTO REAL',
+    items:[
+      { e:'📱', t:'Costo del celular', d:'Precio de compra en USA.' },
+      { e:'✈️', t:'Envío', d:'Flete internacional.' },
+      { e:'🛡️', t:'Seguro', d:'Protege tu inversión.' },
+      { e:'🏛️', t:'Tributos', d:'Lo que corresponda pagar.' },
+      { e:'➕', t:'Otros costos', d:'Comisiones, últimas millas…' }
+    ],
+    dato:'La utilidad se calcula, no se adivina.'
+  },
+
   revisar: {
     tipo:'checklist',
     kicker:'ANTES DE COMPRAR',
@@ -199,18 +306,36 @@ const ESCALETA = [
   { id:'slide:dondecomprar', t:'🛒 Dónde comprar en USA (logos + votación en vivo)' },
   { id:'comprarias',       t:'🛍️ JUEGO: ¿comprar o ignorar? (3 iPhones, feedback al responder)' },
   { id:'tipoimport',       t:'📊 ENCUESTA: ya compramos, ¿importas al detal (1-9) o mayorista (10+)?' },
-  { id:'legal',            t:'🧠 QUIZ: "Importar es ilegal" → Mito' },
-  { id:'experto',          t:'🧠 QUIZ: "Solo para expertos" → Mito' },
-  { id:'tarjeta',          t:'🧠 QUIZ: "Necesitas tarjeta internacional" → Mito' },
-  { id:'imei',             t:'💎 QUIZ IMEI: cómo evitar que te lo bloqueen' },
-  { id:'personalidad',     t:'😜 ENCUESTA divertida: te llega un iPhone gratis…' },
-  { id:'dian',             t:'🧠 QUIZ: "La DIAN lo retiene" → Mito' },
-  { id:'tiempo',           t:'🧠 QUIZ: ¿cuánto tarda? (10-15 días)' },
-  { id:'precio',           t:'💥 QUIZ DOBLE: precio del iPhone en USA' },
-  { id:'traer',            t:'📊 ENCUESTA: ¿qué traerías primero?' },
+  { id:'slide:comprarvsimportar', t:'⚖️ ¿Comprar o importar? (el propósito cambia las reglas)' },
+  { id:'slide:limite',     t:'🚫 ¿Límite de celulares al mes? NO — qué analiza la DIAN' },
+  { id:'slide:dianobserva', t:'👀 ¿Qué observa la DIAN? (comportamiento, no solo paquete)' },
+  { id:'slide:uvt',        t:'💰 Las 22 UVT (no es prohibición)' },
+  { id:'slide:nosolocaja', t:'📦 Importar no es solo traer una caja (5 pasos)' },
+  { id:'slide:nacionalizar', t:'🏛️ ¿Qué significa nacionalizar?' },
+  { id:'slide:couriervs',  t:'📬 Courier vs importación ordinaria' },
+  { id:'slide:importador', t:'🚀 ¿Cuándo te conviertes en importador?' },
+  { id:'slide:costoreal',  t:'🧮 El costo real de importar (la utilidad se calcula)' },
   { id:'slide:oferta',     t:'🎁 Oferta: 5 libras gratis en el stand' },
-  { id:'final',            t:'🏆 RANKING FINAL + premio celular' }
+  { id:'final',            t:'🏆 PODIO: ganador deja sus datos, el resto activa sus libras' }
 ];
+
+/* ============================================================
+   🏁 CIERRE: qué pasa en el celular cuando termina el show
+   - El GANADOR (TOP 1) ve un formulario para reclamar el premio
+     (correo + confirmar WhatsApp) que entra directo a los leads.
+   - El RESTO ve el paso a paso para activar sus 5 LIBRAS:
+     ir al stand → escanear el QR "ACTIVAR LIBRAS" del panel →
+     enviar el WhatsApp que se abre prellenado.
+============================================================ */
+const CIERRE = {
+  urlLanding: 'https://expo.celadashopper.com',
+  whatsapp: '573001260097',
+  /* el mensaje DEBE contener "EXPOMOBILE" para que el bot de Kommo lo active. Sin emojis (iPhone). */
+  msgActivar: 'Quiero activar mis 5 LIBRAS GRATIS de EXPOMOBILE',
+  msgGanador: 'Soy el GANADOR del show EXPOMOBILE y quiero reclamar el envio gratis de mi celular',
+  webhookUrl: 'https://igijeqhyppvpennjdkiu.supabase.co/functions/v1/lead',
+  webhookToken: 'celada-expo-2026'
+};
 
 /* ============================================================
    🏆 PREMIOS (textos del cierre)
