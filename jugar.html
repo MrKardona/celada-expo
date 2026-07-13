@@ -252,18 +252,12 @@ function vPreguntar(durante){
    Ya tenemos nombre + WhatsApp del registro, así que solo mostramos su QR ── */
 function vOfertaLibrasJ(){
   const nom = yo.nombre.split(' ')[0];
-  const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=380x380&margin=2&data='+encodeURIComponent('CELADALIBRAS|'+(yo.whatsapp||'')+'|'+yo.nombre);
   app.innerHTML = '<div style="width:100%;text-align:center">'
     + '<div style="font-size:2.4rem">🎁</div>'
     + '<h1 style="font-size:1.35rem;margin:4px auto 2px">Reclama tus 5 LIBRAS GRATIS</h1>'
-    + '<p class="sub" style="margin-bottom:12px">Ya tenemos tus datos, '+nom+' ✅ Solo actívalas en el stand:</p>'
-    + '<div id="librasCard">'
-    + '<div style="background:#fff;padding:12px;border-radius:14px;display:inline-block;margin:2px auto 10px"><img src="'+qr+'" alt="Tu QR de activación" style="width:min(52vw,220px);height:auto;display:block"></div>'
-    + '<p class="sub" style="font-size:.9rem">Pasa al stand de <b style="color:var(--gold)">Celada Shopper</b> y muestra este QR: se activan solas ✨</p>'
-    + '</div>'
-    + '<button class="btn" style="margin-top:12px" onclick="window.open(CIERRE.urlLanding,\'_blank\')">🌐 Ir a expo.celadashopper.com</button>'
+    + '<p class="sub" style="margin-bottom:16px">Regístrate y actívalas para tu primer envío desde USA, '+nom+' 🇺🇸📦🇨🇴</p>'
+    + '<button class="btn btn-wow" style="width:100%;max-width:360px" onclick="location.href=\'https://expo.celadashopper.com/#registro\'">🚀 Reclamar mis 5 libras</button>'
     + '</div>';
-  escuchaActivacion();
 }
 /* ── Slide EJEMPLOS: elige un caso, ve el desglose, ⬅ Atrás para cambiar ── */
 function vEjemplosJ(s, casoId){
@@ -414,15 +408,11 @@ async function vFinal(){
     ${podio}
     <div class="centro" style="margin-top:14px"><span class="nivel">Tú: ${nivel(yo.puntos)} · ${yo.puntos} pts</span></div>
     <div style="margin-top:16px;background:rgba(255,179,0,.08);border:1.5px solid rgba(255,179,0,.45);border-radius:16px;padding:16px;text-align:center">
-      <b style="color:var(--gold);font-size:1.15rem">🎁 RECLAMA LAS 5 LIBRAS</b>
-      <div id="librasCard">
-      <div style="background:#fff;padding:12px;border-radius:14px;display:inline-block;margin:12px auto"><img src="https://api.qrserver.com/v1/create-qr-code/?size=380x380&margin=2&data=${encodeURIComponent('CELADALIBRAS|'+(yo.whatsapp||'')+'|'+yo.nombre)}" alt="Tu QR de activación" style="width:min(56vw,230px);height:auto;display:block"></div>
-      <p class="sub" style="margin-top:4px">⚠️ Este QR <b style="color:var(--gold)">debe ser activado en el stand</b> de Celada Shopper. Cuando te lo escaneen, se abrirá WhatsApp automáticamente ✨</p>
-      </div>
-      <button class="btn" style="margin-top:12px" onclick="window.open(CIERRE.urlLanding,'_blank')">🌐 Conocer Celada Shopper</button>
+      <b style="color:var(--gold);font-size:1.2rem">🎁 ¡RECLAMA TUS 5 LIBRAS GRATIS!</b>
+      <p class="sub" style="margin:8px auto 14px">Regístrate y activa tus <b style="color:var(--gold)">5 libras GRATIS</b> para tu primer envío desde USA 🇺🇸📦🇨🇴</p>
+      <button class="btn btn-wow" style="width:100%" onclick="location.href='https://expo.celadashopper.com/#registro'">🚀 Reclamar mis 5 libras</button>
     </div>`;
     burst(20,'🏆');
-    escuchaActivacion();
   }
 }
 /* ── Cuando el stand escanea el QR del cliente, su celular reacciona:
