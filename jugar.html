@@ -71,7 +71,7 @@ const app = document.getElementById('app');
 let yo = JSON.parse(localStorage.getItem('ic_yo')||'null');
 let contestadas = JSON.parse(localStorage.getItem('ic_resp')||'{}');
 let estadoActual = 'espera';
-let preguntaTimerJ = null, timerNumIntJ = null;
+let preguntaTimerJ = null, timerNumIntJ = null, cajitaActiva = false;
 let galTimerJ = null;
 let pushCanal = null;
 let wakeLock = null;
@@ -160,6 +160,103 @@ function vPregunta(id){
     };
   });
   if(TIEMPO_PREGUNTA>0 && !q.sinTimer) arrancaTimerJ(id, q);
+}
+/* ── Q&A: el público escribe SUS preguntas → llegan al panel ──
+   durante=true → versión compacta mientras corre la presentación (slides 14-21)
+   durante=false → slide dedicado "¡Queremos escucharte!" (paso 23) */
+var MAX_PREG = 2; /* máximo de preguntas por persona */
+function pregHechas(){ return parseInt(localStorage.getItem('ic_pregN')||'0',10); }
+function vPreguntar(durante){
+  const cab = durante
+    ? '<div class="centro" style="margin-bottom:10px"><div style="font-size:2.6rem">👀</div><h1 style="margin:0 auto;font-size:1.25rem">Presta atención a la pantalla</h1>'
+      + '<p class="sub" style="margin-top:8px">Si te queda una duda, escríbela aquí 👇 Al final resolveremos algunas en vivo.</p></div>'
+    : '<div class="centro" style="margin-bottom:8px"><div class="gigante">🎤</div><h1 style="margin:0 auto;font-size:1.4rem">¡Queremos escucharte!</h1>'
+      + '<p class="sub" style="margin-top:8px">Escribe tu pregunta sobre importar. La leemos en pantalla y te respondemos en vivo. 👇</p></div>';
+  /* Ya usó sus 2 preguntas → vista de agradecimiento */
+  if(pregHechas() >= MAX_PREG){
+    app.innerHTML = '<div class="centro" style="width:100%"><div class="gigante">🙌</div><h1 style="margin:0 auto;font-size:1.3rem">¡Gracias por tus preguntas!</h1>'
+      + '<p class="sub" style="margin-top:8px">Ya enviaste tus '+MAX_PREG+' preguntas. Atento a la pantalla: respondemos algunas en vivo y el resto por WhatsApp. 💬</p></div>';
+    return;
+  }
+  const restantes = MAX_PREG - pregHechas();
+  const pie = durante
+    ? '<p class="mini">Te quedan '+restantes+' de '+MAX_PREG+'. Si no la respondemos en la presentación, haremos lo posible por WhatsApp 💬</p>'
+    : '<p class="mini">Te quedan '+restantes+' de '+MAX_PREG+' preguntas.</p>';
+  app.innerHTML = '<div style="width:100%">'
+    + cab
+    + '<textarea id="qaTxt" maxlength="180" placeholder="Ej: ¿Cuánto tarda en llegar mi celular?" style="width:100%;min-height:92px;resize:none;background:var(--card);border:1px solid var(--line);border-radius:14px;color:var(--txt);font:inherit;font-size:1rem;padding:14px;margin-bottom:6px"></textarea>'
+    + '<div id="qaErr" class="rerr"></div>'
+    + '<button class="btn" id="qaBtn">📨 Enviar mi pregunta</button>'
+    + pie
+    + '<div id="qaOk"></div></div>';
+  const err=document.getElementById('qaErr');
+  document.getElementById('qaBtn').onclick = async function(){
+    if(pregHechas() >= MAX_PREG){ vPreguntar(durante); return; }
+    const t=document.getElementById('qaTxt').value.trim();
+    err.style.display='none';
+    if(t.length<4){ err.textContent='Escribe tu pregunta 🙂'; err.style.display='block'; return; }
+    this.disabled=true; this.textContent='Enviando...';
+    const { error } = await sb.from('ic_preguntas').insert({ nombre: yo.nombre.split(' ')[0], texto: t });
+    if(error){ this.disabled=false; this.textContent='📨 Enviar mi pregunta'; err.textContent='No se pudo enviar, intenta de nuevo.'; err.style.display='block'; return; }
+    localStorage.setItem('ic_pregN', String(pregHechas()+1));
+    burst(10,'🎤'); vibra([30,40,120]);
+    if(pregHechas() >= MAX_PREG){ vPreguntar(durante); return; }
+    this.disabled=false; this.textContent='📨 Enviar otra pregunta';
+    document.getElementById('qaTxt').value='';
+    document.querySelector('.mini').textContent = 'Te queda '+(MAX_PREG-pregHechas())+' de '+MAX_PREG+'.';
+    document.getElementById('qaOk').innerHTML='<div class="fb ok" style="margin-top:12px">✅ ¡Pregunta enviada! Atento a la pantalla.</div>';
+  };
+}
+/* ── Slide OFERTA (24): en el celular mostramos cómo activar las 5 libras.
+   Ya tenemos nombre + WhatsApp del registro, así que solo mostramos su QR ── */
+function vOfertaLibrasJ(){
+  const nom = yo.nombre.split(' ')[0];
+  const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=380x380&margin=2&data='+encodeURIComponent('CELADALIBRAS|'+(yo.whatsapp||'')+'|'+yo.nombre);
+  app.innerHTML = '<div style="width:100%;text-align:center">'
+    + '<div style="font-size:2.4rem">🎁</div>'
+    + '<h1 style="font-size:1.35rem;margin:4px auto 2px">Reclama tus 5 LIBRAS GRATIS</h1>'
+    + '<p class="sub" style="margin-bottom:12px">Ya tenemos tus datos, '+nom+' ✅ Solo actívalas en el stand:</p>'
+    + '<div id="librasCard">'
+    + '<div style="background:#fff;padding:12px;border-radius:14px;display:inline-block;margin:2px auto 10px"><img src="'+qr+'" alt="Tu QR de activación" style="width:min(52vw,220px);height:auto;display:block"></div>'
+    + '<p class="sub" style="font-size:.9rem">Pasa al stand de <b style="color:var(--gold)">Celada Shopper</b> y muestra este QR: se activan solas ✨</p>'
+    + '</div>'
+    + '<button class="btn" style="margin-top:12px" onclick="window.open(CIERRE.urlLanding,\'_blank\')">🌐 Ir a expo.celadashopper.com</button>'
+    + '</div>';
+  escuchaActivacion();
+}
+/* ── Slide EJEMPLOS: elige un caso, ve el desglose, ⬅ Atrás para cambiar ── */
+function vEjemplosJ(s, casoId){
+  const casos = s.casos||[];
+  if(!casoId){
+    app.innerHTML = '<div style="width:100%">'
+      + (s.titulo?'<h1 style="font-size:1.3rem;text-align:center;margin:0 auto 8px">'+s.titulo+'</h1>':'')
+      + '<p class="sub" style="text-align:center;margin-bottom:18px">'+(s.texto||'Elige un caso:')+'</p>'
+      + '<div style="display:flex;flex-direction:column;gap:12px">'
+      + casos.map(function(c){ return '<button class="op ejcaso" data-caso="'+c.id+'" style="text-align:left"><b style="font-size:1.1rem;display:block">'+c.emoji+' '+c.etiqueta+'</b><small style="color:var(--txt2)">'+c.sub+'</small></button>'; }).join('')
+      + '</div></div>';
+    document.querySelectorAll('.ejcaso').forEach(function(b,i){
+      b.onclick=function(){ vibra(30); vEjemplosJ(s, b.dataset.caso); };
+      if(b.animate) b.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*110,easing:'ease-out',fill:'backwards'});
+    });
+    return;
+  }
+  const c = casos.filter(function(x){ return x.id===casoId; })[0];
+  if(!c){ vEjemplosJ(s); return; }
+  app.innerHTML = '<div style="width:100%">'
+    + '<button class="op" id="ejVolver" style="width:auto;display:inline-block;padding:8px 16px;font-size:.85rem;margin-bottom:14px">⬅ Atrás</button>'
+    + '<h1 style="font-size:1.25rem;margin:0 0 2px">'+c.emoji+' '+c.etiqueta+'</h1>'
+    + '<p class="sub" style="margin-bottom:14px">'+c.producto+'</p>'
+    + '<div style="display:flex;flex-direction:column;gap:8px" id="ejLineas">'
+    + c.lineas.map(function(l){ return '<div class="ejlin" style="display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px"><span style="font-size:.92rem">'+l.c+'</span><b style="white-space:nowrap">'+l.v+'</b></div>'; }).join('')
+    + '</div>'
+    + '<div style="margin-top:12px;background:linear-gradient(135deg,#ffd66b,#ffb300);color:#1d1300;border-radius:14px;padding:14px;text-align:center;font-weight:800"><small style="display:block;opacity:.75;font-size:.78rem;letter-spacing:.05em">COSTO REAL</small><span style="font-size:1.5rem">'+c.total+'</span><small style="display:block;opacity:.75;font-weight:700">'+(c.totalCop||'')+'</small></div>'
+    + (c.nota?'<div class="dato" style="margin-top:12px">💡 '+c.nota+'</div>':'')
+    + '<button class="op" id="ejOtro" style="width:100%;text-align:center;font-weight:800;margin-top:14px;border-color:var(--acc);background:rgba(255,179,0,.1)">🔄 Ver el otro caso</button>'
+    + '</div>';
+  document.querySelectorAll('.ejlin').forEach(function(el,i){ if(el.animate) el.animate([{opacity:0,transform:'translateX(-14px)'},{opacity:1,transform:'none'}],{duration:340,delay:60+i*70,easing:'ease-out',fill:'backwards'}); });
+  document.getElementById('ejVolver').onclick=function(){ vibra(20); vEjemplosJ(s); };
+  const otroId = casos.filter(function(x){ return x.id!==casoId; })[0];
+  document.getElementById('ejOtro').onclick=function(){ vibra(20); vEjemplosJ(s, otroId ? otroId.id : null); };
 }
 /* ── JUEGO tienda: ofertas una por una, COMPRAR o IGNORAR ── */
 function vTienda(id, q){
@@ -309,12 +406,19 @@ function render(){
   if(top) top.style.display='flex';
   pintaPts();
   const e = estadoActual.replace(/^rev:/,'');
+  /* Mantener la cajita de preguntas sin borrar lo que escribe la persona al cambiar de slide 14-21 */
+  var _sn = e.indexOf('slide:')===0 ? e.slice(6).split('.')[0] : '';
+  var _esCajita = _sn && typeof SLIDES!=='undefined' && SLIDES[_sn] && SLIDES[_sn].qaCajita;
+  if(_esCajita && cajitaActiva){ return; }
+  cajitaActiva = !!_esCajita;
   if(e==='espera'){ vEspera(); }
   else if(e==='final'){ vFinal(); }
+  else if(e==='preguntas'){ vPreguntar(false); }
   else if(e.startsWith('slide:')){
     const sname = e.slice(6).split('.')[0];
     const s = (typeof SLIDES!=='undefined') ? SLIDES[sname] : null;
-    if(s && s.tipo==='logos' && s.fotos && s.fotos.length){
+    if(s && s.qaCajita){ vPreguntar(true); }
+    else if(s && s.tipo==='logos' && s.fotos && s.fotos.length){
       app.innerHTML = '<div class="centro" style="width:100%">'
         + (s.titulo ? '<h1 style="margin:0 auto 10px;font-size:1.35rem;text-align:center">'+s.titulo+'</h1>' : '')
         + '<p class="sub" style="margin-bottom:14px" id="jlogosSub">'+(contestadas['dondelogos']!==undefined?'✅ Ya votaste, ¡pero sigue tocando para saludar! 👋':'👆 Toca tu tienda favorita: tu primer toque es tu voto')+'</p>'
@@ -338,6 +442,8 @@ function render(){
       for(let i=jo.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=jo[i]; jo[i]=jo[j]; jo[j]=t; }
       jo.forEach(function(idx,pos){ const el=jc[idx]; if(el&&el.animate) el.animate([{opacity:0,transform:'scale(.5)'},{opacity:1,transform:'none'}],{duration:500,delay:pos*200,easing:'cubic-bezier(.22,1.5,.36,1)',fill:'backwards'}); });
     }
+    else if(s && s.tipo==='ejemplos'){ vEjemplosJ(s); }
+    else if(s && s.tipo==='oferta'){ vOfertaLibrasJ(); }
     else if(s && s.tipo==='checklist'){
       app.innerHTML = '<div style="width:100%;max-height:80vh;overflow-y:auto;padding:2px">'
         + (s.titulo ? '<h1 style="margin:0 0 4px;font-size:1.3rem;text-align:center">'+s.titulo+'</h1>' : '')
@@ -392,7 +498,7 @@ async function verificaYo(){
   const { data } = await sb.from('ic_participantes').select('id,puntos').eq('id', yo.id).maybeSingle();
   if(!data){
     yo = null; contestadas = {};
-    localStorage.removeItem('ic_yo'); localStorage.removeItem('ic_resp');
+    localStorage.removeItem('ic_yo'); localStorage.removeItem('ic_resp'); localStorage.removeItem('ic_pregN');
     document.getElementById('badge').style.display = 'none';
   } else if(data.puntos !== yo.puntos){
     yo.puntos = data.puntos; localStorage.setItem('ic_yo', JSON.stringify(yo));

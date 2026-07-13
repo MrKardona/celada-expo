@@ -92,8 +92,8 @@ const IX = {
   },
   tipoimport: {
     tipo: 'encuesta', puntos: 25, estilo: 'tarjetas', /* estilo tarjetas: en pantalla salen tarjetas grandes con el % abajo */
-    pregunta: '✈️ Ya compramos… ¡ahora vamos a importarlo! ¿Tu importación cómo sería?',
-    opciones: ['🛍️ Al detal: de 1 a 9 unidades', '🏭 Mayorista: 10 unidades o más']
+    pregunta: '⚖️ Comprar ≠ importar. Cuando cambia el propósito, cambian las reglas. ¿Tú para qué importarías?',
+    opciones: ['📱 Con fines personales', '🏪 Con fines comerciales']
   },
   /* JUEGO 'tienda': las ofertas aparecen UNA POR UNA en el celular con botones COMPRAR / IGNORAR.
      La imagen pasa a la siguiente cuando el usuario responde. En pantalla: carrusel con conteo en vivo.
@@ -152,31 +152,17 @@ const SLIDES = {
   dondecomprar: { tipo:'logos', kicker:'DÓNDE COMPRAR', titulo:'¿Dónde comprar en Estados Unidos?', texto:'Las tiendas donde conseguimos todo por ti.', fotos:['logo-1.webp','logo-2.webp','logo-3.webp','logo-4.webp','logo-5.webp','logo-6.webp'] },
 
 
-  /* ── BLOQUE EDUCATIVO: de comprador a importador (pasos 14-22) ── */
-  comprarvsimportar: {
-    tipo:'checklist', kicker:'LA GRAN DIFERENCIA',
-    titulo:'¿Comprar o importar?',
-    texto:'Comprar un celular ≠ importar mercancía.',
-    items:[
-      { e:'📱', t:'Uso personal', d:'Compras un celular para ti.' },
-      { e:'🏪', t:'Actividad comercial', d:'Importas mercancía para vender.' }
-    ],
-    dato:'Cuando cambia el propósito, también cambian las reglas.'
-  },
+  /* ── BLOQUE EDUCATIVO: de comprador a importador ── */
+  /* tipo 'mito': pregunta + PALABRA gigante animada (NO/SÍ) + dato. Muy visual. */
   limite: {
-    tipo:'checklist', kicker:'MITO FRECUENTE',
-    titulo:'¿Existe un límite de celulares al mes? NO.',
-    texto:'La ley colombiana no establece un número máximo mensual. Lo que la DIAN analiza es:',
-    items:[
-      { e:'📅', t:'Frecuencia', d:'¿Cada cuánto importas?' },
-      { e:'📦', t:'Cantidad', d:'¿Cuántos equipos traes?' },
-      { e:'🎯', t:'Finalidad', d:'¿Para ti o para vender?' },
-      { e:'🧾', t:'Evidencia comercial', d:'¿Hay señales de negocio?' }
-    ],
+    tipo:'mito', kicker:'MITO FRECUENTE', qaCajita:true,
+    titulo:'¿Existe un límite de celulares al mes?',
+    palabra:'NO',
+    texto:'La ley colombiana no establece un número máximo mensual.',
     dato:'No importa solo cuántos importas, sino para qué los importas.'
   },
   dianobserva: {
-    tipo:'checklist', kicker:'ASÍ TE VE LA DIAN',
+    tipo:'checklist', kicker:'ASÍ TE VE LA DIAN', qaCajita:true,
     titulo:'¿Qué observa la DIAN?',
     texto:'',
     items:[
@@ -188,7 +174,7 @@ const SLIDES = {
     dato:'La DIAN analiza el comportamiento del importador, no únicamente el contenido del paquete.'
   },
   uvt: {
-    tipo:'checklist', kicker:'EL NÚMERO CLAVE',
+    tipo:'checklist', kicker:'EL NÚMERO CLAVE', qaCajita:true,
     titulo:'Las 22 UVT',
     texto:'',
     items:[
@@ -198,7 +184,7 @@ const SLIDES = {
     dato:'22 UVT NO significa que esté prohibido importar.'
   },
   nosolocaja: {
-    tipo:'checklist', kicker:'EL PROCESO COMPLETO',
+    tipo:'checklist', kicker:'EL PROCESO COMPLETO', qaCajita:true,
     titulo:'Importar no es solo traer una caja',
     texto:'',
     items:[
@@ -211,19 +197,20 @@ const SLIDES = {
     dato:'Importar comienza donde termina la compra.'
   },
   nacionalizar: {
-    tipo:'checklist', kicker:'LA PALABRA CLAVE',
+    tipo:'checklist', kicker:'LA PALABRA CLAVE', qaCajita:true,
     titulo:'¿Qué significa nacionalizar?',
-    texto:'',
+    texto:'Es el proceso que legaliza tu mercancía ante la DIAN, paso a paso:',
     items:[
-      { e:'📑', t:'Declarar', d:'La mercancía ante la aduana.' },
-      { e:'🏷️', t:'Clasificar', d:'Correctamente el producto.' },
-      { e:'💰', t:'Pagar', d:'Los tributos aplicables.' },
-      { e:'✅', t:'Autorizar', d:'El ingreso legal al país.' }
+      { e:'📑', t:'1. Declaración de importación', d:'Se presenta ante la DIAN cuando llega la mercancía.' },
+      { e:'🔍', t:'2. Inspección', d:'La DIAN revisa documentos y, si aplica, la carga física.' },
+      { e:'💰', t:'3. Pago de tributos', d:'Arancel e IVA que correspondan.' },
+      { e:'✅', t:'4. Levante', d:'La DIAN autoriza retirar la mercancía.' },
+      { e:'📦', t:'5. Ya es legal', d:'Queda oficialmente nacionalizada y la puedes vender.' }
     ],
-    dato:'La nacionalización convierte una mercancía en un producto legalmente importado.'
+    dato:'Sin el “levante” de la DIAN, la mercancía no puede salir ni venderse. Con Celada, ese proceso lo hacemos por ti.'
   },
   couriervs: {
-    tipo:'checklist', kicker:'DOS CAMINOS',
+    tipo:'checklist', kicker:'DOS CAMINOS', qaCajita:true,
     titulo:'Courier vs Importación Ordinaria',
     texto:'',
     items:[
@@ -233,7 +220,7 @@ const SLIDES = {
     dato:'Cada modalidad responde a una necesidad diferente.'
   },
   importador: {
-    tipo:'checklist', kicker:'EL SALTO',
+    tipo:'checklist', kicker:'EL SALTO', qaCajita:true,
     titulo:'¿Cuándo te conviertes en importador?',
     texto:'Cuando dejas de comprar para ti… y comienzas a importar para vender. Necesitas:',
     items:[
@@ -246,7 +233,7 @@ const SLIDES = {
     dato:'Ya no eres solo un comprador. Ahora eres un importador.'
   },
   costoreal: {
-    tipo:'checklist', kicker:'¿REALMENTE ESTÁS GANANDO?',
+    tipo:'checklist', kicker:'¿REALMENTE ESTÁS GANANDO?', qaCajita:true,
     titulo:'El costo real de importar',
     texto:'Costo del celular ➕ envío ➕ seguro ➕ tributos ➕ otros costos 🟰 COSTO REAL',
     items:[
@@ -257,6 +244,39 @@ const SLIDES = {
       { e:'➕', t:'Otros costos', d:'Comisiones, últimas millas…' }
     ],
     dato:'La utilidad se calcula, no se adivina.'
+  },
+  /* tipo 'ejemplos': en el CELULAR se elige un caso (Menor/Mayor a 22 UVT) y se ve el desglose,
+     con botón ⬅ Atrás para cambiar de caso. En pantalla salen los 2 casos lado a lado. */
+  ejemplos: {
+    tipo:'ejemplos', kicker:'EJEMPLO REAL',
+    titulo:'¿Cuánto cuesta de verdad importar un celular?',
+    texto:'Elige un caso en tu celular y mira los números reales 👇',
+    tasa:'Valores en USD · 22 UVT 2026 = $1.152.228 (≈ USD 281) · importación legal vía courier: 1 equipo por envío, con IMEI homologado ante la CRC',
+    casos:[
+      { id:'menor', emoji:'📱', etiqueta:'Menor a 22 UVT', sub:'Uso personal · sin impuestos',
+        producto:'iPhone SE 3ª gen 64GB usado (comprado en USA)',
+        lineas:[
+          { c:'📱 Precio del celular en USA', v:'USD 100' },
+          { c:'✈️ Envío (casillero Celada)', v:'USD 22' },
+          { c:'🛡️ Seguro tecnología (4%)', v:'USD 4' },
+          { c:'🏛️ Arancel', v:'USD 0' },
+          { c:'🏛️ IVA', v:'USD 0' }
+        ],
+        nota:'Es un smartphone y vale menos de 22 UVT → EXCLUIDO de IVA. Como cuesta menos de USD 200, tampoco paga arancel (TLC con USA). Legal: 1 equipo por envío, IMEI declarado y homologado ante la CRC.',
+        total:'≈ USD 126', totalCop:'~$517.000 COP' },
+      { id:'mayor', emoji:'💼', etiqueta:'Mayor a 22 UVT', sub:'Reventa · con impuestos',
+        producto:'iPhone 15 128GB usado (comprado en USA)',
+        lineas:[
+          { c:'📱 Precio del celular en USA', v:'USD 360' },
+          { c:'✈️ Envío (casillero Celada)', v:'USD 22' },
+          { c:'🛡️ Seguro tecnología (4%)', v:'USD 14' },
+          { c:'🏛️ Arancel (10% s/ valor+flete+seguro)', v:'USD 40' },
+          { c:'🏛️ IVA (19%)', v:'USD 83' }
+        ],
+        nota:'Supera 22 UVT y USD 200 → paga arancel + IVA (todo legal). Un equipo por envío vía courier. OJO: para volumen de reventa (varias unidades) ya es importación ordinaria con agencia de aduanas y RUT importador. Se vende en Colombia ~$2.700.000: sin contar los impuestos crees que ganas más de lo real.',
+        total:'≈ USD 519', totalCop:'~$2.128.000 COP' }
+    ],
+    dato:'La utilidad se calcula, no se adivina — y siempre por el camino legal.'
   },
 
   revisar: {
@@ -278,12 +298,15 @@ const SLIDES = {
     dato:'Con Celada revisamos todo esto por ti antes de comprar.'
   },
   /* 'oferta' = slide especial estilo $100M Offers: título + stack de valor + urgencia + CTA */
-  oferta:     { tipo:'oferta', kicker:'SOLO HOY EN EXPOMOBILE', titulo:'Estrena tu casillero con 5 LIBRAS GRATIS', bullets:[
-                 'Tu casillero en Estados Unidos — GRATIS',
-                 '5 libras de envío gratis en tu primer pedido',
+  oferta:     { tipo:'oferta', kicker:'SOLO HOY · SOLO EN EXPOMOBILE',
+                titulo:'Estrena tu casillero con 5 LIBRAS GRATIS',
+                subtitulo:'Todo lo que viste hoy… ahora hecho POR TI. Empieza a importar sin riesgo.',
+                bullets:[
+                 'Tu casillero propio en Miami, USA — 100% GRATIS',
+                 '5 libras de envío GRATIS en tu primer pedido',
                  'Compramos por ti: sin tarjeta internacional',
                  'Asesoría 1 a 1 para tu primera importación'
-               ], urgencia:'Cupos limitados · solo para los asistentes de hoy', cta:'Actívalo en el stand de Celada Shopper 👉' }
+               ], urgencia:'Cupos limitados · solo para los asistentes de HOY', cta:'Actívalo YA en el stand de Celada Shopper 👉' }
 };
 
 /* ============================================================
@@ -305,8 +328,7 @@ const ESCALETA = [
   { id:'slide:revisar',    t:'✅ Qué revisar antes de comprar (informativo)' },
   { id:'slide:dondecomprar', t:'🛒 Dónde comprar en USA (logos + votación en vivo)' },
   { id:'comprarias',       t:'🛍️ JUEGO: ¿comprar o ignorar? (3 iPhones, feedback al responder)' },
-  { id:'tipoimport',       t:'📊 ENCUESTA: ya compramos, ¿importas al detal (1-9) o mayorista (10+)?' },
-  { id:'slide:comprarvsimportar', t:'⚖️ ¿Comprar o importar? (el propósito cambia las reglas)' },
+  { id:'tipoimport',       t:'⚖️ ENCUESTA: comprar ≠ importar, ¿uso personal (1-9) o comercial (10+)?' },
   { id:'slide:limite',     t:'🚫 ¿Límite de celulares al mes? NO — qué analiza la DIAN' },
   { id:'slide:dianobserva', t:'👀 ¿Qué observa la DIAN? (comportamiento, no solo paquete)' },
   { id:'slide:uvt',        t:'💰 Las 22 UVT (no es prohibición)' },
@@ -315,6 +337,8 @@ const ESCALETA = [
   { id:'slide:couriervs',  t:'📬 Courier vs importación ordinaria' },
   { id:'slide:importador', t:'🚀 ¿Cuándo te conviertes en importador?' },
   { id:'slide:costoreal',  t:'🧮 El costo real de importar (la utilidad se calcula)' },
+  { id:'slide:ejemplos',   t:'📊 EJEMPLO REAL: elige mayor/menor a 22 UVT y ve los números (celular)' },
+  { id:'preguntas',        t:'🎤 Q&A: el público escribe preguntas; tú eliges cuáles mostrar y responder' },
   { id:'slide:oferta',     t:'🎁 Oferta: 5 libras gratis en el stand' },
   { id:'final',            t:'🏆 PODIO: ganador deja sus datos, el resto activa sus libras' }
 ];

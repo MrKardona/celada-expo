@@ -46,6 +46,11 @@ h1{font-size:1.2rem;margin-bottom:4px}
   <button class="paso rev" id="btnRev">✅ Revelar respuesta</button>
   <button class="paso" id="btnLluvia" style="border-color:rgba(255,179,0,.5)">🙋 Lluvia de manos</button>
 </div>
+<div style="margin-top:20px;padding-top:14px;border-top:1px dashed var(--line)">
+  <p class="sub" style="margin-bottom:10px">🎤 <b style="color:var(--gold)">Preguntas del público</b> — <b id="qaN">0</b> recibidas. Toca una para mostrarla en pantalla.</p>
+  <div id="qaLista" style="display:flex;flex-direction:column;gap:8px"><p class="sub" style="opacity:.6">Aún no hay preguntas. Abre el paso “Q&A” para que el público escriba.</p></div>
+  <button class="paso" id="qaLimpiar" style="border-color:rgba(239,68,68,.3);color:#ef4444;margin-top:8px;font-size:.85rem;justify-content:center">Limpiar pantalla de preguntas</button>
+</div>
 <button class="paso" id="btnLibras" style="background:var(--grad);color:#1d1300;border-color:transparent;font-weight:800;justify-content:center;margin-top:16px">🎁 ACTIVAR LIBRAS (escanear QR)</button>
 <button class="paso peligro" id="btnReset">🗑️ Reiniciar TODO (borra jugadores y puntos)</button>
 <div id="scanLibras" style="position:fixed;inset:0;background:#000;z-index:99;display:none;flex-direction:column">
@@ -99,6 +104,40 @@ document.getElementById('escaleta').innerHTML = ESCALETA.map(function(p,i){
 document.querySelectorAll('.paso[data-i]').forEach(function(b){
   b.onclick = function(){ enviar(b.dataset.i); };
 });
+/* 🎤 Preguntas del público (Q&A): llegan en vivo, el presentador elige cuál mostrar */
+const qaCanal = sb.channel('qa');
+qaCanal.subscribe();
+let qaShown = null;
+function pintaQA(preguntas){
+  const cont = document.getElementById('qaLista');
+  document.getElementById('qaN').textContent = preguntas.length;
+  if(!preguntas.length){ cont.innerHTML = '<p class="sub" style="opacity:.6">Aún no hay preguntas. Abre el paso “Q&A” para que el público escriba.</p>'; return; }
+  cont.innerHTML = preguntas.map(function(p){
+    return '<button class="paso qaItem'+(qaShown===p.id?' activo':'')+'" data-id="'+p.id+'" style="text-align:left;align-items:flex-start"><span class="ptxt"><b style="color:var(--gold)">'+(p.nombre||'Anónimo')+'</b><span style="font-weight:500;white-space:normal">'+p.texto+'</span></span></button>';
+  }).join('');
+  cont.querySelectorAll('.qaItem').forEach(function(b){
+    b.onclick = function(){
+      const p = preguntas.filter(function(x){ return String(x.id)===b.dataset.id; })[0];
+      if(!p) return;
+      qaShown = p.id;
+      qaCanal.send({ type:'broadcast', event:'qa', payload:{ nombre:p.nombre, texto:p.texto } });
+      aviso('Mostrando en pantalla 📺');
+      pintaQA(preguntas);
+    };
+  });
+}
+async function cargaQA(){
+  const { data } = await sb.from('ic_preguntas').select('*').order('creado',{ascending:true});
+  pintaQA(data||[]);
+}
+document.getElementById('qaLimpiar').onclick = function(){
+  qaShown = null;
+  qaCanal.send({ type:'broadcast', event:'qa', payload:{ limpiar:true } });
+  aviso('Pantalla limpia ✓');
+  cargaQA();
+};
+sb.channel('qp').on('postgres_changes',{event:'INSERT',schema:'public',table:'ic_preguntas'}, cargaQA).subscribe();
+cargaQA();
 function idx(){ return ESCALETA.findIndex(function(p){ return p.id === actual.replace(/^rev:/,''); }); }
 document.getElementById('btnSig').onclick = function(){
   const i = idx();
@@ -178,8 +217,13 @@ document.getElementById('scanCerrar').onclick = function(){
   if(scanStream){ scanStream.getTracks().forEach(function(t){ t.stop(); }); scanStream=null; }
   document.getElementById('scanLibras').style.display='none';
 };
-document.getElementById('btnReset').onclick = function(){
-  if(confirm('¿Seguro? Se borran TODOS los jugadores, puntos y respuestas.')) enviar('__reset__');
+document.getElementById('btnReset').onclick = async function(){
+  if(!confirm('¿Seguro? Se borran TODOS los jugadores, puntos, respuestas y preguntas del público.')) return;
+  await enviar('__reset__');
+  /* limpiar preguntas del público en panel y pantalla */
+  qaShown = null;
+  qaCanal.send({ type:'broadcast', event:'qa', payload:{ limpiar:true } });
+  setTimeout(cargaQA, 400);
 };
 async function init(){
   const { data } = await sb.from('ic_estado').select('interaccion').eq('id',1).single();
