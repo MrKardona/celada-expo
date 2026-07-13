@@ -168,23 +168,32 @@ function scanMsg(txt, color, bg){ scanStatus.textContent=txt; scanStatus.style.c
 function scanReset(){ scanMsg('Buscando QR…','#a8a8b3','#17171c'); }
 async function scanProcesa(codigo){
   const ahora=Date.now();
-  if(codigo===scanUltimo && ahora-scanUltimoT<4000) return; /* mismo QR aún en cámara */
+  if(codigo===scanUltimo && ahora-scanUltimoT<5000) return; /* mismo QR aún en cámara */
   scanUltimo=codigo; scanUltimoT=ahora;
-  if(codigo.indexOf('CELADALIBRAS|')!==0){ scanMsg('❌ Este QR no es de Celada','#fff','#7f1d1d'); setTimeout(scanReset,2200); return; }
-  const partes=codigo.split('|');
-  const whatsapp=(partes[1]||'').replace(/\D/g,''), nombre=partes.slice(2).join('|')||'Cliente';
-  if(whatsapp.length<10){ scanMsg('❌ QR sin WhatsApp válido','#fff','#7f1d1d'); setTimeout(scanReset,2200); return; }
-  scanMsg('Verificando…','#a8a8b3','#17171c');
-  const { error } = await sb.from('libras_activadas').insert({nombre:nombre, whatsapp:whatsapp});
-  if(!error){
-    scanMsg('✅ ACTIVADO · '+nombre.split(' ')[0],'#062e12','#22c55e');
-    if(navigator.vibrate) navigator.vibrate([40,40,120]);
-  } else if(String(error.code)==='23505' || /duplicate|unique/i.test(error.message||'')){
-    scanMsg('🟡 YA ESTABA ACTIVADO · '+nombre.split(' ')[0],'#1d1300','#ffc53d');
-  } else {
-    scanMsg('❌ Error, intenta de nuevo','#fff','#7f1d1d');
+  /* El QR de la landing trae el código LIB-XXXXXX (o una URL que lo contiene) */
+  var cod=String(codigo||'').trim().toUpperCase();
+  var m=cod.match(/[?&]C=([A-Z0-9-]+)/); if(m) cod=m[1];
+  if(cod.indexOf('LIB-')!==0){ scanMsg('❌ Este QR no es de Celada','#fff','#7f1d1d'); setTimeout(scanReset,2200); return; }
+  scanMsg('Activando…','#a8a8b3','#17171c');
+  try{
+    const r=await fetch('https://igijeqhyppvpennjdkiu.supabase.co/functions/v1/activar-libras',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ codigo: cod, activado_por: 'panel' })
+    });
+    const d=await r.json();
+    if(!r.ok || d.ok===false){
+      scanMsg('❌ '+(d.error||('Error '+r.status)),'#fff','#7f1d1d');
+    } else if(d.ya_activado){
+      scanMsg('🟡 YA ACTIVADO · '+String(d.nombre||'').split(' ')[0],'#1d1300','#ffc53d');
+    } else {
+      var extra=d.enviado ? ' · WhatsApp enviado 📲' : ' · WhatsApp NO enviado';
+      scanMsg('✅ ACTIVADO · '+String(d.nombre||'').split(' ')[0]+extra,'#062e12','#22c55e');
+      if(navigator.vibrate) navigator.vibrate([40,40,120]);
+    }
+  }catch(e){
+    scanMsg('❌ Error de conexión','#fff','#7f1d1d');
   }
-  setTimeout(scanReset,2600);
+  setTimeout(scanReset,2800);
 }
 function scanLoop(){
   const v=document.getElementById('scanVideo'), cv=document.getElementById('scanCanvas');
