@@ -160,6 +160,13 @@ h1{color:var(--gold);font-size:clamp(2.2rem,5vw,4rem);letter-spacing:-.02em;line
 .of-urg{background:rgba(255,179,0,.14);border:1px solid rgba(255,179,0,.45);color:var(--gold);font-weight:800;font-size:clamp(1rem,1.8vw,1.35rem);padding:12px 28px;border-radius:100px;margin-bottom:20px;animation:ofBreath 2.1s ease-in-out infinite}
 @keyframes ofBreath{0%,100%{box-shadow:0 0 0 rgba(255,179,0,0);transform:scale(1)}50%{box-shadow:0 0 34px rgba(255,179,0,.45);transform:scale(1.035)}}
 .of-cta{font-size:clamp(1.3rem,2.6vw,2.1rem);font-weight:900;color:var(--txt);background:var(--grad);color:#1d1300;padding:16px 34px;border-radius:100px;box-shadow:0 12px 40px rgba(255,179,0,.35);animation:ofPulse 1.9s ease-in-out infinite}
+/* ── CTA final: reclama tus libras en la web ── */
+.fin-cta{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.fin-btn{background:var(--grad);color:#1d1300;font-weight:900;font-size:clamp(1.5rem,3.2vw,2.7rem);letter-spacing:-.01em;padding:18px 46px;border-radius:100px;box-shadow:0 14px 50px rgba(255,179,0,.5);animation:finPulse 1.35s ease-in-out infinite}
+@keyframes finPulse{0%,100%{transform:scale(1);box-shadow:0 14px 46px rgba(255,179,0,.4)}50%{transform:scale(1.06);box-shadow:0 16px 66px rgba(255,179,0,.75)}}
+.fin-txt{font-size:clamp(1.15rem,2vw,1.7rem);color:var(--txt);margin:0}
+.fin-txt b{color:var(--gold)}
+.fin-link{color:var(--gold);font-weight:900;font-size:clamp(1.3rem,2.4vw,2rem);border-bottom:3px solid rgba(255,179,0,.55);padding-bottom:2px}
 .sl-gif{width:min(400px,72vw);border-radius:20px;margin-bottom:24px;box-shadow:0 18px 55px rgba(0,0,0,.55)}
 /* ── Presentación del presentador (luces + nombre) ── */
 .presenta{position:relative;width:min(1100px,92vw);display:flex;flex-direction:column;align-items:center;text-align:center}
@@ -380,12 +387,17 @@ async function vFinal(){
   const nom = function(p){ return p ? p.nombre.split(' ')[0] : '—'; };
   const pod = function(pos){ const p=t3[pos]; if(!p) return '';
     return '<div class="pod pos'+(pos+1)+'"><div class="pod-name">'+(pos===0?'👑 ':'')+nom(p)+'</div><div class="pod-pts">'+p.puntos+' pts</div><div class="pod-bar">'+(pos+1)+'</div></div>'; };
-  app.innerHTML = `<h1>🏆 Ranking final</h1>
+  app.innerHTML = `<h1 style="margin-bottom:8px">🏆 Ranking final</h1>
     <div class="podio">${pod(1)}${pod(0)}${pod(2)}</div>
     ${resto.length ? '<div class="rk-rest">'+resto.map(function(p,i){ return '<div class="rrow"><span>'+(i+4)+'. '+p.nombre+'</span><span style="color:var(--gold)">'+p.puntos+' pts</span></div>'; }).join('')+'</div>' : ''}
     <div class="premio">${PREMIOS.top1}</div>
-    <p class="sub" style="margin-top:8px">${PREMIOS.todos}</p>`;
+    <div class="fin-cta">
+      <div class="fin-btn">🎁 5 LIBRAS GRATIS PARA TODOS LOS DEMÁS</div>
+      <p class="fin-txt">Reclámalas en el stand de <b>Celada Shopper</b> 🎪</p>
+      <p class="fin-txt" style="opacity:.9">o entra a <b class="fin-link">expo.celadashopper.com</b> y déjanos tus datos</p>
+    </div>`;
   ['.pos3','.pos2','.pos1'].forEach(function(sel,i){ const el=document.querySelector(sel); if(el&&el.animate) el.animate([{opacity:0,transform:'translateY(46px)'},{opacity:1,transform:'none'}],{duration:640,delay:500+i*750,easing:'cubic-bezier(.22,1.3,.36,1)',fill:'backwards'}); });
+  const cta=document.querySelector('.fin-cta'); if(cta&&cta.animate) cta.animate([{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:700,delay:500+3*750,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'});
   setTimeout(function(){ burst(44,'🏆'); }, 500+2*750);
 }
 function vSlide(id){

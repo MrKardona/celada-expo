@@ -278,6 +278,21 @@ const SLIDES = {
     ],
     dato:'La utilidad se calcula, no se adivina — y siempre por el camino legal.'
   },
+  /* Slide 23: gran importador (10 unidades, importación ordinaria) */
+  granimportador: {
+    tipo:'checklist', kicker:'NIVEL PRO',
+    titulo:'Gran importador: 10 unidades, 100% legal',
+    texto:'Traer volumen para revender ya NO es courier: es importación ordinaria. Esto necesitas:',
+    items:[
+      { e:'🧾', t:'RUT importador', d:'Con responsabilidad aduanera y código de comercio.' },
+      { e:'🏢', t:'Cámara de Comercio', d:'Matrícula mercantil de tu negocio.' },
+      { e:'🧑‍💼', t:'Agencia de aduanas', d:'Obligatoria desde USD 1.000 de mercancía.' },
+      { e:'📲', t:'Homologación CRC + IMEI', d:'Cada equipo homologado y verificado ante MinTIC.' },
+      { e:'📄', t:'Registro de importación (VUCE)', d:'+ factura, transporte y certificado de origen (TLC).' },
+      { e:'💰', t:'Pago de tributos', d:'Antes del levante. Celulares: 0% arancel · IVA 19% descontable.' }
+    ],
+    dato:'Ejemplo: 10 iPhone 15 usados (USD 360 c/u) → costo real ≈ USD 4.194 (~$1.720.000 c/u). El IVA se recupera y todo es deducible.'
+  },
 
   revisar: {
     tipo:'checklist',
@@ -338,6 +353,7 @@ const ESCALETA = [
   { id:'slide:importador', t:'🚀 ¿Cuándo te conviertes en importador?' },
   { id:'slide:costoreal',  t:'🧮 El costo real de importar (la utilidad se calcula)' },
   { id:'slide:ejemplos',   t:'📊 EJEMPLO REAL: elige mayor/menor a 22 UVT y ve los números (celular)' },
+  { id:'slide:granimportador', t:'🏢 GRAN IMPORTADOR: 10 unidades legal (requisitos + costos)' },
   { id:'preguntas',        t:'🎤 Q&A: el público escribe preguntas; tú eliges cuáles mostrar y responder' },
   { id:'slide:oferta',     t:'🎁 Oferta: 5 libras gratis en el stand' },
   { id:'final',            t:'🏆 PODIO: ganador deja sus datos, el resto activa sus libras' }
@@ -365,6 +381,6 @@ const CIERRE = {
    🏆 PREMIOS (textos del cierre)
 ============================================================ */
 const PREMIOS = {
-  top1: '👑 TOP 1 gana el envío de su celular GRATIS 📱✈️',
-  todos: 'Y todos: 5 LIBRAS GRATIS registrándose en el stand 🎁'
+  top1: '👑 El TOP 1 gana el ENVÍO de un celular desde Estados Unidos a Colombia — ¡GRATIS! 📱✈️',
+  todos: 'Y todos los demás: 5 LIBRAS GRATIS reclamándolas en el stand 🎁'
 };
